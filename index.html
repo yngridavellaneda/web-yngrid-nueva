@@ -4,6 +4,23 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Yngrid Avellaneda — Bienestar Integrativo</title>
+<!-- Meta Pixel Code -->
+<script>
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '2418823595293549');
+fbq('track', 'PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none"
+src="https://www.facebook.com/tr?id=2418823595293549&ev=PageView&noscript=1"
+/></noscript>
+<!-- End Meta Pixel Code -->
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -514,7 +531,7 @@ footer{
       </div>
     </div>
     <div class="svc-right">
-      <p class="svc-desc">Técnica de contacto suave sobre 32 puntos craneales que liberan cargas electromagnéticas fijas en el sistema nervioso. Induce estados de relajación profunda comparables a la meditación en ondas theta. <strong>El cuerpo recuerda cómo soltar lo que la mente sigue sosteniendo.</strong></p>
+      <p class="svc-desc">Técnica de contacto suave sobre 32 puntos craneales que liberan la carga electromagnética de los pensamientos. Induce estados de relajación profunda comparables a la meditación en ondas theta. <strong>El cuerpo recuerda cómo soltar lo que la mente sigue sosteniendo.</strong></p>
       <a href="https://wa.me/51970455039" target="_blank" class="svc-link">Reservar sesión</a>
     </div>
   </div>
@@ -732,6 +749,13 @@ btnSend.addEventListener('click', () => {
     document.getElementById('f-nombre').style.borderBottomColor = '#c0392b';
     return; 
   }
+  // Meta Pixel — Lead event
+  fbq('track', 'Lead', {
+    content_name: servicio || 'Consulta general',
+    content_category: 'Bienestar Integrativo',
+    value: 220,
+    currency: 'PEN'
+  });
   let text = '¡Hola Yngrid! 👋\n\n';
   text += `Mi nombre es *${nombre}*`;
   if (contacto) text += ` y puedes escribirme a: ${contacto}`;
@@ -740,6 +764,29 @@ btnSend.addEventListener('click', () => {
   if (mensaje)  text += `Lo que estoy viviendo:\n_${mensaje}_\n\n`;
   text += 'Quedo a la espera. ✨';
   window.open('https://wa.me/51970455039?text=' + encodeURIComponent(text), '_blank');
+});
+
+// Meta Pixel — ViewContent en secciones clave
+const pixelSections = [
+  { id: 'servicios', name: 'Servicios' },
+  { id: 'retiro',   name: 'Retiro de Transformación' },
+  { id: 'podcast',  name: 'Podcast Somos Espejo' },
+  { id: 'contacto', name: 'Formulario de Contacto' }
+];
+const pixelObs = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      const section = pixelSections.find(s => s.id === e.target.id);
+      if (section) {
+        fbq('track', 'ViewContent', { content_name: section.name });
+      }
+      pixelObs.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.3 });
+pixelSections.forEach(s => {
+  const el = document.getElementById(s.id);
+  if (el) pixelObs.observe(el);
 });
 
 // Remove red border on input
