@@ -1,0 +1,1043 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reserva tu sesión — Yngrid Avellaneda</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream: #F5EFE1;
+    --cream-deep: #ECE1C8;
+    --ink: #3A2E24;
+    --ink-soft: #6B5C4C;
+    --amber: #C08A3E;
+    --amber-deep: #9C6C2B;
+    --terracotta: #B5563C;
+    --teal: #4B6C63;
+    --teal-soft: #E4EBE7;
+    --line: #D8C9A8;
+    --white: #FFFDF8;
+    --radius: 4px;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--cream);
+    color:var(--ink);
+    font-family:'Jost', sans-serif;
+    font-weight:300;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,.serif{
+    font-family:'Cormorant Garamond', serif;
+    font-weight:500;
+    letter-spacing:0.01em;
+  }
+  .eyebrow{
+    font-family:'Jost',sans-serif;
+    font-size:0.72rem;
+    letter-spacing:0.22em;
+    text-transform:uppercase;
+    color:var(--amber-deep);
+    margin:0 0 0.6rem 0;
+  }
+  .wrap{max-width:760px; margin:0 auto; padding:0 24px;}
+
+  /* HERO */
+  header.hero{
+    padding:64px 0 48px 0;
+    text-align:center;
+    border-bottom:1px solid var(--line);
+  }
+  header.hero h1{
+    font-size:2.6rem;
+    font-style:italic;
+    margin:0 0 10px 0;
+    color:var(--ink);
+  }
+  header.hero p{
+    max-width:480px;
+    margin:0 auto;
+    color:var(--ink-soft);
+    font-size:1.02rem;
+  }
+
+  /* THREAD / RITUAL PATH */
+  .path{
+    position:relative;
+    max-width:760px;
+    margin:0 auto;
+    padding:0 24px;
+  }
+  .path::before{
+    content:"";
+    position:absolute;
+    left:35px;
+    top:0;
+    bottom:0;
+    width:1px;
+    background:repeating-linear-gradient(to bottom, var(--line) 0, var(--line) 4px, transparent 4px, transparent 9px);
+  }
+  section.step{
+    position:relative;
+    padding:52px 0 52px 64px;
+    border-bottom:1px solid var(--line);
+  }
+  section.step:last-of-type{border-bottom:none;}
+  .node{
+    position:absolute;
+    left:24px;
+    top:56px;
+    width:24px;
+    height:24px;
+    border-radius:50%;
+    background:var(--cream);
+    border:1px solid var(--amber);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-family:'Jost',sans-serif;
+    font-size:0.68rem;
+    color:var(--amber-deep);
+  }
+  section.step h2{
+    font-size:1.6rem;
+    margin:0 0 6px 0;
+  }
+  section.step > p.hint{
+    color:var(--ink-soft);
+    font-size:0.92rem;
+    margin:0 0 24px 0;
+  }
+
+  /* SESSION CARDS */
+  .sessions-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:14px;
+  }
+  @media (max-width:560px){ .sessions-grid{grid-template-columns:1fr;} .path::before{left:26px;} .node{left:15px;} section.step{padding-left:52px;} }
+  .session-card{
+    background:var(--white);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:18px 18px 16px 18px;
+    cursor:pointer;
+    transition:border-color 0.2s ease, background 0.2s ease;
+  }
+  .session-card:hover{border-color:var(--amber);}
+  .session-card.selected{
+    border-color:var(--amber-deep);
+    background:linear-gradient(180deg, var(--white), var(--teal-soft));
+  }
+  .card-badge{
+    display:inline-block;
+    font-size:0.66rem;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color:var(--teal);
+    background:var(--teal-soft);
+    padding:3px 9px;
+    border-radius:999px;
+    margin-bottom:8px;
+  }
+  .session-card h3{
+    font-size:1.22rem;
+    margin:0 0 4px 0;
+  }
+  .session-card .meta{
+    font-size:0.8rem;
+    color:var(--ink-soft);
+    display:flex;
+    justify-content:space-between;
+    margin-bottom:8px;
+  }
+  .session-card .desc{
+    font-size:0.86rem;
+    color:var(--ink-soft);
+    margin:0;
+  }
+
+  /* AVAILABILITY */
+  .date-group{margin-bottom:18px;}
+  .date-group .date-label{
+    font-family:'Jost',sans-serif;
+    font-size:0.78rem;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color:var(--teal);
+    margin-bottom:8px;
+  }
+  .slots{display:flex; flex-wrap:wrap; gap:8px;}
+  .slot-pill{
+    border:1px solid var(--line);
+    background:var(--white);
+    color:var(--ink);
+    padding:8px 16px;
+    border-radius:999px;
+    font-family:'Jost',sans-serif;
+    font-size:0.86rem;
+    cursor:pointer;
+    transition:all 0.2s ease;
+  }
+  .slot-pill:hover{border-color:var(--teal);}
+  .slot-pill.selected{
+    background:var(--teal);
+    border-color:var(--teal);
+    color:var(--white);
+  }
+  .slot-pill.full{
+    opacity:0.4;
+    text-decoration:line-through;
+    cursor:not-allowed;
+  }
+  .manual-datetime{display:flex; gap:12px; flex-wrap:wrap;}
+  .manual-datetime input{
+    font-family:'Jost',sans-serif;
+    padding:10px 12px;
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    background:var(--white);
+    color:var(--ink);
+    font-size:0.9rem;
+  }
+  .availability-note{
+    font-size:0.82rem;
+    color:var(--ink-soft);
+    font-style:italic;
+    margin-top:10px;
+  }
+
+  /* FORM */
+  .field{margin-bottom:16px;}
+  .field label{
+    display:block;
+    font-size:0.8rem;
+    letter-spacing:0.04em;
+    color:var(--ink-soft);
+    margin-bottom:6px;
+  }
+  .field input, .field textarea{
+    width:100%;
+    font-family:'Jost',sans-serif;
+    font-size:0.95rem;
+    padding:11px 13px;
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    background:var(--white);
+    color:var(--ink);
+  }
+  .field textarea{resize:vertical; min-height:70px;}
+  .field input:focus, .field textarea:focus, .slot-pill:focus, .session-card:focus, button:focus{
+    outline:2px solid var(--teal);
+    outline-offset:2px;
+  }
+
+  /* PAYMENT */
+  .pay-options{display:flex; flex-direction:column; gap:10px;}
+  .pay-option{
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    background:var(--white);
+    padding:14px 16px;
+    cursor:pointer;
+  }
+  .pay-option.selected{border-color:var(--amber-deep); background:var(--cream-deep);}
+  .pay-option h4{margin:0 0 4px 0; font-family:'Jost',sans-serif; font-size:0.95rem; font-weight:500;}
+  .pay-option p{margin:0; font-size:0.84rem; color:var(--ink-soft);}
+  .pay-detail{
+    display:none;
+    margin-top:10px;
+    padding:12px 14px;
+    background:var(--teal-soft);
+    border-radius:var(--radius);
+    font-size:0.85rem;
+    color:var(--ink);
+  }
+  .pay-option.selected .pay-detail{display:block;}
+  .pay-detail a{color:var(--teal); font-weight:500;}
+
+  /* SUMMARY BAR */
+  .summary-bar{
+    position:sticky;
+    bottom:0;
+    background:var(--ink);
+    color:var(--cream);
+    padding:16px 24px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:16px;
+    flex-wrap:wrap;
+  }
+  .summary-bar .info{font-size:0.85rem; opacity:0.85;}
+  .summary-bar .info strong{color:var(--white); font-weight:500;}
+  .btn-confirm{
+    background:var(--amber);
+    color:var(--white);
+    border:none;
+    padding:13px 26px;
+    border-radius:999px;
+    font-family:'Jost',sans-serif;
+    font-size:0.92rem;
+    letter-spacing:0.02em;
+    cursor:pointer;
+    transition:background 0.2s ease;
+  }
+  .btn-confirm:hover{background:var(--amber-deep);}
+  .btn-confirm:disabled{background:#a89a86; cursor:not-allowed;}
+
+  /* FAQ */
+  .faq-item{border-bottom:1px solid var(--line);}
+  .faq-q{
+    padding:16px 0;
+    cursor:pointer;
+    font-family:'Jost',sans-serif;
+    font-size:0.98rem;
+    font-weight:500;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+  }
+  .faq-q .sign{color:var(--amber); font-family:'Cormorant Garamond',serif; font-size:1.3rem;}
+  .faq-a{
+    max-height:0;
+    overflow:hidden;
+    transition:max-height 0.3s ease;
+    font-size:0.9rem;
+    color:var(--ink-soft);
+  }
+  .faq-a p{margin:0 0 16px 0;}
+  .faq-item.open .faq-a{max-height:300px;}
+
+  footer{
+    text-align:center;
+    padding:40px 24px 60px 24px;
+    color:var(--ink-soft);
+    font-size:0.78rem;
+    line-height:1.7;
+  }
+  footer a{color:var(--teal);}
+
+  .confirmation-box{
+    display:none;
+    background:var(--teal-soft);
+    border:1px solid var(--teal);
+    border-radius:var(--radius);
+    padding:20px;
+    margin-top:20px;
+    font-size:0.9rem;
+  }
+  .confirmation-box.show{display:block;}
+  .confirmation-box h4{margin:0 0 8px 0; color:var(--teal); font-family:'Jost',sans-serif;}
+  .confirmation-box a.wa-btn{
+    display:inline-block;
+    margin-top:10px;
+    background:#25D366;
+    color:white;
+    text-decoration:none;
+    padding:10px 18px;
+    border-radius:999px;
+    font-size:0.85rem;
+  }
+
+  /* CHAT WIDGET */
+  #chat-toggle{
+    position:fixed;
+    bottom:88px;
+    right:20px;
+    background:var(--amber);
+    color:var(--white);
+    border:none;
+    width:56px;
+    height:56px;
+    border-radius:50%;
+    font-family:'Cormorant Garamond',serif;
+    font-size:1.6rem;
+    cursor:pointer;
+    box-shadow:0 4px 14px rgba(58,46,36,0.25);
+    z-index:40;
+    transition:background 0.2s ease;
+  }
+  #chat-toggle:hover{background:var(--amber-deep);}
+  #chat-panel{
+    position:fixed;
+    bottom:154px;
+    right:20px;
+    width:320px;
+    max-width:88vw;
+    height:420px;
+    max-height:70vh;
+    background:var(--white);
+    border:1px solid var(--line);
+    border-radius:10px;
+    box-shadow:0 12px 32px rgba(58,46,36,0.22);
+    display:none;
+    flex-direction:column;
+    overflow:hidden;
+    z-index:40;
+  }
+  #chat-panel.open{display:flex;}
+  #chat-header{
+    background:var(--ink);
+    color:var(--cream);
+    padding:14px 16px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+  }
+  #chat-header .title{font-family:'Cormorant Garamond',serif; font-size:1.15rem; font-style:italic;}
+  #chat-header button{
+    background:none;
+    border:none;
+    color:var(--cream);
+    font-size:1.1rem;
+    cursor:pointer;
+    opacity:0.75;
+  }
+  #chat-messages{
+    flex:1;
+    overflow-y:auto;
+    padding:14px 14px 6px 14px;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    background:var(--cream);
+  }
+  .chat-bubble{
+    max-width:82%;
+    padding:9px 13px;
+    border-radius:12px;
+    font-size:0.85rem;
+    line-height:1.45;
+  }
+  .chat-bubble.assistant{
+    align-self:flex-start;
+    background:var(--teal-soft);
+    color:var(--ink);
+    border-bottom-left-radius:3px;
+  }
+  .chat-bubble.user{
+    align-self:flex-end;
+    background:var(--amber);
+    color:var(--white);
+    border-bottom-right-radius:3px;
+  }
+  .chat-bubble.typing{font-style:italic; opacity:0.7;}
+  #chat-input-row{
+    display:flex;
+    gap:8px;
+    padding:10px;
+    border-top:1px solid var(--line);
+    background:var(--white);
+  }
+  #chat-input-row input{
+    flex:1;
+    font-family:'Jost',sans-serif;
+    font-size:0.85rem;
+    padding:9px 11px;
+    border:1px solid var(--line);
+    border-radius:999px;
+    background:var(--cream);
+    color:var(--ink);
+  }
+  #chat-input-row button{
+    background:var(--teal);
+    color:var(--white);
+    border:none;
+    width:38px;
+    height:38px;
+    border-radius:50%;
+    cursor:pointer;
+    font-size:0.95rem;
+  }
+  #chat-input-row button:disabled{opacity:0.5; cursor:not-allowed;}
+  #chat-disclaimer{
+    font-size:0.68rem;
+    color:var(--ink-soft);
+    text-align:center;
+    padding:6px 10px 10px 10px;
+    background:var(--white);
+  }
+  @media (max-width:420px){
+    #chat-panel{ right:10px; bottom:144px; width:92vw; }
+    #chat-toggle{ right:14px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <p class="eyebrow">Yngrid Avellaneda · Lima, Perú</p>
+    <h1>Reserva tu espacio</h1>
+    <p>Cada sesión es un tiempo que separamos solo para ti. Elige lo que necesitas hoy, encuentra un momento y te confirmo personalmente.</p>
+  </div>
+</header>
+
+<div class="path">
+
+  <!-- PASO 1: SESIÓN -->
+  <section class="step" id="step-session">
+    <div class="node">1</div>
+    <h2>¿Qué sesión buscas?</h2>
+    <p class="hint">Elige una para ver duración, inversión y detalle.</p>
+    <div class="sessions-grid" id="sessions-grid"></div>
+  </section>
+
+  <!-- PASO 2: FECHA -->
+  <section class="step" id="step-date">
+    <div class="node">2</div>
+    <h2>Elige tu momento</h2>
+    <p class="hint">Estos son los horarios disponibles esta semana. Si prefieres otro, escríbelo y coordinamos.</p>
+    <div id="availability-container"><p class="availability-note">Cargando disponibilidad…</p></div>
+  </section>
+
+  <!-- PASO 3: DATOS -->
+  <section class="step" id="step-data">
+    <div class="node">3</div>
+    <h2>Cuéntame de ti</h2>
+    <p class="hint">Solo lo necesario para poder contactarte y confirmar.</p>
+    <div class="field">
+      <label for="f-name">Nombre completo</label>
+      <input type="text" id="f-name" placeholder="Tu nombre">
+    </div>
+    <div class="field">
+      <label for="f-phone">WhatsApp</label>
+      <input type="tel" id="f-phone" placeholder="+51 9XX XXX XXX">
+    </div>
+    <div class="field">
+      <label for="f-email">Correo electrónico</label>
+      <input type="email" id="f-email" placeholder="tucorreo@ejemplo.com">
+    </div>
+    <div class="field">
+      <label for="f-notes">¿Algo que quieras compartir antes de tu sesión? (opcional)</label>
+      <textarea id="f-notes" placeholder="Cualquier contexto que te gustaría que conozca de antemano"></textarea>
+    </div>
+  </section>
+
+  <!-- PASO 4: PAGO -->
+  <section class="step" id="step-payment">
+    <div class="node">4</div>
+    <h2>Cómo deseas pagar</h2>
+    <p class="hint">Tu espacio queda reservado al confirmar el pago o el envío del comprobante.</p>
+    <div class="pay-options" id="pay-options"></div>
+  </section>
+
+</div>
+
+<div class="wrap">
+  <div class="confirmation-box" id="confirmation-box">
+    <h4>Tu solicitud está lista para enviarse ✦</h4>
+    <p id="confirmation-summary"></p>
+    <a href="#" target="_blank" class="wa-btn" id="wa-link">Enviar por WhatsApp para confirmar</a>
+  </div>
+</div>
+
+<div class="summary-bar">
+  <div class="info" id="summary-info">Aún no has elegido una sesión</div>
+  <button class="btn-confirm" id="btn-confirm" disabled>Solicitar reserva</button>
+</div>
+
+<div class="wrap" style="padding-top:56px;">
+  <p class="eyebrow" style="text-align:center;">Preguntas frecuentes</p>
+  <h2 class="serif" style="text-align:center; margin-top:0;">Antes de reservar</h2>
+  <div id="faq-container" style="margin-top:24px;"></div>
+</div>
+
+<footer>
+  <p>Yngrid Avellaneda · Terapia somática, constelaciones familiares y acompañamiento consciente · Lima, Perú</p>
+  <p>Tus datos se usan únicamente para gestionar tu reserva, conforme a la Ley N.º 29733 de Protección de Datos Personales del Perú.<br>
+  ¿Dudas? Escríbeme directo por <a href="#" id="footer-wa">WhatsApp</a>.</p>
+</footer>
+
+<button id="chat-toggle" aria-label="Abrir chat de preguntas">✦</button>
+<div id="chat-panel">
+  <div id="chat-header">
+    <span class="title">Pregúntame</span>
+    <button id="chat-close" aria-label="Cerrar chat">✕</button>
+  </div>
+  <div id="chat-messages"></div>
+  <div id="chat-input-row">
+    <input type="text" id="chat-input" placeholder="Escribe tu pregunta…" maxlength="300">
+    <button id="chat-send" aria-label="Enviar">➤</button>
+  </div>
+  <div id="chat-disclaimer">Respuestas automáticas sobre mis sesiones. Para confirmar tu reserva, usa el formulario de arriba.</div>
+</div>
+
+<script>
+/* ============================================================
+   CONFIGURACIÓN — edita aquí sin tocar el resto del código
+   ============================================================ */
+const CONFIG = {
+  // Tu número de WhatsApp en formato internacional sin + ni espacios (ej: número de Perú)
+  whatsappNumber: "51970455039",
+
+  // URL de tu Google Apps Script (ver guía de configuración). Déjalo vacío "" si aún no lo tienes.
+  appsScriptUrl: "https://script.google.com/macros/s/AKfycbxLxjsGrg6Rz7hKG8-u1f3FhxgfzwC2ld1LoZZM5ljHcEAA68ghhTEA1HGRqvnO_Ug2wQ/exec",
+
+  sessionTypes: [
+    {
+      id: "bars",
+      name: "Barras de Access Consciousness",
+      duration: "60 min",
+      price: "S/ 220",
+      desc: "Una sesión de relajación profunda que libera patrones mentales y emocionales."
+    },
+    {
+      id: "constelacion-individual",
+      name: "Constelación Familiar Individual",
+      duration: "90 min",
+      price: "S/ 220",
+      desc: "Un espacio uno a uno para revisar patrones sistémicos y de linaje."
+    },
+    {
+      id: "constelacion-grupal",
+      name: "Constelación Familiar Grupal",
+      duration: "3 horas",
+      price: "S/ 180",
+      desc: "Sesión grupal donde tu tema se representa con el apoyo del campo.",
+      badge: "Grupal"
+    },
+    {
+      id: "zoe-lab-grupal",
+      name: "Zoe Lab · Taller de Coregulación Grupal",
+      duration: "3 horas aprox.",
+      price: "S/ 160",
+      desc: "Trabajo grupal de respiración y coregulación colectiva.",
+      badge: "Grupal · máx. 10 personas"
+    },
+    {
+      id: "respiracion-individual",
+      name: "Respiración Somática Individual",
+      duration: "75 min aprox.",
+      price: "S/ 250",
+      desc: "Sesión personalizada de respiración consciente para soltar tensión acumulada y regular tu sistema nervioso."
+    },
+    {
+      id: "coaching",
+      name: "Sesión 1:1 de Acompañamiento",
+      duration: "60 min",
+      price: "S/ 220",
+      desc: "Conversación enfocada para tu proceso personal o de transformación."
+    },
+    {
+      id: "taller-retiro",
+      name: "Taller o Retiro",
+      duration: "Variable",
+      price: "Consultar",
+      desc: "Experiencias grupales de mayor duración. Coordinamos fecha y detalle."
+    },
+    {
+      id: "programa-5-sesiones",
+      name: "Programa de 5 Sesiones de Acompañamiento",
+      duration: "Proceso personalizado",
+      price: "S/ 850",
+      desc: "Un acompañamiento personalizado de 5 sesiones enfocado en trabajar una creencia limitante o un tema específico que desees transformar. Integra herramientas como Barras de Access®, Constelaciones Familiares, Respiración Consciente, Facilitación y Coaching para abordar el origen del bloqueo desde diferentes perspectivas, promoviendo mayor claridad, liberación emocional, nuevas elecciones y cambios sostenibles en tu vida.",
+      badge: "Programa"
+    },
+    {
+      id: "paquete-bars",
+      name: "Paquete x4 · Barras de Access Consciousness",
+      duration: "4 sesiones de 60 min",
+      price: "S/ 769",
+      desc: "4 sesiones de Barras de access. Un proceso diseñado para liberar el estrés, disminuir la sobrecarga mental y transformar patrones, creencias y emociones que limitan tu vida. A través de cuatro sesiones, tu mente y cuerpo tienen el espacio para integrar cambios más profundos, favoreciendo una mayor claridad, bienestar, ligereza y apertura para crear nuevas posibilidades en diferentes áreas de tu vida.",
+      badge: "Paquete x4"
+    },
+    {
+      id: "paquete-constelacion-individual",
+      name: "Paquete x4 · Constelación Familiar Individual",
+      duration: "4 sesiones de 90 min",
+      price: "S/ 769",
+      desc: "4 sesiones individuales. Un proceso terapéutico para identificar y transformar dinámicas inconscientes, patrones familiares y bloqueos emocionales que pueden estar influyendo en tu vida. A lo largo de 4 sesiones, podrás desarrollar una mayor comprensión de tu historia, liberar cargas que ya no te corresponden y abrir espacio para relaciones más sanas, mayor bienestar y nuevas posibilidades en tu presente.",
+      badge: "Paquete x4"
+    },
+    {
+      id: "paquete-respiracion-individual",
+      name: "Paquete x4 · Respiración Somática Individual",
+      duration: "4 sesiones de 75 min",
+      price: "S/ 889",
+      desc: "Un proceso de cuatro sesiones orientado a liberar el estrés acumulado, regular el sistema nervioso y facilitar la integración de emociones almacenadas en el cuerpo a través de la respiración consciente. Este acompañamiento promueve una mayor conexión contigo, bienestar emocional, claridad mental y una sensación más profunda de presencia y vitalidad.",
+      badge: "Paquete x4"
+    },
+    {
+      id: "paquete-coaching",
+      name: "Paquete x4 · Sesión 1:1 de Acompañamiento",
+      duration: "4 sesiones de 60 min",
+      price: "S/ 769",
+      desc: "Un proceso de cuatro sesiones diseñado para acompañarte en el logro de un objetivo o la transformación de una situación específica. A través de herramientas de coaching y un acompañamiento personalizado, desarrollarás mayor claridad, confianza y enfoque, identificando bloqueos y creando estrategias que te permitan generar cambios sostenibles y avanzar con mayor seguridad hacia los resultados que deseas.",
+      badge: "Paquete x4"
+    }
+  ],
+
+  // Horarios manuales de respaldo (se usan si no hay appsScriptUrl o mientras se configura)
+  fallbackNote: "Selecciona la fecha y hora que prefieras. Te confirmaré disponibilidad real por WhatsApp en menos de 24 horas.",
+
+  paymentMethods: [
+    {
+      id: "yape",
+      name: "Yape",
+      short: "Pago inmediato desde tu celular",
+      detail: "Yapea al <strong>941 180 949</strong><br>Envía tu captura de pantalla por WhatsApp para confirmar tu espacio."
+    },
+    {
+      id: "plin",
+      name: "Plin",
+      short: "Transferencia inmediata entre bancos",
+      detail: "Plinea al <strong>970 455 039</strong><br>Envía tu captura de pantalla por WhatsApp para confirmar tu espacio."
+    },
+    {
+      id: "transferencia",
+      name: "Transferencia bancaria",
+      short: "Interbank o BCP, a tu elección",
+      detail: "<strong>Interbank</strong> — Cuenta Simple Soles: 482 3460439151<br>CCI: 00348201346043915173<br><br><strong>BCP</strong> — Cuenta Soles: 19405626542074<br>CCI: 00219410562654207496<br><br>Envía el voucher por WhatsApp para confirmar tu espacio."
+    },
+    {
+      id: "link",
+      name: "Link de pago (tarjeta)",
+      short: "Mercado Pago",
+      detail: "Paga con tarjeta aquí: <a href=\"https://link.mercadopago.com.pe/yngridavellanedcoach\" target=\"_blank\">link.mercadopago.com.pe/yngridavellanedcoach</a><br>Este medio suma una comisión de 3.49% sobre el monto.<span id=\"link-commission-note\"></span>"
+    }
+  ],
+
+  faq: [
+    {
+      q: "¿Las sesiones son presenciales o virtuales?",
+      a: "Depende del tipo de sesión. Las Barras y la Respiración Somática son presenciales en Lima; las Constelaciones y el acompañamiento 1:1 pueden ser virtuales o presenciales, según lo que prefieras. Lo conversamos al confirmar tu reserva."
+    },
+    {
+      q: "¿Qué pasa si necesito cancelar o reprogramar?",
+      a: "Avísame con al menos 24 horas de anticipación por WhatsApp y reprogramamos sin costo. Las cancelaciones el mismo día no son reembolsables, salvo casos de fuerza mayor."
+    },
+    {
+      q: "¿Necesito preparación previa?",
+      a: "No necesitas preparar nada especial. Solo te pido llegar con la mente abierta y, si puedes, evitar comidas pesadas antes de la sesión."
+    },
+    {
+      q: "¿Cómo confirmo mi reserva?",
+      a: "Tu espacio queda confirmado cuando envías el comprobante de pago (o completas el pago por link) por WhatsApp. Antes de eso, tu horario queda solo reservado de forma tentativa."
+    },
+    {
+      q: "¿Puedo asistir a una constelación grupal por primera vez sin saber cómo funciona?",
+      a: "Sí. La mayoría de personas llega sin experiencia previa. Al inicio de cada sesión grupal explico cómo funciona el proceso antes de comenzar."
+    }
+  ]
+};
+/* ============================================================
+   FIN DE CONFIGURACIÓN
+   ============================================================ */
+
+let state = {
+  session: null,
+  date: null,
+  time: null,
+  payment: null
+};
+
+// --- Render session cards ---
+const sessionsGrid = document.getElementById("sessions-grid");
+CONFIG.sessionTypes.forEach(s => {
+  const card = document.createElement("div");
+  card.className = "session-card";
+  card.tabIndex = 0;
+  card.innerHTML = `
+    ${s.badge ? `<div class="card-badge">${s.badge}</div>` : ""}
+    <h3>${s.name}</h3>
+    <div class="meta"><span>${s.duration}</span><span>${s.price}</span></div>
+    <p class="desc">${s.desc}</p>
+  `;
+  card.addEventListener("click", () => selectSession(s, card));
+  sessionsGrid.appendChild(card);
+});
+
+function selectSession(s, card){
+  document.querySelectorAll(".session-card").forEach(c => c.classList.remove("selected"));
+  card.classList.add("selected");
+  state.session = s;
+  updateSummary();
+}
+
+// --- Availability ---
+const availabilityContainer = document.getElementById("availability-container");
+
+function renderManualPicker(){
+  availabilityContainer.innerHTML = `
+    <div class="manual-datetime">
+      <input type="date" id="manual-date">
+      <input type="time" id="manual-time">
+    </div>
+    <p class="availability-note">${CONFIG.fallbackNote}</p>
+  `;
+  document.getElementById("manual-date").addEventListener("change", e => { state.date = e.target.value; updateSummary(); });
+  document.getElementById("manual-time").addEventListener("change", e => { state.time = e.target.value; updateSummary(); });
+}
+
+function renderSlots(days){
+  availabilityContainer.innerHTML = "";
+  days.forEach(day => {
+    const group = document.createElement("div");
+    group.className = "date-group";
+    const label = document.createElement("div");
+    label.className = "date-label";
+    label.textContent = day.label;
+    group.appendChild(label);
+    const slotsWrap = document.createElement("div");
+    slotsWrap.className = "slots";
+    day.slots.forEach(slot => {
+      const pill = document.createElement("button");
+      pill.className = "slot-pill" + (slot.full ? " full" : "");
+      pill.textContent = slot.time;
+      pill.disabled = slot.full;
+      pill.addEventListener("click", () => {
+        document.querySelectorAll(".slot-pill").forEach(p => p.classList.remove("selected"));
+        pill.classList.add("selected");
+        state.date = day.date;
+        state.time = slot.time;
+        updateSummary();
+      });
+      slotsWrap.appendChild(pill);
+    });
+    group.appendChild(slotsWrap);
+    availabilityContainer.appendChild(group);
+  });
+  const note = document.createElement("p");
+  note.className = "availability-note";
+  note.textContent = "¿Ningún horario te acomoda? Escríbeme y coordinamos.";
+  availabilityContainer.appendChild(note);
+}
+
+async function loadAvailability(){
+  if(!CONFIG.appsScriptUrl){
+    renderManualPicker();
+    return;
+  }
+  try{
+    const res = await fetch(CONFIG.appsScriptUrl + "?action=availability");
+    const data = await res.json();
+    if(data && data.days && data.days.length){
+      renderSlots(data.days);
+    } else {
+      renderManualPicker();
+    }
+  }catch(err){
+    renderManualPicker();
+  }
+}
+loadAvailability();
+
+// --- Payment options ---
+const payContainer = document.getElementById("pay-options");
+CONFIG.paymentMethods.forEach(p => {
+  const opt = document.createElement("div");
+  opt.className = "pay-option";
+  opt.tabIndex = 0;
+  opt.innerHTML = `
+    <h4>${p.name}</h4>
+    <p>${p.short}</p>
+    <div class="pay-detail">${p.detail}</div>
+  `;
+  opt.addEventListener("click", () => {
+    document.querySelectorAll(".pay-option").forEach(o => o.classList.remove("selected"));
+    opt.classList.add("selected");
+    state.payment = p;
+    updateSummary();
+  });
+  payContainer.appendChild(opt);
+});
+
+// --- Summary + submit ---
+const summaryInfo = document.getElementById("summary-info");
+const btnConfirm = document.getElementById("btn-confirm");
+
+function calcWithCommission(priceStr){
+  const match = (priceStr || "").match(/[\d.,]+/);
+  if(!match) return null;
+  const num = parseFloat(match[0].replace(",", "."));
+  if(isNaN(num)) return null;
+  return (num * 1.0349).toFixed(2);
+}
+
+function updateLinkCommissionNote(){
+  const note = document.getElementById("link-commission-note");
+  if(!note) return;
+  if(state.session){
+    const withFee = calcWithCommission(state.session.price);
+    note.textContent = withFee
+      ? ` Con "${state.session.name}" (${state.session.price}), el total con comisión sería aprox. S/ ${withFee}.`
+      : "";
+  } else {
+    note.textContent = "";
+  }
+}
+
+function updateSummary(){
+  const parts = [];
+  if(state.session) parts.push(`<strong>${state.session.name}</strong>`);
+  if(state.date) parts.push(state.date);
+  if(state.time) parts.push(state.time);
+  if(state.payment) parts.push(`pago por ${state.payment.name}`);
+  summaryInfo.innerHTML = parts.length ? parts.join(" · ") : "Aún no has elegido una sesión";
+  btnConfirm.disabled = !(state.session && state.date && state.time && state.payment);
+  updateLinkCommissionNote();
+}
+
+btnConfirm.addEventListener("click", async () => {
+  const name = document.getElementById("f-name").value.trim();
+  const phone = document.getElementById("f-phone").value.trim();
+  const email = document.getElementById("f-email").value.trim();
+  const notes = document.getElementById("f-notes").value.trim();
+
+  if(!name || !phone){
+    alert("Por favor completa al menos tu nombre y WhatsApp antes de continuar.");
+    return;
+  }
+
+  const booking = {
+    timestamp: new Date().toISOString(),
+    session: state.session.name,
+    date: state.date,
+    time: state.time,
+    payment: state.payment.name,
+    name, phone, email, notes
+  };
+
+  // Enviar a Google Sheet si está configurado (no bloquea el flujo si falla)
+  if(CONFIG.appsScriptUrl){
+    try{
+      await fetch(CONFIG.appsScriptUrl, {
+        method: "POST",
+        headers: {"Content-Type": "text/plain"},
+        body: JSON.stringify(booking)
+      });
+    }catch(err){ /* silencioso: el mensaje de WhatsApp queda como respaldo */ }
+  }
+
+  const message = `Hola Yngrid, quisiera reservar:%0A` +
+    `Sesión: ${booking.session}%0A` +
+    `Fecha: ${booking.date}%0A` +
+    `Hora: ${booking.time}%0A` +
+    `Pago: ${booking.payment}%0A` +
+    `Nombre: ${booking.name}%0A` +
+    (booking.notes ? `Nota: ${booking.notes}%0A` : "");
+
+  const waUrl = `https://wa.me/${CONFIG.whatsappNumber}?text=${message}`;
+  document.getElementById("wa-link").href = waUrl;
+  document.getElementById("confirmation-summary").textContent =
+    `${booking.session} · ${booking.date} ${booking.time} · pago por ${booking.payment}. Un último paso: envíame el mensaje por WhatsApp para que confirme tu espacio personalmente.`;
+  document.getElementById("confirmation-box").classList.add("show");
+  document.getElementById("confirmation-box").scrollIntoView({behavior:"smooth", block:"center"});
+});
+
+document.getElementById("footer-wa").href = `https://wa.me/${CONFIG.whatsappNumber}`;
+
+// --- FAQ ---
+const faqContainer = document.getElementById("faq-container");
+CONFIG.faq.forEach(item => {
+  const el = document.createElement("div");
+  el.className = "faq-item";
+  el.innerHTML = `
+    <div class="faq-q"><span>${item.q}</span><span class="sign">+</span></div>
+    <div class="faq-a"><p>${item.a}</p></div>
+  `;
+  el.querySelector(".faq-q").addEventListener("click", () => {
+    const isOpen = el.classList.contains("open");
+    document.querySelectorAll(".faq-item").forEach(f => { f.classList.remove("open"); f.querySelector(".sign").textContent = "+"; });
+    if(!isOpen){ el.classList.add("open"); el.querySelector(".sign").textContent = "–"; }
+  });
+  faqContainer.appendChild(el);
+});
+
+// --- CHAT WIDGET ---
+function buildChatContext(){
+  const sessions = CONFIG.sessionTypes.map(s =>
+    `- ${s.name} (${s.duration}, ${s.price}): ${s.desc}`
+  ).join("\n");
+  const payments = CONFIG.paymentMethods.map(p => `- ${p.name}: ${p.short}`).join("\n");
+  const faqs = CONFIG.faq.map(f => `P: ${f.q}\nR: ${f.a}`).join("\n\n");
+  return `SESIONES Y PRECIOS:\n${sessions}\n\nFORMAS DE PAGO:\n${payments}\n\nPREGUNTAS FRECUENTES:\n${faqs}`;
+}
+
+const chatToggle = document.getElementById("chat-toggle");
+const chatPanel = document.getElementById("chat-panel");
+const chatClose = document.getElementById("chat-close");
+const chatMessages = document.getElementById("chat-messages");
+const chatInput = document.getElementById("chat-input");
+const chatSend = document.getElementById("chat-send");
+
+let chatHistory = [];
+let chatOpened = false;
+
+chatToggle.addEventListener("click", () => {
+  chatPanel.classList.add("open");
+  if(!chatOpened){
+    chatOpened = true;
+    addBubble("assistant", "Hola, soy la asistente de Yngrid. Puedo contarte sobre las sesiones, precios y formas de pago. ¿Qué te gustaría saber?");
+  }
+  chatInput.focus();
+});
+chatClose.addEventListener("click", () => chatPanel.classList.remove("open"));
+
+function addBubble(role, text){
+  const bubble = document.createElement("div");
+  bubble.className = `chat-bubble ${role}`;
+  bubble.textContent = text;
+  chatMessages.appendChild(bubble);
+  chatMessages.scrollTop = chatMessages.scrollHeight;
+  return bubble;
+}
+
+async function sendChatMessage(){
+  const text = chatInput.value.trim();
+  if(!text) return;
+
+  if(!CONFIG.appsScriptUrl){
+    addBubble("user", text);
+    addBubble("assistant", "El chat automático aún no está conectado. Escríbeme directo por WhatsApp y te respondo yo misma con gusto.");
+    chatInput.value = "";
+    return;
+  }
+
+  addBubble("user", text);
+  chatHistory.push({ role: "user", text });
+  chatInput.value = "";
+  chatInput.disabled = true;
+  chatSend.disabled = true;
+  const typingBubble = addBubble("assistant typing", "Escribiendo…");
+
+  try{
+    const res = await fetch(CONFIG.appsScriptUrl, {
+      method: "POST",
+      headers: {"Content-Type": "text/plain"},
+      body: JSON.stringify({
+        type: "chat",
+        message: text,
+        history: chatHistory.slice(-6),
+        context: buildChatContext()
+      })
+    });
+    const data = await res.json();
+    typingBubble.remove();
+    const reply = (data && data.reply) ? data.reply : "No pude responder en este momento. Escríbeme por WhatsApp y te ayudo directamente.";
+    addBubble("assistant", reply);
+    chatHistory.push({ role: "assistant", text: reply });
+  }catch(err){
+    typingBubble.remove();
+    addBubble("assistant", "Tuve un problema de conexión. Escríbeme por WhatsApp y te ayudo directamente.");
+  }finally{
+    chatInput.disabled = false;
+    chatSend.disabled = false;
+    chatInput.focus();
+  }
+}
+
+chatSend.addEventListener("click", sendChatMessage);
+chatInput.addEventListener("keydown", e => {
+  if(e.key === "Enter") sendChatMessage();
+});
+</script>
+
+</body>
+</html>
