@@ -1,0 +1,400 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Somos Espejo · Temas</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout: cabecera con la próxima grabación, tablero de 5 columnas (una por etapa) que se apila en móvil, editor lateral. */
+:root {
+  color-scheme: light;
+  --bg: #eef2f1;
+  --surface: #fbfcfb;
+  --surface-2: #e3e9e7;
+  --ink: #12211f;
+  --muted: #5a6b68;
+  --line: #cfd8d5;
+  --accent: #0f6b63;
+  --accent-ink: #ffffff;
+  --danger: #b3321f;
+  --s1: #7d8f8c;
+  --s2: #3a6db3;
+  --s3: #0f6b63;
+  --s4: #b0741a;
+  --s5: #6b55b8;
+  --font-display: "Bricolage Grotesque", "Trebuchet MS", sans-serif;
+  --font-body: "Instrument Sans", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0e1514; --surface: #162120; --surface-2: #1e2c2a; --ink: #e4ecea; --muted: #94a8a4;
+    --line: #2a3a38; --accent: #4fc3b4; --accent-ink: #072320; --danger: #f08a78;
+    --s1: #8aa09c; --s2: #7aa7ea; --s3: #4fc3b4; --s4: #e0a54e; --s5: #a994ee;
+    color-scheme: dark;
+  }
+}
+* { box-sizing: border-box; }
+html { background: var(--bg); }
+body {
+  margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 15px; line-height: 1.45;
+  padding-block: calc(28px + env(safe-area-inset-top, 0px)) calc(56px + env(safe-area-inset-bottom, 0px));
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.wrap { max-width: 1320px; margin: 0 auto; display: flex; flex-direction: column; gap: 22px; }
+button, input, select, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+header { display: flex; flex-wrap: wrap; gap: 16px 32px; align-items: flex-end; justify-content: space-between; }
+.eyebrow { font-family: var(--font-mono); font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin: 0 0 6px; }
+h1 { font-family: var(--font-display); font-weight: 700; font-size: clamp(36px, 7vw, 60px); line-height: 1; letter-spacing: -.02em; margin: 0; text-wrap: balance; }
+.next { min-width: 0; display: flex; flex-direction: column; gap: 2px; padding: 10px 14px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); }
+.next[hidden] { display: none; }
+.next .lbl { font-family: var(--font-mono); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+.next .val { font-family: var(--font-display); font-weight: 500; font-size: 18px; overflow-wrap: anywhere; }
+
+.tools { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.tools input[type=search] { flex: 1 1 220px; min-width: 0; padding: 9px 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); }
+.tools select { padding: 9px 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); }
+.btn { padding: 9px 16px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface); font-weight: 600; }
+.btn.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.btn.danger { color: var(--danger); border-color: var(--danger); background: transparent; }
+.btn:disabled { opacity: .5; cursor: default; }
+
+.banner { padding: 10px 14px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface-2); color: var(--muted); }
+.banner[hidden] { display: none; }
+
+.board { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 14px; align-items: start; }
+.col { min-width: 0; display: flex; flex-direction: column; gap: 10px; }
+.col-h { display: flex; align-items: center; gap: 8px; padding: 0 2px 8px; border-bottom: 1px solid var(--line); }
+.dot { width: 10px; height: 10px; border-radius: 50%; flex: none; }
+.col-h h2 { font-family: var(--font-display); font-weight: 700; font-size: 16px; margin: 0; flex: 1; min-width: 0; }
+.count { font-family: var(--font-mono); font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.none { color: var(--muted); font-size: 13px; padding: 6px 2px; }
+
+.card { text-align: left; width: 100%; display: flex; flex-direction: column; gap: 8px; padding: 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); cursor: pointer; }
+.card:hover { border-color: var(--accent); }
+.card h3 { margin: 0; font-family: var(--font-display); font-weight: 500; font-size: 17px; line-height: 1.2; overflow-wrap: anywhere; }
+.card p { margin: 0; color: var(--muted); font-size: 13.5px; overflow-wrap: anywhere; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.meta { display: flex; flex-wrap: wrap; gap: 6px; font-size: 12.5px; }
+.tag { padding: 2px 8px; border-radius: 999px; background: var(--surface-2); color: var(--muted); }
+.guest, .when { font-family: var(--font-mono); font-size: 12px; color: var(--ink); padding: 2px 0; overflow-wrap: anywhere; }
+.foot { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-width: 0; }
+.who { display: flex; align-items: center; gap: 6px; min-width: 0; font-size: 12.5px; color: var(--muted); }
+.av { width: 22px; height: 22px; border-radius: 50%; flex: none; display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; color: var(--bg); background: var(--s1); }
+.av.Shelah { background: var(--s5); }
+.av.Yngrid { background: var(--s3); }
+.who span.n { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mv { display: flex; gap: 4px; flex: none; }
+.mv button { width: 30px; height: 30px; border-radius: 6px; border: 1px solid var(--line); background: var(--bg); line-height: 1; }
+.mv button:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+.mv button:disabled { opacity: .3; cursor: default; }
+
+.empty { border: 1px dashed var(--line); border-radius: 10px; padding: 36px 20px; text-align: center; display: flex; flex-direction: column; gap: 10px; align-items: center; background: var(--surface); }
+.empty h2 { font-family: var(--font-display); margin: 0; font-size: 24px; }
+.empty p { margin: 0; color: var(--muted); max-width: 46ch; }
+
+.scrim { position: fixed; inset: 0; z-index: 20; background: rgba(8, 16, 15, .5); display: flex; justify-content: flex-end; }
+.scrim[hidden] { display: none; }
+.sheet { width: min(520px, 100%); height: 100%; overflow-y: auto; background: var(--surface); border-left: 1px solid var(--line);
+  padding-block: calc(20px + env(safe-area-inset-top, 0px)) calc(24px + env(safe-area-inset-bottom, 0px));
+  padding-left: 20px; padding-right: max(20px, env(safe-area-inset-right, 0px)); display: flex; flex-direction: column; gap: 14px; }
+.sheet h2 { font-family: var(--font-display); font-size: 26px; margin: 0; }
+.field { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+.field label { font-family: var(--font-mono); font-size: 11.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.field input, .field select, .field textarea { width: 100%; min-width: 0; padding: 9px 11px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); }
+.field textarea { min-height: 90px; resize: vertical; }
+.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.err { color: var(--danger); font-size: 13px; min-height: 1em; }
+.actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-top: 4px; }
+.actions .spacer { flex: 1; }
+.toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(20px + env(safe-area-inset-bottom, 0px)); z-index: 30; background: var(--ink); color: var(--bg); padding: 10px 16px; border-radius: 8px; max-width: calc(100% - 32px); }
+.toast[hidden] { display: none; }
+
+@media (max-width: 1100px) { .board { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 720px) {
+  .board { grid-template-columns: minmax(0, 1fr); }
+  .row2 { grid-template-columns: 1fr; }
+  .sheet { border-left: 0; }
+}
+@media (prefers-reduced-motion: no-preference) { .card { transition: border-color .15s; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <p class="eyebrow">Temario del podcast</p>
+      <h1>Somos Espejo</h1>
+    </div>
+    <div class="next" id="next" hidden>
+      <span class="lbl">Próxima grabación</span>
+      <span class="val" id="next-val"></span>
+    </div>
+  </header>
+
+  <div class="tools">
+    <input type="search" id="q" placeholder="Buscar por tema, invitado o etiqueta" aria-label="Buscar">
+    <select id="who" aria-label="Filtrar por quién lo lleva">
+      <option value="">Todos los temas</option>
+      <option value="Shelah">Los de Shelah</option>
+      <option value="Yngrid">Los de Yngrid</option>
+      <option value="_none">Sin asignar</option>
+    </select>
+    <button class="btn primary" id="add" type="button" disabled>Nuevo tema</button>
+  </div>
+
+  <div class="banner" id="banner" hidden></div>
+  <div id="main"></div>
+</div>
+
+<div class="scrim" id="scrim" hidden>
+  <form class="sheet" id="form" novalidate aria-labelledby="sheet-title">
+    <h2 id="sheet-title">Nuevo tema</h2>
+    <div class="field"><label for="f-titulo">Tema</label><input id="f-titulo" type="text" maxlength="140" autocomplete="off"></div>
+    <div class="field"><label for="f-angulo">Ángulo o idea central</label><textarea id="f-angulo" maxlength="1200"></textarea></div>
+    <div class="row2">
+      <div class="field"><label for="f-estado">Etapa</label><select id="f-estado"></select></div>
+      <div class="field"><label for="f-fecha">Fecha de grabación</label><input id="f-fecha" type="date"></div>
+    </div>
+    <div class="field"><label for="f-invitado">Invitada o invitado</label><input id="f-invitado" type="text" maxlength="100" autocomplete="off"></div>
+    <div class="field"><label for="f-etiquetas">Etiquetas, separadas por coma</label><input id="f-etiquetas" type="text" maxlength="120" autocomplete="off"></div>
+    <div class="field"><label for="f-lleva">Quién lo lleva</label>
+      <select id="f-lleva">
+        <option value="">Sin asignar</option>
+        <option value="Shelah">Shelah</option>
+        <option value="Yngrid">Yngrid</option>
+      </select>
+    </div>
+    <div class="field"><label for="f-notas">Notas, preguntas y links</label><textarea id="f-notas" maxlength="4000"></textarea></div>
+    <div class="err" id="err" role="alert"></div>
+    <div class="actions">
+      <button class="btn primary" type="submit" id="save">Guardar</button>
+      <button class="btn" type="button" id="cancel">Cancelar</button>
+      <span class="spacer"></span>
+      <button class="btn danger" type="button" id="del" hidden>Eliminar</button>
+    </div>
+  </form>
+</div>
+<div class="toast" id="toast" role="status" hidden></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script>
+const SUPABASE_URL = "https://pdgqszkvlryxyuecrtbo.supabase.co";
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBkZ3Fzemt2bHJ5eHl1ZWNydGJvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI1MTYzMjQsImV4cCI6MjEwODA5MjMyNH0.5BJrI-OPryKTd1evS0br-T19K15gIp-Cewrt0Ts7tEU";
+
+const ESTADOS = [
+  { k: "idea", t: "Ideas", c: "--s1" },
+  { k: "investigando", t: "Investigando", c: "--s2" },
+  { k: "listo", t: "Listo para grabar", c: "--s3" },
+  { k: "grabado", t: "Grabado", c: "--s4" },
+  { k: "publicado", t: "Publicado", c: "--s5" }
+];
+const $ = (s) => document.querySelector(s);
+function h(tag, cls, text) { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
+
+let sb = null, items = [], loading = true, loadFailed = false;
+const view = { q: "", who: "" };
+let editing = null, delTimer = null, toastTimer = null;
+
+function toast(msg) {
+  const t = $("#toast"); t.textContent = msg; t.hidden = false;
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => { t.hidden = true; }, 4000);
+}
+function todayStr() { const d = new Date(); return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0"); }
+function fmtDate(s) {
+  if (!s) return "";
+  const d = new Date(s + "T12:00:00");
+  return isNaN(d) ? s : d.toLocaleDateString("es-PE", { weekday: "short", day: "numeric", month: "short" });
+}
+function ts(it) { const t = Date.parse(it.mov || it.creado || ""); return isNaN(t) ? 0 : t; }
+
+async function load() {
+  if (!sb) return;
+  const { data, error } = await sb.from("temas").select("*").order("mov", { ascending: false }).limit(1000);
+  loading = false;
+  if (error) { loadFailed = true; draw(); return; }
+  loadFailed = false; items = data || []; draw();
+}
+
+async function run(promise, okMsg) {
+  const { error } = await promise;
+  if (error) { toast("No se pudo guardar. Revisa tu conexión e inténtalo de nuevo."); return false; }
+  await load();
+  if (okMsg) toast(okMsg);
+  return true;
+}
+
+function visible() {
+  const q = view.q.trim().toLowerCase();
+  return items.filter((i) => {
+    if (view.who === "_none" && i.lleva) return false;
+    if (view.who && view.who !== "_none" && i.lleva !== view.who) return false;
+    if (!q) return true;
+    const hay = [i.titulo, i.angulo, i.invitado, (i.etiquetas || []).join(" ")].join(" ").toLowerCase();
+    return hay.includes(q);
+  });
+}
+
+function draw() {
+  $("#add").disabled = !sb || loadFailed;
+  const banner = $("#banner");
+  if (loadFailed || !sb) { banner.hidden = false; banner.textContent = "No se pudieron cargar los temas. Revisa tu conexión y recarga la página."; }
+  else banner.hidden = true;
+
+  const today = todayStr();
+  const upcoming = items.filter((i) => i.fecha && i.fecha >= today && ["idea", "investigando", "listo"].includes(i.estado))
+    .sort((a, b) => a.fecha.localeCompare(b.fecha))[0];
+  const nx = $("#next");
+  if (upcoming) { nx.hidden = false; $("#next-val").textContent = fmtDate(upcoming.fecha) + " · " + upcoming.titulo; }
+  else nx.hidden = true;
+
+  const main = $("#main");
+  main.replaceChildren();
+  if (loading) { main.append(h("div", "none", "Cargando temas…")); return; }
+  if (!items.length && !loadFailed) {
+    const box = h("div", "empty");
+    box.append(h("h2", null, "Todavía no hay temas"));
+    box.append(h("p", null, "Anota la primera idea de Somos Espejo. Los temas que agregue cualquiera de las dos aparecen aquí para las dos y se mueven de columna a medida que avanzan, desde Ideas hasta Publicado."));
+    const b = h("button", "btn primary", "Agregar el primer tema"); b.type = "button";
+    b.addEventListener("click", () => openEditor(null)); box.append(b);
+    main.append(box);
+    return;
+  }
+  const list = visible();
+  const board = h("div", "board");
+  ESTADOS.forEach((st, idx) => {
+    const col = h("section", "col");
+    const head = h("div", "col-h");
+    const dot = h("span", "dot"); dot.style.background = "var(" + st.c + ")";
+    const inCol = list.filter((i) => i.estado === st.k).sort((a, b) => ts(b) - ts(a));
+    head.append(dot, h("h2", null, st.t), h("span", "count", String(inCol.length)));
+    col.append(head);
+    if (!inCol.length) col.append(h("div", "none", "Sin temas"));
+    inCol.forEach((it) => col.append(card(it, idx)));
+    board.append(col);
+  });
+  main.append(board);
+}
+
+function card(it, idx) {
+  const c = h("div", "card");
+  c.tabIndex = 0; c.setAttribute("role", "button");
+  c.setAttribute("aria-label", "Editar tema: " + (it.titulo || "Sin título"));
+  c.append(h("h3", null, it.titulo || "Sin título"));
+  if (it.angulo) c.append(h("p", null, it.angulo));
+  if (it.invitado) c.append(h("div", "guest", "Con " + it.invitado));
+  if (it.fecha) c.append(h("div", "when", "Graba " + fmtDate(it.fecha)));
+  if (it.etiquetas && it.etiquetas.length) {
+    const m = h("div", "meta");
+    it.etiquetas.forEach((t) => m.append(h("span", "tag", t)));
+    c.append(m);
+  }
+  const foot = h("div", "foot");
+  const who = h("div", "who");
+  if (it.lleva) {
+    who.append(h("span", "av " + it.lleva, it.lleva.charAt(0)), h("span", "n", it.lleva));
+  } else who.append(h("span", "n", "Sin asignar"));
+  foot.append(who);
+  const mv = h("div", "mv");
+  const left = h("button", null, "←"); left.type = "button";
+  const right = h("button", null, "→"); right.type = "button";
+  left.disabled = idx === 0; right.disabled = idx === ESTADOS.length - 1;
+  if (idx > 0) left.setAttribute("aria-label", "Mover a " + ESTADOS[idx - 1].t);
+  if (idx < ESTADOS.length - 1) right.setAttribute("aria-label", "Mover a " + ESTADOS[idx + 1].t);
+  left.addEventListener("click", (e) => { e.stopPropagation(); mover(it, -1); });
+  right.addEventListener("click", (e) => { e.stopPropagation(); mover(it, 1); });
+  mv.append(left, right); foot.append(mv);
+  c.append(foot);
+  c.addEventListener("click", () => openEditor(it));
+  c.addEventListener("keydown", (e) => { if (e.key === "Enter" && e.target === c) openEditor(it); });
+  return c;
+}
+
+async function mover(it, dir) {
+  const i = ESTADOS.findIndex((e) => e.k === it.estado) + dir;
+  if (i < 0 || i >= ESTADOS.length) return;
+  // Se actualiza en pantalla de inmediato y luego se confirma con la base.
+  it.estado = ESTADOS[i].k; draw();
+  const ok = await run(sb.from("temas").update({ estado: ESTADOS[i].k, mov: new Date().toISOString() }).eq("id", it.id));
+  if (!ok) load();
+}
+
+function openEditor(it) {
+  editing = it;
+  clearTimeout(delTimer); resetDel();
+  $("#sheet-title").textContent = it ? "Editar tema" : "Nuevo tema";
+  $("#f-titulo").value = it ? it.titulo || "" : "";
+  $("#f-angulo").value = it ? it.angulo || "" : "";
+  $("#f-estado").value = it ? it.estado || "idea" : "idea";
+  $("#f-fecha").value = it ? it.fecha || "" : "";
+  $("#f-invitado").value = it ? it.invitado || "" : "";
+  $("#f-etiquetas").value = it ? (it.etiquetas || []).join(", ") : "";
+  $("#f-lleva").value = it ? it.lleva || "" : "";
+  $("#f-notas").value = it ? it.notas || "" : "";
+  $("#err").textContent = "";
+  $("#del").hidden = !it;
+  $("#scrim").hidden = false;
+  $("#f-titulo").focus();
+}
+function closeEditor() { $("#scrim").hidden = true; editing = null; clearTimeout(delTimer); resetDel(); }
+function resetDel() { const d = $("#del"); d.textContent = "Eliminar"; d.dataset.arm = ""; }
+
+$("#form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const titulo = $("#f-titulo").value.trim();
+  if (!titulo) { $("#err").textContent = "Escribe el tema antes de guardar."; $("#f-titulo").focus(); return; }
+  const data = {
+    titulo,
+    angulo: $("#f-angulo").value.trim(),
+    estado: $("#f-estado").value,
+    fecha: $("#f-fecha").value || null,
+    invitado: $("#f-invitado").value.trim(),
+    etiquetas: $("#f-etiquetas").value.split(",").map((s) => s.trim()).filter(Boolean).slice(0, 6),
+    notas: $("#f-notas").value.trim(),
+    lleva: $("#f-lleva").value || null,
+    mov: new Date().toISOString()
+  };
+  $("#save").disabled = true;
+  const ok = await run(editing ? sb.from("temas").update(data).eq("id", editing.id) : sb.from("temas").insert(data), "Tema guardado");
+  $("#save").disabled = false;
+  if (ok) closeEditor();
+});
+$("#cancel").addEventListener("click", closeEditor);
+$("#scrim").addEventListener("mousedown", (e) => { if (e.target === $("#scrim")) closeEditor(); });
+document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !$("#scrim").hidden) closeEditor(); });
+$("#del").addEventListener("click", async () => {
+  const d = $("#del");
+  if (!editing) return;
+  if (d.dataset.arm !== "1") {
+    d.dataset.arm = "1"; d.textContent = "Confirmar eliminar";
+    delTimer = setTimeout(resetDel, 4000); return;
+  }
+  clearTimeout(delTimer);
+  const ok = await run(sb.from("temas").delete().eq("id", editing.id), "Tema eliminado");
+  if (ok) closeEditor(); else resetDel();
+});
+$("#add").addEventListener("click", () => openEditor(null));
+$("#q").addEventListener("input", (e) => { view.q = e.target.value; draw(); });
+$("#who").addEventListener("change", (e) => { view.who = e.target.value; draw(); });
+$("#f-estado").append(...ESTADOS.map((s) => { const o = h("option", null, s.t); o.value = s.k; return o; }));
+
+draw();
+if (window.supabase && window.supabase.createClient) {
+  sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  load();
+  // Cambios de la otra persona en vivo; si el canal falla, se refresca igual cada 30 s y al volver a la pestaña.
+  try {
+    sb.channel("temas-en-vivo").on("postgres_changes", { event: "*", schema: "public", table: "temas" }, () => load()).subscribe();
+  } catch (e) { /* el refresco periódico cubre este caso */ }
+  setInterval(() => { if (document.visibilityState === "visible" && $("#scrim").hidden) load(); }, 30000);
+  document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible" && $("#scrim").hidden) load(); });
+} else {
+  loading = false; loadFailed = true; draw();
+}
+</script>
+</body>
+</html>
