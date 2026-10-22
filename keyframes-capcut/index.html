@@ -1,0 +1,488 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Keyframes en CapCut</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Figtree:wght@400;500;600;700&display=swap">
+<style>
+:root{color-scheme:light}
+body{margin:0}
+/* Concepto: guía de clase. Cada paso lleva un dibujo de la pantalla de CapCut (oscura, como la real)
+   sobre una página clara y fría. El rombo (el botón de keyframe) es el motivo que se repite. */
+:root{
+  --bg:#EDF2F8; --surface:#FFFFFF; --ink:#14202E; --muted:#4D5C74; --line:#CFD9E6;
+  --accent:#0A7F8C; --on-accent:#FFFFFF; --soft:#DCEAF1; --warn:#B4233A;
+  --hot:#FF5D6C;
+  --ui-bg:#14171E; --ui-deep:#0A0C10; --ui-panel:#1F232C; --ui-line:#363C4A; --ui-ink:#DDE2EC; --ui-dim:#8E98AB;
+  --ui-clip:#2A7983; --ui-accent:#35D4E2;
+  --pic-sky:#5BA8F0; --pic-sun:#FFD166; --pic-m1:#2E8F7D; --pic-m2:#1F6B5E;
+  --display:'Fredoka','Trebuchet MS',system-ui,sans-serif;
+  --body:'Figtree',system-ui,-apple-system,'Segoe UI',sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0D141F; --surface:#162030; --ink:#E7EDF6; --muted:#A3B2C9; --line:#27364C;
+    --accent:#3CD2E0; --on-accent:#06242A; --soft:#13303A; --warn:#FF8C98;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0D141F; --surface:#162030; --ink:#E7EDF6; --muted:#A3B2C9; --line:#27364C;
+  --accent:#3CD2E0; --on-accent:#06242A; --soft:#13303A; --warn:#FF8C98;
+  color-scheme:dark;
+}
+
+body{
+  background:var(--bg); color:var(--ink);
+  font:400 18px/1.6 var(--body);
+  padding-block:28px 64px;
+  padding-left:max(16px, env(safe-area-inset-left, 0px));
+  padding-right:max(16px, env(safe-area-inset-right, 0px));
+}
+.wrap{max-width:1080px; margin:0 auto; display:flex; flex-direction:column; gap:72px}
+h1,h2,h3{font-family:var(--display); text-wrap:balance; margin:0}
+h1{font-weight:700; font-size:clamp(2.5rem,7vw,4.4rem); line-height:1.02; letter-spacing:-.01em}
+h2{font-weight:600; font-size:clamp(1.7rem,3.6vw,2.3rem); line-height:1.15}
+h3{font-weight:600; font-size:1.45rem; line-height:1.2}
+p{margin:0; max-width:56ch}
+.eyebrow{font:600 .8rem/1 var(--body); letter-spacing:.16em; text-transform:uppercase; color:var(--accent)}
+.lead{font-size:1.28rem; line-height:1.5; color:var(--muted); max-width:46ch}
+.hero{display:flex; flex-direction:column; gap:18px; padding-top:8px}
+section{display:flex; flex-direction:column; gap:22px; min-width:0}
+
+/* idea */
+.idea-fig{margin:0; padding:20px 16px 12px; background:var(--surface); border:1px solid var(--line); border-radius:18px; overflow-x:auto}
+.idea-fig svg{display:block; width:100%; min-width:520px; height:auto}
+.fig-line{stroke:var(--line); stroke-width:3; stroke-linecap:round}
+.fig-dot{stroke:var(--muted); stroke-width:1.5; stroke-dasharray:3 4}
+.fig-t{font:600 14px var(--body); fill:var(--ink)}
+.fig-s{font:500 13px var(--body); fill:var(--muted)}
+.rule{display:flex; gap:14px; align-items:center; padding:16px 20px; background:var(--soft); border-radius:14px; max-width:none}
+.rule svg{flex:none}
+.rule p{max-width:none; font-weight:600}
+
+/* leyenda */
+.legend{display:flex; flex-wrap:wrap; gap:12px 28px; align-items:center; font-size:1rem; color:var(--muted)}
+.legend span{display:inline-flex; gap:10px; align-items:center}
+
+/* pasos */
+.steps{list-style:none; margin:0; padding:0}
+.step{
+  display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.3fr); gap:20px 36px; align-items:center;
+  padding-block:36px; border-top:1px solid var(--line);
+}
+.step:last-child{border-bottom:1px solid var(--line)}
+.step-head{display:flex; align-items:center; gap:16px; margin-bottom:14px}
+.num{position:relative; width:58px; height:58px; flex:none}
+.num::before{content:""; position:absolute; inset:7px; background:var(--accent); border-radius:9px; transform:rotate(45deg)}
+.num span{position:relative; display:grid; place-items:center; height:100%; font:700 1.5rem var(--display); color:var(--on-accent)}
+.ojo{margin-top:14px; font-size:1rem; color:var(--muted)}
+.ojo b{color:var(--warn); font-weight:700; margin-right:.4em}
+.shot{border-radius:14px; overflow:hidden; border:1px solid var(--line); background:var(--ui-bg); min-width:0}
+.mock{display:block; width:100%; height:auto}
+.mock .u-bg{fill:var(--ui-bg)}
+.mock .u-panel{fill:var(--ui-panel)}
+.mock .u-deep{fill:var(--ui-deep)}
+.mock .u-thumb{fill:var(--ui-line)}
+.mock .u-acc{fill:var(--ui-accent)}
+.mock .u-tick{stroke:var(--ui-line); stroke-width:1.5}
+.mock .t{font:500 12.5px var(--body); fill:var(--ui-ink)}
+.mock .t-dim{fill:var(--ui-dim)}
+.mock .t-b{font-weight:700}
+.mock .t-hot{fill:var(--hot); font-weight:700}
+.mock .u-clip{fill:var(--ui-clip)}
+.mock .u-clip.sel{stroke:#fff; stroke-width:3}
+.mock .drop{fill:none; stroke:var(--hot); stroke-width:2.5; stroke-dasharray:7 6}
+.mock .ring{fill:none; stroke:var(--hot); stroke-width:3.5}
+.mock .u-arrow{fill:none; stroke:var(--hot); stroke-width:3.5; stroke-linecap:round}
+.mock .u-hot-fill{fill:var(--hot)}
+.mock .ph-line{stroke:#fff; stroke-width:2}
+.mock .ph-head{fill:#fff}
+.mock .dm{stroke-width:1.8}
+.mock .dm-empty{fill:none; stroke:var(--ui-dim)}
+.mock .dm-active{fill:none; stroke:var(--ui-accent)}
+.mock .dm-filled{fill:var(--ui-accent); stroke:var(--ui-bg)}
+.mock .pic{transform-box:fill-box; transform-origin:center; transform:scale(var(--ps,1))}
+.mock .pic-anim{animation:zoom 3s linear infinite}
+.mock .ph-anim{animation:sweep 3s linear infinite}
+@keyframes zoom{from{transform:scale(1)} to{transform:scale(1.2)}}
+@keyframes sweep{from{transform:translateX(0)} to{transform:translateX(270px)}}
+
+/* más cosas */
+.cards{display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:18px}
+.card{background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:18px 18px 22px; display:flex; flex-direction:column; gap:10px; min-width:0}
+.card svg{display:block; width:100%; height:auto}
+.card p{font-size:1rem; color:var(--muted)}
+.mini-a{fill:var(--accent)}
+.mini-g{fill:none; stroke:var(--accent); stroke-width:2.5; stroke-dasharray:5 5}
+.mini-l{fill:none; stroke:var(--muted); stroke-width:2.5; stroke-linecap:round; stroke-linejoin:round}
+
+.tips{display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:28px 40px}
+.tip{display:flex; flex-direction:column; gap:8px; min-width:0}
+.tip p{font-size:1.05rem}
+.speed{margin-top:6px; padding:12px; border:1px solid var(--line); border-radius:12px; background:var(--surface); overflow-x:auto}
+.speed svg{display:block; width:100%; min-width:300px; height:auto}
+
+.problems{list-style:none; margin:0; padding:0; display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:26px 40px}
+.problems li{display:flex; flex-direction:column; gap:6px}
+.problems h3{font-size:1.2rem}
+.problems p{font-size:1.05rem; color:var(--muted)}
+
+.retos{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:14px}
+.retos li{display:grid; grid-template-columns:auto minmax(0,1fr); gap:16px; align-items:start; padding:18px 20px; background:var(--surface); border:1px solid var(--line); border-radius:14px}
+.retos .tag{font:600 .8rem/1 var(--body); letter-spacing:.14em; text-transform:uppercase; color:var(--on-accent); background:var(--accent); padding:7px 10px; border-radius:7px; margin-top:4px}
+.retos p{max-width:none}
+.foot{font-size:.95rem; color:var(--muted)}
+kbd{font:600 .85em var(--body); padding:2px 8px; border:1px solid var(--line); border-bottom-width:3px; border-radius:6px; background:var(--surface)}
+:focus-visible{outline:3px solid var(--accent); outline-offset:3px}
+
+@media (max-width:820px){
+  .step{grid-template-columns:minmax(0,1fr); padding-block:28px}
+  body{font-size:17px}
+}
+@media (prefers-reduced-motion: reduce){
+  .mock .pic-anim{animation:none}
+  .mock .ph-anim{animation:none; transform:translateX(144px)}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <span class="eyebrow">CapCut para computadora</span>
+  <h1>Keyframes paso a paso</h1>
+  <p class="lead">Con keyframes haces que una foto o un video se acerque, se mueva, gire o aparezca solo. Vamos a hacerlo con un zoom lento, en 8 pasos.</p>
+</header>
+
+<section aria-labelledby="idea-h">
+  <h2 id="idea-h">Primero, la idea</h2>
+  <p>Un keyframe (cuadro clave) es una foto de cómo está el clip en un momento: su tamaño, su lugar o su giro. Tú guardas dos fotos, una al inicio y otra al final. CapCut dibuja solo todo lo que pasa en medio. En CapCut, cada keyframe se ve como un rombo.</p>
+  <figure class="idea-fig">
+    <svg viewBox="0 0 640 214" role="img" aria-label="Dos keyframes en una línea de tiempo: al inicio el cuadro es chico y al final es grande. CapCut calcula los tamaños intermedios.">
+      <line class="fig-line" x1="40" y1="160" x2="600" y2="160"/>
+      <line class="fig-dot" x1="110" y1="120" x2="110" y2="150"/>
+      <line class="fig-dot" x1="250" y1="120" x2="250" y2="152"/>
+      <line class="fig-dot" x1="390" y1="120" x2="390" y2="152"/>
+      <line class="fig-dot" x1="530" y1="120" x2="530" y2="150"/>
+      <rect x="92" y="82" width="36" height="36" rx="5" fill="var(--accent)"/>
+      <rect x="223" y="64" width="54" height="54" rx="6" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-dasharray="6 5"/>
+      <rect x="354" y="46" width="72" height="72" rx="7" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-dasharray="6 5"/>
+      <rect x="485" y="28" width="90" height="90" rx="8" fill="var(--accent)"/>
+      <circle cx="250" cy="160" r="4" fill="var(--muted)"/>
+      <circle cx="390" cy="160" r="4" fill="var(--muted)"/>
+      <polygon points="110,148 122,160 110,172 98,160" fill="var(--accent)"/>
+      <polygon points="530,148 542,160 530,172 518,160" fill="var(--accent)"/>
+      <text class="fig-s" x="320" y="24" text-anchor="middle">Lo de en medio lo calcula CapCut</text>
+      <text class="fig-t" x="110" y="194" text-anchor="middle">Keyframe 1 · 0 s</text>
+      <text class="fig-s" x="110" y="211" text-anchor="middle">tamaño chico</text>
+      <text class="fig-t" x="530" y="194" text-anchor="middle">Keyframe 2 · 3 s</text>
+      <text class="fig-s" x="530" y="211" text-anchor="middle">tamaño grande</text>
+    </svg>
+  </figure>
+  <div class="rule">
+    <svg width="34" height="34" viewBox="0 0 34 34" aria-hidden="true"><polygon points="17,2 32,17 17,32 2,17" fill="var(--accent)"/></svg>
+    <p>Regla de oro: un solo rombo no mueve nada. Necesitas mínimo dos, en momentos distintos.</p>
+  </div>
+</section>
+
+<section aria-labelledby="pasos-h">
+  <h2 id="pasos-h">Paso a paso: un zoom lento</h2>
+  <div class="legend" aria-label="Cómo leer los dibujos">
+    <span><svg width="38" height="24" viewBox="0 0 38 24" aria-hidden="true"><rect x="3" y="3" width="32" height="18" rx="6" fill="none" stroke="var(--hot)" stroke-width="3.5"/></svg>Borde rojo: mira aquí</span>
+    <span><svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true"><path d="M4 2 L4 19 L8.6 15 L11.6 22.5 L14.6 21.2 L11.6 14 L17.4 14 Z" fill="#fff" stroke="#111" stroke-width="1.2" stroke-linejoin="round"/></svg>Flechita: haz clic aquí</span>
+    <span><svg width="22" height="22" viewBox="0 0 22 22" aria-hidden="true"><polygon points="11,2 20,11 11,20 2,11" fill="none" stroke="var(--accent)" stroke-width="2.5"/></svg>Rombo: el botón de keyframe</span>
+  </div>
+
+  <ol class="steps">
+
+    <li class="step">
+      <div class="txt">
+        <div class="step-head"><div class="num"><span>1</span></div><h3>Pon tu foto o video en la línea de tiempo</h3></div>
+        <p>Arriba a la izquierda están tus archivos. Haz clic sobre el que quieras, mantén el botón apretado y arrástralo hacia abajo, a la franja larga que se llama línea de tiempo. Suelta el botón.</p>
+      </div>
+      <div class="shot" data-mock="1"></div>
+    </li>
+
+    <li class="step">
+      <div class="txt">
+        <div class="step-head"><div class="num"><span>2</span></div><h3>Haz clic una vez sobre el clip</h3></div>
+        <p>Un clip es cada pieza que está en la línea de tiempo. Al hacer clic se le dibuja un borde blanco. Eso quiere decir que está seleccionado y que ya puedes cambiarle cosas.</p>
+        <p class="ojo"><b>Ojo</b>Sin borde blanco, el panel de la derecha no te muestra las opciones.</p>
+      </div>
+      <div class="shot" data-mock="2"></div>
+    </li>
+
+    <li class="step">
+      <div class="txt">
+        <div class="step-head"><div class="num"><span>3</span></div><h3>Busca el panel de la derecha</h3></div>
+        <p>Arriba del panel elige la pestaña <b>Video</b> y luego <b>Básico</b>. Ahí aparecen tres cosas que puedes animar: <b>Escala</b> (el tamaño), <b>Posición</b> y <b>Rotación</b>.</p>
+        <p style="margin-top:12px">Al lado de cada una hay un rombo vacío. Ese rombo es el botón de keyframe.</p>
+      </div>
+      <div class="shot" data-mock="3"></div>
+    </li>
+
+    <li class="step">
+      <div class="txt">
+        <div class="step-head"><div class="num"><span>4</span></div><h3>Pon la línea blanca donde empieza el movimiento</h3></div>
+        <p>La línea blanca vertical se llama cursor. Haz clic en los números de arriba de la línea de tiempo para moverla, o arrástrala. Para este ejemplo déjala al inicio del clip, en 0 s.</p>
+      </div>
+      <div class="shot" data-mock="4"></div>
+    </li>
+
+    <li class="step">
+      <div class="txt">
+        <div class="step-head"><div class="num"><span>5</span></div><h3>Haz clic en el rombo de Escala</h3></div>
+        <p>El rombo se pinta de color. Acabas de guardar la primera foto: así se ve el clip en este momento. También aparece un puntito sobre el clip en la línea de tiempo.</p>
+        <p class="ojo"><b>Ojo</b>Con un solo rombo todavía no se mueve nada.</p>
+      </div>
+      <div class="shot" data-mock="5"></div>
+    </li>
+
+    <li class="step">
+      <div class="txt">
+        <div class="step-head"><div class="num"><span>6</span></div><h3>Mueve la línea blanca más adelante</h3></div>
+        <p>Llévala unos 3 segundos después del inicio. Todavía no cambies nada en el panel, solo mueve la línea.</p>
+        <p class="ojo"><b>Ojo</b>Es normal que el rombo se vea vacío otra vez: en este punto aún no hay keyframe.</p>
+      </div>
+      <div class="shot" data-mock="6"></div>
+    </li>
+
+    <li class="step">
+      <div class="txt">
+        <div class="step-head"><div class="num"><span>7</span></div><h3>Cambia el valor de Escala</h3></div>
+        <p>Haz clic en la casilla de Escala, escribe <b>120</b> y presiona <kbd>Enter</kbd>. El segundo rombo aparece solo, porque ya había uno antes.</p>
+        <p style="margin-top:12px">Fíjate que la foto del reproductor ya se ve más grande.</p>
+      </div>
+      <div class="shot" data-mock="7"></div>
+    </li>
+
+    <li class="step">
+      <div class="txt">
+        <div class="step-head"><div class="num"><span>8</span></div><h3>Dale play y mira</h3></div>
+        <p>Presiona la barra espaciadora <kbd>Espacio</kbd> o el botón de play. La foto se acerca sola entre un rombo y el otro.</p>
+        <p style="margin-top:12px">Ya hiciste tu primer movimiento con keyframes.</p>
+      </div>
+      <div class="shot" data-mock="8"></div>
+    </li>
+
+  </ol>
+</section>
+
+<section aria-labelledby="mas-h">
+  <h2 id="mas-h">Qué más puedes animar</h2>
+  <p>Todo funciona igual: rombo, mover la línea, cambiar el valor. Cada propiedad tiene su propio rombo.</p>
+  <div class="cards">
+    <div class="card">
+      <svg viewBox="0 0 160 100" role="img" aria-label="Un cuadro chico que pasa a ser un cuadro grande">
+        <rect class="mini-a" x="16" y="54" width="26" height="26" rx="4"/>
+        <line class="mini-l" x1="52" y1="67" x2="80" y2="67"/><polyline class="mini-l" points="73,60 80,67 73,74"/>
+        <rect class="mini-a" x="92" y="22" width="56" height="56" rx="6"/>
+      </svg>
+      <h3>Escala</h3>
+      <p>Zoom hacia adentro o hacia afuera. Panel derecho → Video → Básico.</p>
+    </div>
+    <div class="card">
+      <svg viewBox="0 0 160 100" role="img" aria-label="Un cuadro que se desplaza de izquierda a derecha">
+        <rect class="mini-a" x="12" y="34" width="32" height="32" rx="5"/>
+        <line class="mini-l" x1="54" y1="50" x2="100" y2="50"/><polyline class="mini-l" points="93,43 100,50 93,57"/>
+        <rect class="mini-g" x="112" y="34" width="32" height="32" rx="5"/>
+      </svg>
+      <h3>Posición</h3>
+      <p>Mueve el clip por la pantalla con los valores X (lados) e Y (arriba y abajo).</p>
+    </div>
+    <div class="card">
+      <svg viewBox="0 0 160 100" role="img" aria-label="Un cuadro derecho que pasa a estar girado">
+        <rect class="mini-g" x="18" y="30" width="40" height="40" rx="5"/>
+        <path class="mini-l" d="M62 26 Q 90 8 112 22"/><polyline class="mini-l" points="103,15 112,22 104,30"/>
+        <rect class="mini-a" x="104" y="32" width="40" height="40" rx="5" transform="rotate(30 124 52)"/>
+      </svg>
+      <h3>Rotación</h3>
+      <p>Hace girar el clip. Está justo debajo de Posición en Básico.</p>
+    </div>
+    <div class="card">
+      <svg viewBox="0 0 160 100" role="img" aria-label="Un cuadro sólido que se vuelve casi transparente">
+        <rect class="mini-a" x="16" y="30" width="40" height="40" rx="5"/>
+        <line class="mini-l" x1="66" y1="50" x2="94" y2="50"/><polyline class="mini-l" points="87,43 94,50 87,57"/>
+        <rect class="mini-a" x="104" y="30" width="40" height="40" rx="5" opacity=".25"/>
+      </svg>
+      <h3>Opacidad</h3>
+      <p>Para aparecer o desaparecer. En Básico, baja hasta la sección Mezcla.</p>
+    </div>
+  </div>
+</section>
+
+<section aria-labelledby="trucos-h">
+  <h2 id="trucos-h">Trucos para controlar el movimiento</h2>
+  <div class="tips">
+    <div class="tip">
+      <h3>Mover un keyframe</h3>
+      <p>Arrastra el puntito que está sobre el clip, hacia la izquierda o hacia la derecha.</p>
+    </div>
+    <div class="tip">
+      <h3>Borrar un keyframe</h3>
+      <p>Párate exactamente sobre él. Las flechitas junto al rombo te llevan de uno a otro. Luego haz clic en el rombo pintado y se vacía.</p>
+    </div>
+    <div class="tip">
+      <h3>Hacerlo más lento o más rápido</h3>
+      <p>Separa los rombos para que el movimiento sea lento. Júntalos para que sea rápido.</p>
+      <div class="speed">
+        <svg viewBox="0 0 360 120" role="img" aria-label="Dos rombos separados significan movimiento lento. Dos rombos juntos significan movimiento rápido.">
+          <text class="fig-s" x="8" y="20">Separados: lento</text>
+          <line class="fig-line" x1="8" y1="40" x2="352" y2="40"/>
+          <polygon points="60,30 70,40 60,50 50,40" fill="var(--accent)"/>
+          <polygon points="300,30 310,40 300,50 290,40" fill="var(--accent)"/>
+          <text class="fig-s" x="8" y="86">Juntos: rápido</text>
+          <line class="fig-line" x1="8" y1="106" x2="352" y2="106"/>
+          <polygon points="150,96 160,106 150,116 140,106" fill="var(--accent)"/>
+          <polygon points="210,96 220,106 210,116 200,106" fill="var(--accent)"/>
+        </svg>
+      </div>
+    </div>
+    <div class="tip">
+      <h3>Movimiento más suave</h3>
+      <p>Si tu versión de CapCut tiene opciones de curvas o «Ease», elige una suave para que el movimiento no se vea brusco. El nombre cambia según la versión.</p>
+    </div>
+  </div>
+</section>
+
+<section aria-labelledby="fallas-h">
+  <h2 id="fallas-h">Si algo no sale</h2>
+  <ul class="problems">
+    <li>
+      <h3>Se movió todo el clip entero</h3>
+      <p>Cambiaste el valor antes de poner el primer rombo. Deshaz con <kbd>Ctrl</kbd> + <kbd>Z</kbd> (en Mac, <kbd>Cmd</kbd> + <kbd>Z</kbd>), pon el rombo primero y luego cambia el valor.</p>
+    </li>
+    <li>
+      <h3>Le doy play y no pasa nada</h3>
+      <p>Probablemente tienes un solo rombo. Necesitas dos, en momentos distintos de la línea de tiempo.</p>
+    </li>
+    <li>
+      <h3>No veo el panel ni el rombo</h3>
+      <p>Haz clic otra vez sobre el clip para seleccionarlo. Luego revisa que estés en Video → Básico.</p>
+    </li>
+    <li>
+      <h3>Toqué el rombo equivocado</h3>
+      <p>Cada propiedad tiene el suyo. El rombo de Escala no mueve la Posición. Busca el rombo que está en la misma fila que lo que quieres animar.</p>
+    </li>
+  </ul>
+</section>
+
+<section aria-labelledby="ahora-h">
+  <h2 id="ahora-h">Ahora tú</h2>
+  <ul class="retos">
+    <li><span class="tag">Reto 1</span><p><b>Zoom más lento.</b> Repite el ejercicio, pero separa los rombos 5 segundos. ¿Se nota más lento?</p></li>
+    <li><span class="tag">Reto 2</span><p><b>Entrada desde un lado.</b> Usa Posición. En el primer rombo pon un valor negativo grande en X, para que el clip empiece fuera de la pantalla. En el segundo rombo pon 0.</p></li>
+    <li><span class="tag">Reto 3</span><p><b>Aparecer poco a poco.</b> Usa Opacidad. Pon 0% en el primer rombo y 100% en el segundo.</p></li>
+  </ul>
+  <p class="foot">Los nombres exactos de los botones pueden cambiar un poco según la versión de CapCut que tengas.</p>
+</section>
+
+</div>
+
+<script>
+(function(){
+  var X0=48, PX=90, uid=0;
+  function tx(t){ return X0+PX*t; }
+  function dm(cx,cy,s,st){
+    return '<polygon class="dm dm-'+st+'" points="'+cx+','+(cy-s)+' '+(cx+s)+','+cy+' '+cx+','+(cy+s)+' '+(cx-s)+','+cy+'"/>';
+  }
+  function cursor(x,y){
+    return '<g transform="translate('+x+' '+y+')"><path d="M0 0 L0 17 L4.6 13 L7.6 20.5 L10.6 19.2 L7.6 12 L13.4 12 Z" fill="#fff" stroke="#111" stroke-width="1.3" stroke-linejoin="round"/></g>';
+  }
+  function scene(x,y,w,h){
+    return '<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" fill="var(--pic-sky)"/>'+
+      '<circle cx="'+(x+.74*w)+'" cy="'+(y+.27*h)+'" r="'+(.09*w)+'" fill="var(--pic-sun)"/>'+
+      '<polygon points="'+x+','+(y+h)+' '+(x+.28*w)+','+(y+.38*h)+' '+(x+.6*w)+','+(y+h)+'" fill="var(--pic-m1)"/>'+
+      '<polygon points="'+(x+.35*w)+','+(y+h)+' '+(x+.66*w)+','+(y+.48*h)+' '+(x+w)+','+(y+h)+'" fill="var(--pic-m2)"/>';
+  }
+  function mock(o){
+    var n=++uid, ps=o.ps||1, dia=o.dia||'empty', scale=o.scale||'100%', s='';
+    s+='<svg class="mock" viewBox="0 0 520 320" role="img" aria-label="'+o.alt+'">';
+    s+='<defs><clipPath id="sc'+n+'"><rect x="148" y="54" width="170" height="96" rx="3"/></clipPath>'+
+       '<marker id="ah'+n+'" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="u-hot-fill"/></marker></defs>';
+    s+='<rect class="u-bg" width="520" height="320" rx="12"/>';
+    s+='<text class="t t-dim" x="260" y="20" text-anchor="middle">Mi proyecto</text>';
+
+    /* multimedia */
+    s+='<rect class="u-panel" x="10" y="30" width="120" height="146" rx="6"/>';
+    s+='<text class="t t-dim" x="20" y="47">Multimedia</text>';
+    s+=scene(18,56,48,34);
+    s+='<rect class="u-thumb" x="74" y="56" width="48" height="34" rx="3"/>';
+    s+='<rect class="u-thumb" x="18" y="100" width="48" height="34" rx="3"/>';
+    s+='<rect class="u-thumb" x="74" y="100" width="48" height="34" rx="3"/>';
+
+    /* reproductor */
+    s+='<rect class="u-panel" x="138" y="30" width="190" height="146" rx="6"/>';
+    s+='<text class="t t-dim" x="148" y="47">Reproductor</text>';
+    s+='<rect class="u-deep" x="148" y="54" width="170" height="96" rx="3"/>';
+    s+='<g clip-path="url(#sc'+n+')"><g class="pic'+(o.anim?' pic-anim':'')+'" style="--ps:'+ps+'">'+scene(148,54,170,96)+'</g></g>';
+    s+='<circle class="u-thumb" cx="233" cy="164" r="9"/><polygon points="230,159.5 230,168.5 238,164" fill="var(--ui-ink)"/>';
+
+    /* panel derecho */
+    s+='<rect class="u-panel" x="336" y="30" width="174" height="146" rx="6"/>';
+    if(o.panel){
+      s+='<text class="t t-b" x="346" y="47">Video</text><text class="t t-dim" x="388" y="47">Audio</text><text class="t t-dim" x="430" y="47">Velocidad</text>';
+      s+='<rect class="u-acc" x="346" y="51" width="32" height="2.5" rx="1.2"/>';
+      s+='<rect class="u-thumb" x="344" y="58" width="52" height="18" rx="9"/><text class="t" x="370" y="71" text-anchor="middle">Básico</text><text class="t t-dim" x="408" y="71">Animación</text>';
+      s+='<text class="t" x="346" y="100">Escala</text><rect class="u-deep" x="398" y="85" width="60" height="22" rx="5"/><text class="t" x="428" y="100" text-anchor="middle">'+scale+'</text>'+dm(486,96,7,dia);
+      s+='<text class="t" x="346" y="126">Posición</text><rect class="u-deep" x="398" y="111" width="28" height="22" rx="5"/><text class="t" x="412" y="126" text-anchor="middle">0</text><rect class="u-deep" x="430" y="111" width="28" height="22" rx="5"/><text class="t" x="444" y="126" text-anchor="middle">0</text>'+dm(486,122,7,'empty');
+      s+='<text class="t" x="346" y="152">Rotación</text><rect class="u-deep" x="398" y="137" width="60" height="22" rx="5"/><text class="t" x="428" y="152" text-anchor="middle">0°</text>'+dm(486,148,7,'empty');
+    } else {
+      s+='<text class="t t-dim" x="423" y="98" text-anchor="middle">Detalles</text><text class="t t-dim" x="423" y="118" text-anchor="middle">(elige un clip)</text>';
+    }
+
+    /* línea de tiempo */
+    s+='<rect class="u-panel" x="10" y="184" width="500" height="128" rx="6"/>';
+    for(var t=0;t<=5;t++){
+      s+='<line class="u-tick" x1="'+tx(t)+'" y1="218" x2="'+tx(t)+'" y2="224"/><text class="t t-dim" x="'+tx(t)+'" y="213" text-anchor="middle" style="font-size:11px">'+t+'s</text>';
+    }
+    if(o.clip===false){
+      s+='<rect class="drop" x="48" y="230" width="360" height="50" rx="5"/><text class="t t-hot" x="228" y="260" text-anchor="middle">Suelta aquí</text>';
+    } else {
+      s+='<rect class="u-clip'+(o.sel?' sel':'')+'" x="48" y="230" width="360" height="50" rx="5"/><text class="t" x="60" y="248">mi_foto.jpg</text>';
+    }
+    (o.kfs||[]).forEach(function(k){ s+=dm(tx(k),268,6,'filled'); });
+
+    if(o.ph!==undefined){
+      var px=tx(o.ph);
+      s+='<g class="'+(o.phAnim?'ph-anim':'')+'"><line class="ph-line" x1="'+px+'" y1="200" x2="'+px+'" y2="292"/><polygon class="ph-head" points="'+(px-7)+',187 '+(px+7)+',187 '+(px+7)+',196 '+px+',204 '+(px-7)+',196"/></g>';
+    }
+    if(o.extra) s+=o.extra;
+    if(o.arrow) s+='<path class="u-arrow" d="'+o.arrow+'" marker-end="url(#ah'+n+')"/>';
+    (o.ring||[]).forEach(function(r){ s+='<rect class="ring" x="'+r[0]+'" y="'+r[1]+'" width="'+r[2]+'" height="'+r[3]+'" rx="9"/>'; });
+    if(o.cur) s+=cursor(o.cur[0],o.cur[1]);
+    return s+'</svg>';
+  }
+
+  var M={
+    1:{alt:'Se arrastra el archivo desde Multimedia hasta la línea de tiempo.',panel:false,clip:false,
+       ring:[[14,52,56,42]],arrow:'M48 98 C 62 170, 140 200, 186 234',cur:[40,80]},
+    2:{alt:'Se hace clic sobre el clip y queda con un borde blanco.',panel:true,sel:true,
+       ring:[[43,225,370,60]],cur:[210,254]},
+    3:{alt:'El panel derecho con las pestañas Video y Básico, y los rombos de Escala, Posición y Rotación.',panel:true,sel:true,
+       ring:[[332,28,182,152]]},
+    4:{alt:'La línea blanca se coloca al inicio del clip, en 0 segundos.',panel:true,sel:true,ph:0,
+       ring:[[34,184,28,112]],cur:[60,216]},
+    5:{alt:'Se hace clic en el rombo de Escala y aparece un puntito sobre el clip.',panel:true,sel:true,ph:0,dia:'filled',kfs:[0],
+       ring:[[472,82,28,28]],cur:[488,100]},
+    6:{alt:'La línea blanca se mueve hasta los 3 segundos.',panel:true,sel:true,ph:3,dia:'active',kfs:[0],
+       arrow:'M60 302 L300 302',ring:[[304,184,28,112]],cur:[332,216],
+       extra:'<text class="t t-hot" x="180" y="296" text-anchor="middle">3 segundos</text>'},
+    7:{alt:'La Escala cambia a 120 por ciento y aparece un segundo rombo. La foto se ve más grande.',panel:true,sel:true,ph:3,dia:'filled',kfs:[0,3],scale:'120%',ps:1.2,
+       ring:[[340,82,168,28]],cur:[432,104]},
+    8:{alt:'Al dar play, la línea blanca avanza y la foto se acerca entre los dos rombos.',panel:true,sel:true,ph:0,phAnim:true,dia:'active',kfs:[0,3],scale:'110%',ps:1.1,anim:true,
+       ring:[[136,28,194,150]]}
+  };
+  var nodes=document.querySelectorAll('[data-mock]');
+  for(var i=0;i<nodes.length;i++){
+    var cfg=M[nodes[i].getAttribute('data-mock')];
+    if(cfg) nodes[i].innerHTML=mock(cfg);
+  }
+})();
+</script>
+</body>
+</html>
