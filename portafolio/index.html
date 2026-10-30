@@ -1,0 +1,352 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="Videos editados y publicaciones de campañas de Yngrid Avellaneda, organizados por rubro y cliente.">
+<title>Portafolio Yngrid Avellaneda</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@300;400;500&display=swap">
+<style>
+body{margin:0}img{max-width:100%}[hidden]{display:none!important}
+/* Layout: galería silenciosa. Barra fina fija, título enorme en tipo ligero, tira de cuatro piezas a alturas distintas, y un capítulo por cliente con piezas sobre fondo blanco y pie de foto debajo. */
+:root{
+  --bg:#FDFBFA;
+  --ink:#24090F;
+  --muted:#8A7776;
+  --line:rgba(36,9,15,.14);
+  --wine:#6E1428;
+  --pop:#F2C230;
+  --tile:#EFE6E2;
+  --veil:rgba(253,251,250,.82);
+  --f-display:'Cormorant','Cormorant Garamond',Georgia,'Times New Roman',serif;
+  --f-body:'Jost','Helvetica Neue',Arial,sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#150609;--ink:#F6ECE6;--muted:#A8908E;--line:rgba(246,236,230,.16);
+    --wine:#F2C230;--tile:#24100F;--veil:rgba(21,6,9,.82);color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#150609;--ink:#F6ECE6;--muted:#A8908E;--line:rgba(246,236,230,.16);
+  --wine:#F2C230;--tile:#24100F;--veil:rgba(21,6,9,.82);color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{
+  background:var(--bg);color:var(--ink);font-family:var(--f-body);font-weight:300;font-size:16px;line-height:1.6;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  padding-block:0 40px;
+}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--bg);z-index:30}
+.wrap{max-width:1360px;margin:0 auto}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--wine);outline-offset:4px}
+
+/* barra */
+.bar{
+  position:sticky;top:env(safe-area-inset-top,0px);z-index:20;
+  display:flex;flex-wrap:wrap;gap:8px 28px;align-items:center;justify-content:space-between;
+  padding-block:16px;background:var(--veil);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--line);margin-inline:calc(50% - 50vw);padding-inline:max(16px,env(safe-area-inset-left,0px)) max(16px,env(safe-area-inset-right,0px));
+}
+.mark{font-family:var(--f-display);font-size:22px;font-style:italic;letter-spacing:.01em}
+.tabs{display:flex;gap:26px}
+.tab{background:none;border:0;padding:6px 0;cursor:pointer;font-size:11px;font-weight:400;letter-spacing:.24em;text-transform:uppercase;color:var(--muted);
+  border-bottom:1px solid transparent;transition:color .2s,border-color .2s}
+.tab:hover{color:var(--ink)}
+.tab[aria-pressed="true"]{color:var(--ink);border-bottom-color:var(--wine)}
+
+/* portada */
+.hero{padding-block:clamp(56px,10vw,132px) clamp(36px,6vw,72px);display:grid;gap:clamp(28px,4vw,48px)}
+.eyebrow{font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:var(--muted);font-weight:400}
+h1{font-family:var(--f-display);font-weight:300;font-size:clamp(58px,14.5vw,208px);line-height:.88;letter-spacing:-.025em;margin:0;text-wrap:balance}
+h1 em{font-style:italic;font-weight:300;color:var(--wine);display:block;padding-left:clamp(0px,9vw,140px)}
+.hero-note{display:flex;flex-wrap:wrap;gap:16px 56px;align-items:flex-start;justify-content:space-between}
+.lede{max-width:40ch;margin:0;font-size:clamp(16px,1.6vw,19px);line-height:1.65}
+.nums{display:flex;gap:40px;margin:0;padding:0;list-style:none}
+.nums li{display:grid;gap:4px}
+.nums b{font-family:var(--f-display);font-weight:300;font-size:46px;line-height:1;font-variant-numeric:tabular-nums}
+.nums span{font-size:10px;letter-spacing:.26em;text-transform:uppercase;color:var(--muted);font-weight:400}
+
+/* tira de portada */
+.strip{display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(10px,1.6vw,22px);align-items:end;margin-bottom:clamp(56px,9vw,120px)}
+.strip img{width:100%;display:block;object-fit:cover;background:var(--tile)}
+.strip img:nth-child(1){aspect-ratio:3/4.4}
+.strip img:nth-child(2){aspect-ratio:4/5;margin-bottom:clamp(20px,5vw,72px)}
+.strip img:nth-child(3){aspect-ratio:3/4.4;margin-bottom:clamp(10px,2.5vw,36px)}
+.strip img:nth-child(4){aspect-ratio:4/5;margin-bottom:clamp(30px,8vw,110px)}
+
+/* clientes */
+.client{padding-block:clamp(40px,6vw,88px);border-top:1px solid var(--line);display:grid;gap:clamp(28px,4vw,52px)}
+.rubro{margin-top:clamp(40px,6vw,88px)}
+.rubro:first-child{margin-top:0}
+.rubro-h{display:flex;align-items:baseline;gap:18px;flex-wrap:wrap;padding-block:20px 6px;border-top:1px solid var(--ink)}
+.rubro-k{font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:var(--muted);font-weight:400}
+.rubro-h h3{font-family:var(--f-display);font-style:italic;font-weight:300;font-size:clamp(26px,3.6vw,44px);line-height:1.1;color:var(--wine);margin:0}
+.rubro-body .client:first-child{border-top:0}
+.c-head{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 32px;align-items:end}
+.c-head h2{font-family:var(--f-display);font-weight:300;font-size:clamp(44px,8.5vw,120px);line-height:.95;letter-spacing:-.02em;margin:0;min-width:0;overflow-wrap:anywhere}
+.c-meta{margin:0;text-align:right;font-size:11px;font-weight:400;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);line-height:1.9;min-width:0}
+.c-meta b{display:block;color:var(--wine);font-weight:400}
+.grp{display:grid;gap:18px;min-width:0}
+.grp-label{font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:var(--muted);font-weight:400}
+.row{display:flex;flex-wrap:wrap;gap:clamp(18px,2.4vw,36px);align-items:flex-start;min-width:0;--h:clamp(280px,40vw,540px)}
+.grp[data-kind="post"] .row{--h:clamp(260px,34vw,460px)}
+.item{flex:0 0 auto;width:calc(var(--h) * var(--ar));max-width:100%;display:grid;gap:12px}
+.tile{position:relative;display:block;width:100%;aspect-ratio:var(--ar);padding:0;border:0;background:var(--tile);cursor:pointer;overflow:hidden}
+.tile img,.tile video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;transition:transform 1.1s cubic-bezier(.2,.7,.2,1)}
+.tile:hover img{transform:scale(1.04)}
+.tile::after{content:"";position:absolute;inset:0;box-shadow:inset 0 0 0 1px rgba(255,255,255,.0);transition:box-shadow .3s}
+.tile:hover::after{box-shadow:inset 0 0 0 1px rgba(255,255,255,.55)}
+.play{position:absolute;left:50%;top:50%;width:62px;height:62px;margin:-31px 0 0 -31px;border-radius:50%;
+  border:1px solid rgba(255,255,255,.85);display:grid;place-items:center;background:rgba(20,6,9,.18);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);
+  transition:transform .4s,background .3s;pointer-events:none}
+.play::before{content:"";border-left:13px solid #fff;border-top:8px solid transparent;border-bottom:8px solid transparent;margin-left:4px}
+.tile:hover .play{transform:scale(1.1);background:rgba(20,6,9,.38)}
+.tile video+.play{opacity:0}
+figcaption{display:flex;justify-content:space-between;gap:12px;align-items:baseline;margin:0}
+.t{font-family:var(--f-display);font-size:20px;line-height:1.2;font-style:italic;min-width:0}
+.k{font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);font-weight:400;white-space:nowrap;font-variant-numeric:tabular-nums}
+
+footer{border-top:1px solid var(--line);padding-top:28px;display:flex;flex-wrap:wrap;gap:10px 28px;justify-content:space-between;align-items:baseline}
+footer .mark{font-size:30px}
+footer span:not(.mark){font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--muted);font-weight:400}
+
+/* visor */
+.lb{position:fixed;inset:0;z-index:50;background:rgba(12,3,6,.96);display:grid;grid-template-rows:auto 1fr;
+  padding:max(14px,env(safe-area-inset-top,0px)) max(14px,env(safe-area-inset-right,0px)) max(14px,env(safe-area-inset-bottom,0px)) max(14px,env(safe-area-inset-left,0px))}
+.lb[hidden]{display:none!important}
+.lb-bar{display:flex;gap:14px;align-items:center;justify-content:space-between;color:#F6ECE6;padding:4px 2px 14px}
+.lb-title{font-family:var(--f-display);font-style:italic;font-size:22px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lb-btns{display:flex;gap:10px}
+.lb-btn{background:none;border:1px solid rgba(246,236,230,.4);color:#F6ECE6;width:44px;height:44px;border-radius:50%;cursor:pointer;font-size:17px;line-height:1;transition:background .25s,color .25s}
+.lb-btn:hover{background:#F6ECE6;color:#150609}
+.lb-stage{display:grid;place-items:center;min-height:0;min-width:0}
+.lb-stage video,.lb-stage img{max-width:100%;max-height:100%;background:#000;display:block}
+
+@media (max-width:640px){
+  .strip{grid-template-columns:repeat(2,1fr)}
+  .strip img:nth-child(n){margin-bottom:0;aspect-ratio:4/5}
+  .c-head{grid-template-columns:minmax(0,1fr)}
+  .c-meta{text-align:left}
+  .nums{gap:28px}
+  .tabs{gap:18px}
+}
+@media (prefers-reduced-motion:reduce){.tile img,.play{transition:none}}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="bar">
+    <span class="mark">Y. Avellaneda</span>
+    <div class="tabs" role="group" aria-label="Filtrar por tipo">
+      <button class="tab" type="button" data-f="all" aria-pressed="true">Todo</button>
+      <button class="tab" type="button" data-f="video" aria-pressed="false">Videos</button>
+      <button class="tab" type="button" data-f="post" aria-pressed="false">Publicaciones</button>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="eyebrow">Portafolio · Lima, Perú · 2026</div>
+    <h1>Yngrid <em>Avellaneda</em></h1>
+    <div class="hero-note">
+      <p class="lede">Videos editados y publicaciones de campañas para joyería, calzado, fragancias, un estudio de IA y proyectos de bienestar.</p>
+    </div>
+  </section>
+
+  <div class="strip" aria-hidden="true">
+    <img src="p/aura-fall-ny.jpg" alt="">
+    <img src="img/avia-1.jpg" alt="">
+    <img src="img/pb-4.jpg" alt="">
+    <img src="img/novus-3.jpg" alt="">
+  </div>
+
+  <main id="clients"></main>
+
+  <footer>
+    <span class="mark">Yngrid Avellaneda</span>
+    <span>Campañas · 2026</span>
+  </footer>
+</div>
+
+<div class="lb" id="lb" hidden role="dialog" aria-modal="true" aria-label="Vista ampliada">
+  <div class="lb-bar">
+    <div class="lb-title" id="lbTitle"></div>
+    <div class="lb-btns">
+      <button class="lb-btn" type="button" id="lbPrev" aria-label="Anterior">←</button>
+      <button class="lb-btn" type="button" id="lbNext" aria-label="Siguiente">→</button>
+      <button class="lb-btn" type="button" id="lbClose" aria-label="Cerrar">✕</button>
+    </div>
+  </div>
+  <div class="lb-stage" id="lbStage"></div>
+</div>
+
+<script>
+var DATA=[
+ {name:'Aura',meta:'<b>Fall in New York</b>Fragancias para el hogar',
+  videos:[
+   {src:'v/aura-fall-ny.mp4',poster:'p/aura-fall-ny.jpg',ar:9/16,dur:'0:20',t:'Morning, on my terms'},
+   {src:'v/aura-01.mp4',poster:'p/aura-01.jpg',ar:9/16,dur:'0:05',t:'Honey'},
+   {src:'v/aura-02.mp4',poster:'p/aura-02.jpg',ar:9/16,dur:'0:05',t:'Pieza 02'}],
+  posts:[]},
+ {name:'AVIA',meta:'<b>Colección Rodio</b>Joyería en plata con baño de rodio',
+  videos:[],
+  posts:[
+   {src:'img/avia-hero.jpg',ar:3712/4608,b:'Foto',t:'Brazalete',alt:'Mujer con abrigo blanco y guantes negros luciendo un brazalete de plata'},
+   {src:'img/avia-1.jpg',ar:.8,b:'1 / 7',t:'Plata · El colgante',alt:'Lámina «Plata» con el colgante sobre fondo vinotinto'},
+   {src:'img/avia-2.jpg',ar:.8,b:'2 / 7',t:'Negro · El collar',alt:'Lámina «Negro» con un lazo de plata sobre un zapato negro'},
+   {src:'img/avia-3.jpg',ar:.8,b:'3 / 7',t:'Colección Rodio',alt:'Collar de plata colgado de un caballete junto a copas'},
+   {src:'img/avia-4.jpg',ar:.8,b:'4 / 7',t:'Los aros · ¿Diga?',alt:'Mujer sonriente al teléfono rojo mostrando un aro'},
+   {src:'img/avia-5.jpg',ar:.8,b:'5 / 7',t:'Mañana · El collar',alt:'Lámina «Mañana» con retrato y collar'},
+   {src:'img/avia-6.jpg',ar:.8,b:'6 / 7',t:'La pulsera · Elige la tuya',alt:'Lámina «Elige la tuya» con una pulsera sobre una fresa'},
+   {src:'img/avia-7.jpg',ar:.8,b:'7 / 7',t:'El brazalete · Del ascensor a la piel',alt:'Brazalete en una muñeca dentro de un ascensor'}]},
+ {name:'Pretty Ballerinas',meta:'<b>Calzado</b>Imágenes y video',
+  videos:[
+   {src:'v/pb-01.mp4',poster:'p/pb-01.jpg',ar:16/9,dur:'0:15',t:'Bailarina de terciopelo verde'},
+   {src:'v/pb-02.mp4',poster:'p/pb-02.jpg',ar:464/832,dur:'0:14',t:'Detalle de la hebilla'},
+   {src:'v/pb-03.mp4',poster:'p/pb-03.jpg',ar:478/850,dur:'0:15',t:'Terraza frente al mar'}],
+  posts:[1,2,3,4,5,6].map(function(i){return {src:'img/pb-'+i+'.jpg',ar:1031/1280,b:i+' / 6',t:'Campaña · foto '+i,alt:'Modelo con bailarinas doradas en un salón de campaña, foto '+i}})},
+ {name:'NOVUS',meta:'<b>NOVUS AI Studio</b>Video y carrusel',
+  videos:[
+   {src:'v/novus-oct.mp4',poster:'p/novus-oct.jpg',ar:9/16,dur:'0:30',t:'NOVUS Oct'},
+   {src:'v/novus-web.mp4',poster:'p/novus-web.jpg',ar:9/16,dur:'0:22',t:'Toda idea empieza a lápiz'}],
+  posts:[1,2,3,4].map(function(i){return {src:'img/novus-'+i+'.jpg',ar:1,b:i+' / 4',t:'Carrusel · lámina '+i,alt:'Lámina '+i+' del carrusel NOVUS'}})},
+ {name:'Shelah Torreblanca',meta:'<b>Facilitadora</b>Videos y carrusel',
+  videos:[
+   {src:'v/shelah-historia.mp4',poster:'p/shelah-historia.jpg',ar:9/16,dur:'1:14',t:'Historia'},
+   {src:'v/shelah-vipassana.mp4',poster:'p/shelah-vipassana.jpg',ar:9/16,dur:'1:06',t:'Vipassana'}],
+  posts:[
+   {src:'img/shelah-c1.jpg',ar:.8,b:'1 / 8',t:'Cosas en las que creo al 100%',alt:'Shelah Torreblanca mirando a cámara en un sendero junto a un edificio de piedra, con el título del carrusel'},
+   {src:'v/shelah-c2.mp4',poster:'p/shelah-c2.jpg',ar:.8,b:'2 / 8',t:'Digas lo que digas'},
+   {src:'v/shelah-c3.mp4',poster:'p/shelah-c3.jpg',ar:.8,b:'3 / 8',t:'Nada es casualidad'},
+   {src:'v/shelah-c4.mp4',poster:'p/shelah-c4.jpg',ar:.8,b:'4 / 8',t:'Todo lo que tienes en tu vida lo elegiste tú'},
+   {src:'v/shelah-c5.mp4',poster:'p/shelah-c5.jpg',ar:.8,b:'5 / 8',t:'No ves la realidad como es'},
+   {src:'v/shelah-c6.mp4',poster:'p/shelah-c6.jpg',ar:.8,b:'6 / 8',t:'No existe bueno ni malo'},
+   {src:'v/shelah-c7.mp4',poster:'p/shelah-c7.jpg',ar:.8,b:'7 / 8',t:'Mientras no aceptes a Dios en tu vida'},
+   {src:'img/shelah-c8.jpg',ar:.8,b:'8 / 8',t:'Cosas en las que creo al 100%',alt:'Shelah Torreblanca caminando de espaldas por el sendero, con el título del carrusel'}]},
+ {name:'Beauty Stage',meta:'<b>Podología</b>Videos para redes',
+  videos:[
+   {src:'v/bs-01.mp4',poster:'p/bs-01.jpg',ar:9/16,dur:'0:28',t:'Pies sanos y felices'},
+   {src:'v/bs-02.mp4',poster:'p/bs-02.jpg',ar:9/16,dur:'0:28',t:'Una experiencia de relajo'}],
+  posts:[]}
+];
+
+var root=document.getElementById('clients');
+var canHover=window.matchMedia&&window.matchMedia('(hover:hover) and (pointer:fine)').matches;
+function item(c,it,kind){
+  kind=it.poster?'video':'post';
+  var f=document.createElement('figure');f.className='item';f.style.margin='0';f.style.setProperty('--ar',it.ar);
+  var b=document.createElement('button');
+  b.type='button';b.className='tile';
+  b.dataset.kind=kind;b.dataset.src=it.src;b.dataset.title=c.name+' · '+it.t;
+  b.setAttribute('aria-label',(kind==='video'?'Reproducir: ':'Ampliar: ')+c.name+', '+it.t);
+  var img=document.createElement('img');
+  img.src=kind==='video'?it.poster:it.src;img.alt=kind==='video'?'':it.alt;img.loading='lazy';img.decoding='async';
+  b.appendChild(img);
+  if(kind==='video'){
+    var p=document.createElement('span');p.className='play';b.appendChild(p);
+    if(canHover){
+      var pv=null;
+      b.addEventListener('mouseenter',function(){
+        if(pv)return;pv=document.createElement('video');pv.muted=true;pv.loop=true;pv.playsInline=true;pv.src=it.src;
+        pv.style.opacity='0';pv.style.transition='opacity .5s';
+        pv.addEventListener('playing',function(){pv.style.opacity='1';p.style.opacity='0'});
+        b.insertBefore(pv,p);pv.play().catch(function(){});
+      });
+      b.addEventListener('mouseleave',function(){
+        if(!pv)return;pv.pause();pv.remove();pv=null;p.style.opacity='';
+      });
+    }
+  }
+  f.appendChild(b);
+  var cap=document.createElement('figcaption');
+  var t=document.createElement('span');t.className='t';t.textContent=it.t;
+  var k=document.createElement('span');k.className='k';k.textContent=it.b||it.dur;
+  cap.appendChild(t);cap.appendChild(k);f.appendChild(cap);
+  return f;
+}
+function group(c,list,kind,label){
+  if(!list.length)return null;
+  var g=document.createElement('div');g.className='grp';g.dataset.kind=kind;
+  g.innerHTML='<div class="grp-label"></div><div class="row"></div>';
+  g.firstChild.textContent=label+' — '+list.length;
+  var row=g.lastChild;
+  list.forEach(function(it){row.appendChild(item(c,it,kind))});
+  return g;
+}
+var RUBRO={'Aura':'Moda, joyería y fragancias','AVIA':'Moda, joyería y fragancias','Pretty Ballerinas':'Moda, joyería y fragancias','NOVUS':'Estudio de IA','Shelah Torreblanca':'Bienestar','Beauty Stage':'Salud'};
+var curR=null,body=null;
+DATA.forEach(function(c){
+  if(RUBRO[c.name]!==curR){
+    curR=RUBRO[c.name];
+    var rs=document.createElement('section');rs.className='rubro';
+    var rh=document.createElement('div');rh.className='rubro-h';
+    rh.innerHTML='<span class="rubro-k">Rubro</span><h3></h3>';rh.lastChild.textContent=curR;
+    body=document.createElement('div');body.className='rubro-body';
+    rs.appendChild(rh);rs.appendChild(body);root.appendChild(rs);
+  }
+  var s=document.createElement('section');s.className='client';
+  var h=document.createElement('div');h.className='c-head';
+  h.innerHTML='<h2></h2><p class="c-meta">'+c.meta+'</p>';
+  h.firstChild.textContent=c.name;
+  s.appendChild(h);
+  var v=group(c,c.videos,'video','Videos');if(v)s.appendChild(v);
+  var p=group(c,c.posts,'post','Publicaciones');if(p)s.appendChild(p);
+  body.appendChild(s);
+});
+
+/* filtros */
+var tabs=document.querySelectorAll('.tab');
+function applyFilter(f){
+  tabs.forEach(function(c){c.setAttribute('aria-pressed',String(c.dataset.f===f))});
+  document.querySelectorAll('.grp').forEach(function(g){g.hidden=!(f==='all'||g.dataset.kind===f)});
+  document.querySelectorAll('.client').forEach(function(s){s.hidden=!s.querySelector('.grp:not([hidden])')});
+  document.querySelectorAll('.rubro').forEach(function(r){r.hidden=!r.querySelector('.client:not([hidden])')});
+}
+tabs.forEach(function(c){c.addEventListener('click',function(){applyFilter(c.dataset.f)})});
+
+/* visor */
+var lb=document.getElementById('lb'),stage=document.getElementById('lbStage'),ttl=document.getElementById('lbTitle');
+var list=[],cur=0,opener=null;
+function visibleTiles(){return Array.prototype.filter.call(document.querySelectorAll('.tile'),function(t){return !t.closest('[hidden]')})}
+function show(i){
+  list=visibleTiles();
+  cur=(i+list.length)%list.length;
+  var t=list[cur];stage.innerHTML='';
+  ttl.textContent=t.dataset.title;
+  var el;
+  if(t.dataset.kind==='video'){
+    el=document.createElement('video');el.controls=true;el.autoplay=true;el.playsInline=true;el.src=t.dataset.src;
+    el.setAttribute('aria-label',t.dataset.title);
+  }else{
+    el=document.createElement('img');el.src=t.dataset.src;el.alt=t.querySelector('img').alt;
+  }
+  stage.appendChild(el);
+}
+function open(t){
+  opener=t;lb.hidden=false;document.body.style.overflow='hidden';
+  show(visibleTiles().indexOf(t));document.getElementById('lbClose').focus();
+}
+function close(){
+  var v=stage.querySelector('video');if(v)v.pause();
+  stage.innerHTML='';lb.hidden=true;document.body.style.overflow='';
+  if(opener)opener.focus();
+}
+root.addEventListener('click',function(e){var t=e.target.closest('.tile');if(t)open(t)});
+document.getElementById('lbClose').addEventListener('click',close);
+document.getElementById('lbPrev').addEventListener('click',function(){show(cur-1)});
+document.getElementById('lbNext').addEventListener('click',function(){show(cur+1)});
+lb.addEventListener('click',function(e){if(e.target===lb||e.target===stage)close()});
+document.addEventListener('keydown',function(e){
+  if(lb.hidden)return;
+  if(e.key==='Escape')close();
+  else if(e.key==='ArrowLeft')show(cur-1);
+  else if(e.key==='ArrowRight')show(cur+1);
+});
+</script>
+
+</body>
+</html>
