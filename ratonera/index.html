@@ -1,0 +1,728 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Expediente Ratonera</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700;800&family=Special+Elite&display=swap" rel="stylesheet">
+<style>
+/* Concepto: expediente policial de Monkswell Manor. Una columna, pestañas fijas arriba,
+   tarjetas que se voltean para revelar la identidad real de cada personaje. */
+:root{
+  --bg:#E9EFF5; --surface:#FFFFFF; --surface-2:#DCE5EE; --ink:#16202D; --ink-soft:#4B5C70; --line:#BFCCDA;
+  --accent:#F2B90D; --on-accent:#16202D; --accent-text:#7A4E00; --stamp:#B3261E; --ok:#17784A; --bad:#B3261E;
+  --font-display:'Special Elite','Courier New',monospace;
+  --font-body:'Nunito Sans',system-ui,-apple-system,'Segoe UI',sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0D1520; --surface:#162131; --surface-2:#1F2E44; --ink:#E7EEF6; --ink-soft:#A3B3C7; --line:#2B3C55;
+    --accent:#F5C33B; --on-accent:#101827; --accent-text:#F5C33B; --stamp:#FF8A80; --ok:#62D6A0; --bad:#FF8A80;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0D1520; --surface:#162131; --surface-2:#1F2E44; --ink:#E7EEF6; --ink-soft:#A3B3C7; --line:#2B3C55;
+  --accent:#F5C33B; --on-accent:#101827; --accent-text:#F5C33B; --stamp:#FF8A80; --ok:#62D6A0; --bad:#FF8A80;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{
+  background:var(--bg); color:var(--ink);
+  font:400 16px/1.6 var(--font-body);
+  padding-block:0 56px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));
+  padding-right:max(16px,env(safe-area-inset-right,0px));
+}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--bg);z-index:30}
+.shell{max-width:760px;margin:0 auto}
+h1,h2{font-family:var(--font-display);font-weight:400;text-wrap:balance;margin:0}
+h2{font-size:27px;line-height:1.2;margin-bottom:10px}
+h3{font-size:18px;font-weight:800;margin:28px 0 8px;text-wrap:balance}
+h4{font-size:16px;font-weight:800;margin:0 0 4px}
+p{margin:0 0 12px}
+a{color:var(--accent-text)}
+.small{font-size:14px;color:var(--ink-soft)}
+.lead{font-size:18px;line-height:1.55}
+.eyebrow{font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft)}
+:focus-visible{outline:3px solid var(--accent-text);outline-offset:2px;border-radius:6px}
+
+/* Cabecera */
+.mast{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;padding-top:max(22px,calc(env(safe-area-inset-top,0px) + 8px));padding-bottom:6px}
+.mast h1{font-size:clamp(30px,8vw,44px);line-height:1.05;margin-top:6px}
+.mouse{width:96px;flex:none;height:auto}
+
+/* Pestañas */
+.nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--bg);border-bottom:1px solid var(--line);margin-bottom:22px}
+.tabs{display:flex;gap:6px;overflow-x:auto;padding:10px 0;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex:none;padding:8px 14px;border-radius:999px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);font:700 14px var(--font-body);text-decoration:none;position:relative}
+.tab.on{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.tab.seen:not(.on)::after{content:"";position:absolute;top:5px;right:6px;width:6px;height:6px;border-radius:50%;background:var(--ok)}
+
+/* Componentes comunes */
+.panel{min-width:0}
+.stamp{display:inline-block;font:400 13px var(--font-display);letter-spacing:.12em;text-transform:uppercase;color:var(--stamp);border:2px solid var(--stamp);padding:1px 9px;border-radius:5px;transform:rotate(-2deg)}
+.box{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px}
+.tint{background:color-mix(in srgb,var(--accent) 20%,var(--surface));border:1px solid color-mix(in srgb,var(--accent) 55%,var(--line));border-radius:14px;padding:16px 18px}
+.tint p:last-child,.box p:last-child{margin-bottom:0}
+.btn{font:800 15px var(--font-body);padding:10px 18px;border-radius:10px;border:1.5px solid var(--ink);background:var(--surface);color:var(--ink);cursor:pointer}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.btn:disabled{opacity:.45;cursor:default}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.bar{height:8px;background:var(--surface-2);border-radius:99px;overflow:hidden}
+.bar>i{display:block;height:100%;width:0;background:var(--accent);transition:width .35s}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+.chip{border:1.5px solid var(--line);background:var(--surface);border-radius:999px;padding:4px 12px;font-size:14px;font-weight:700}
+.facts{display:grid;grid-template-columns:minmax(0,8.5rem) minmax(0,1fr);margin:0;border-bottom:1px solid var(--line)}
+.facts dt,.facts dd{margin:0;padding:10px 0;border-top:1px solid var(--line)}
+.facts dt{font-weight:800;color:var(--ink-soft);font-size:14px;padding-right:10px}
+
+/* Plan */
+.plan{list-style:none;margin:14px 0 10px;padding:0;display:grid;gap:8px}
+.plan li{display:flex;gap:12px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 14px}
+.plan input{width:22px;height:22px;flex:none;accent-color:var(--accent-text)}
+.plan label{flex:1;min-width:0;font-weight:700;cursor:pointer}
+.plan label span{display:block;font-weight:400;font-size:14px;color:var(--ink-soft)}
+.plan a{font-weight:800;font-size:14px;flex:none}
+
+/* Listas de pasos con orden real */
+.events{list-style:none;counter-reset:ev;margin:0;padding:0}
+.events li{counter-increment:ev;position:relative;padding:0 0 14px 44px;min-width:0}
+.events li::before{content:counter(ev);position:absolute;left:0;top:0;width:30px;height:30px;border-radius:50%;background:var(--accent);color:var(--on-accent);font:400 15px/30px var(--font-display);text-align:center}
+.events li::after{content:"";position:absolute;left:14px;top:34px;bottom:4px;width:2px;background:var(--line)}
+.events li:last-child::after{display:none}
+
+/* Acordeón y preguntas */
+details.q{border-top:1px solid var(--line)}
+details.q:last-of-type{border-bottom:1px solid var(--line)}
+details.q summary{cursor:pointer;list-style:none;padding:14px 32px 14px 0;font-weight:700;position:relative}
+details.q summary::-webkit-details-marker{display:none}
+details.q summary::after{content:"+";position:absolute;right:4px;top:10px;font:400 24px var(--font-display);color:var(--accent-text)}
+details.q[open] summary::after{content:"\2212"}
+details.q .ans{padding:0 0 16px}
+details.q .ans p:last-child{margin-bottom:0}
+.model{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px;line-height:1.7}
+
+/* Rejilla de tarjetas informativas */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,230px),1fr));gap:12px}
+.item{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;min-width:0}
+.item .ex{margin:8px 0 0;font-size:14px;color:var(--ink-soft)}
+.item .ex b{color:var(--ink)}
+.years{display:grid;grid-template-columns:minmax(0,4.2rem) minmax(0,1fr);gap:0 14px;margin:0}
+.years dt{font:400 18px var(--font-display);color:var(--accent-text);padding:8px 0;border-top:1px solid var(--line)}
+.years dd{margin:0;padding:8px 0;border-top:1px solid var(--line)}
+
+/* Tarjetas que se voltean */
+.flip{display:grid;perspective:1000px;text-align:left;background:none;border:0;padding:0;margin:0;font:inherit;color:inherit;cursor:pointer;width:100%}
+.face{grid-area:1/1;backface-visibility:hidden;-webkit-backface-visibility:hidden;transition:transform .55s;border-radius:14px;padding:16px;border:1px solid var(--line);min-width:0;display:block}
+.face.front{background:var(--surface)}
+.face.back{background:var(--surface-2);border:2px solid var(--accent);transform:rotateY(180deg)}
+.flip.on .front{transform:rotateY(-180deg)}
+.flip.on .back{transform:rotateY(0)}
+.flip .name{display:block;font:400 21px/1.2 var(--font-display);margin-bottom:6px}
+.flip .tap{display:block;margin-top:10px;font-size:13px;font-weight:800;color:var(--accent-text)}
+.flip .stamp{margin-bottom:8px}
+.chars{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,235px),1fr));gap:12px}
+
+/* Cadena causal */
+.chain{list-style:none;margin:0;padding:0;display:grid;gap:0}
+.chain li{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 14px;position:relative;margin-bottom:22px}
+.chain li:last-child{margin-bottom:0}
+.chain li:not(:last-child)::after{content:"\2193";position:absolute;left:50%;bottom:-24px;transform:translateX(-50%);font:400 20px var(--font-display);color:var(--accent-text)}
+
+/* Quiz y tarjetas de estudio */
+.qcard{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px}
+.qcard h3{margin-top:14px;font-size:19px}
+.opts{display:grid;gap:10px;margin-top:14px}
+.opt{display:block;width:100%;text-align:left;font:700 16px/1.4 var(--font-body);padding:12px 14px;border-radius:10px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink);cursor:pointer}
+.opt:hover:not(:disabled){border-color:var(--accent-text)}
+.opt.right{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 16%,var(--surface))}
+.opt.wrong{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 14%,var(--surface))}
+.opt:disabled{cursor:default}
+.fb{margin-top:14px;min-height:1px}
+.fb .tag{font-weight:800}
+.fb .tag.ok{color:var(--ok)}
+.fb .tag.no{color:var(--bad)}
+.score{font:400 56px/1 var(--font-display);color:var(--accent-text)}
+.deck .face{min-height:230px;display:flex;flex-direction:column;justify-content:center;padding:22px}
+.deck .face .big{font:400 24px/1.25 var(--font-display)}
+.deck .face .small{margin-top:14px}
+
+footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--line);font-size:14px;color:var(--ink-soft)}
+
+@media (max-width:420px){
+  h2{font-size:24px}
+  .mouse{width:76px}
+  .facts{grid-template-columns:minmax(0,6.6rem) minmax(0,1fr)}
+}
+@media (prefers-reduced-motion: reduce){
+  .face,.bar>i{transition:none}
+}
+</style>
+
+</head>
+<body>
+<div class="shell">
+  <header class="mast">
+    <div style="min-width:0">
+      <div class="eyebrow">Monkswell Manor · Expediente de estudio</div>
+      <h1>La Ratonera</h1>
+    </div>
+    <svg class="mouse" viewBox="0 0 100 64" role="img" aria-label="Un ratón junto a un trozo de queso">
+      <path d="M4 58h92" stroke="var(--line)" stroke-width="2" stroke-linecap="round" fill="none"/>
+      <path d="M12 50c-7-1-10-8-6-14" stroke="var(--ink)" stroke-width="2" stroke-linecap="round" fill="none"/>
+      <ellipse cx="30" cy="47" rx="20" ry="11" fill="var(--surface-2)" stroke="var(--ink)" stroke-width="2"/>
+      <ellipse cx="51" cy="46" rx="11" ry="8" fill="var(--surface-2)" stroke="var(--ink)" stroke-width="2"/>
+      <circle cx="46" cy="37" r="6" fill="var(--surface)" stroke="var(--ink)" stroke-width="2"/>
+      <circle cx="54" cy="44" r="1.7" fill="var(--ink)"/>
+      <circle cx="62" cy="47" r="2.2" fill="var(--stamp)"/>
+      <path d="M72 58h26V40z" fill="var(--accent)" stroke="var(--ink)" stroke-width="2" stroke-linejoin="round"/>
+      <circle cx="90" cy="52" r="2.4" fill="var(--ink)"/>
+      <circle cx="82" cy="55" r="1.6" fill="var(--ink)"/>
+    </svg>
+  </header>
+
+  <nav class="nav" aria-label="Secciones"><div class="tabs" id="tabs"></div></nav>
+
+  <!-- INICIO -->
+  <section class="panel" id="p-inicio" data-tab="inicio">
+    <h2>Tu plan para esta noche</h2>
+    <p class="lead">Camil, aquí está todo lo que necesitas de La Ratonera. Sigue el orden, marca cada paso y llegas lista al examen en unos 80 minutos.</p>
+    <ul class="plan" id="plan"></ul>
+    <div class="bar" aria-hidden="true"><i id="planbar"></i></div>
+    <p class="small" id="plantxt" style="margin-top:8px"></p>
+
+    <h3>La obra en 30 segundos</h3>
+    <div class="tint">
+      <p>Ocho personas quedan atrapadas por la nieve en una casa de huéspedes cerca de Londres. Se enteran de que un asesino anda entre ellas y de que cualquiera puede ser la próxima víctima.</p>
+      <p>La explicación está en el pasado: tres niños maltratados en una granja, y uno de ellos murió. El asesino es quien menos se espera, el sargento que llegó a investigar.</p>
+    </div>
+
+    <h3>Ficha técnica</h3>
+    <dl class="facts">
+      <dt>Título original</dt><dd>The Mousetrap</dd>
+      <dt>Autora</dt><dd>Agatha Christie (Reino Unido)</dd>
+      <dt>Género</dt><dd>Dramático (obra de teatro)</dd>
+      <dt>Subgénero</dt><dd>Policial o de misterio</dd>
+      <dt>Estructura</dt><dd>Dos actos; el primero tiene dos escenas</dd>
+      <dt>Origen</dt><dd>Radioteatro «Three Blind Mice» (1947)</dd>
+      <dt>Estreno</dt><dd>6 de octubre de 1952, Teatro Royal de Nottingham</dd>
+      <dt>Espacio</dt><dd>Monkswell Manor, casa de huéspedes en las afueras de Londres. Todo ocurre en el salón principal.</dd>
+      <dt>Tiempo</dt><dd>Mediados del siglo XX (se suele indicar los años 50), durante unos pocos días de invierno</dd>
+      <dt>Personajes</dt><dd>Ocho en escena</dd>
+      <dt>Tema central</dt><dd>La venganza nacida de un pasado de abuso e indiferencia</dd>
+    </dl>
+
+    <h3>Dato que impresiona</h3>
+    <div class="box">
+      <span class="stamp">Récord mundial</span>
+      <p style="margin-top:10px">Es la obra que más tiempo estuvo en cartel de forma continua. Desde 1952 se presentó en Londres sin pausa hasta el 16 de marzo de 2020, cuando la pandemia obligó a cerrar. Se estrenó en 92 países y la vieron más de 60 millones de espectadores. Al terminar cada función se pide al público que no revele el final.</p>
+    </div>
+  </section>
+
+  <!-- RESUMEN -->
+  <section class="panel" id="p-resumen" data-tab="resumen" hidden>
+    <h2>Resumen detallado</h2>
+    <p class="small">Los nombres pueden cambiar un poco según la traducción. Usa siempre los de tu libro.</p>
+
+    <h3>Antes de la obra: lo que pasó en Longridge</h3>
+    <p>Para entender la obra hay que conocer el pasado, porque ahí está el origen del conflicto. La obra lo va revelando de a poco.</p>
+    <div class="grid">
+      <div class="item"><h4>Los niños</h4><p>Tres hermanos Corrigan: <b>Georgie</b>, <b>Kathy</b> y <b>Jimmy</b>. Fueron enviados a la granja Longridge, a cargo de un matrimonio.</p></div>
+      <div class="item"><h4>El maltrato</h4><p>Los esposos de la granja maltrataron a los niños. <b>Jimmy murió</b>. La mujer, Maureen, fue condenada y después cambió de apellido: Maureen Lyon.</p></div>
+      <div class="item"><h4>Los que no ayudaron</h4><p>La <b>Sra. Boyle</b> fue una de las magistradas que envió a los niños a esa granja y negó su responsabilidad. <b>Mollie</b> fue la maestra de Jimmy, que le pidió ayuda y ella no llegó a leer su carta a tiempo.</p></div>
+    </div>
+
+    <h3>La historia en orden</h3>
+    <ol class="events">
+      <li>Los jóvenes <b>Mollie y Giles Ralston</b> inauguran Monkswell Manor, su casa de huéspedes. Cae una fuerte nevada.</li>
+      <li>Por la radio informan del <b>asesinato de una mujer en Culver Street</b>, Londres. Es Maureen Lyon.</li>
+      <li>Llegan los primeros huéspedes: <b>Christopher Wren</b>, la <b>Sra. Boyle</b>, el <b>Mayor Metcalf</b> y la <b>Srta. Casewell</b>.</li>
+      <li>Aparece sin avisar el <b>Sr. Paravicini</b>, que dice que su coche quedó atascado en la nieve.</li>
+      <li>Llega el <b>sargento Trotter</b>. Explica que la policía encontró en la escena del crimen una pista con la dirección de la casa y una referencia a la canción «Tres ratones ciegos», que indica que habrá dos víctimas más.</li>
+      <li>Trotter advierte que <b>el asesino está en la casa</b>. Todos pasan a ser sospechosos y la comunicación por teléfono queda cortada.</li>
+      <li>Se apagan las luces, se oye silbar la canción y la <b>Sra. Boyle es asesinada</b>.</li>
+      <li>Trotter interroga a todos. Cada uno oculta algo. <b>Mollie y Giles</b> se habían ocultado que viajaron a Londres para comprar regalos de aniversario y empiezan a desconfiar el uno del otro.</li>
+      <li>Trotter propone <b>reconstruir lo ocurrido</b>, con cada uno repitiendo lo que hacía pero en otro lugar.</li>
+      <li>Trotter se revela como <b>Georgie Corrigan</b> y se dispone a atacar a Mollie, la tercera víctima que tenía planeada.</li>
+      <li><b>Kathy</b>, la Srta. Casewell, confiesa que es su hermana y lo convence de detenerse. El <b>Mayor Metcalf</b>, policía encubierto, lo sedó.</li>
+      <li>Mollie y Giles se reconcilian. Georgie recibirá el cuidado que necesita.</li>
+    </ol>
+
+    <h3>Resumen por partes</h3>
+    <details class="q" open><summary>Planteamiento: la casa, la nieve y los huéspedes</summary><div class="ans">
+      <p>Mollie y Giles Ralston inauguran su casa de huéspedes en una noche de tormenta de nieve. Por la radio se anuncia un asesinato en Culver Street. Llegan los huéspedes, todos con personalidades extrañas, y el ambiente se vuelve tenso. La nieve los aísla del mundo exterior.</p>
+    </div></details>
+    <details class="q"><summary>Nudo: la investigación y el segundo crimen</summary><div class="ans">
+      <p>El sargento Trotter llega y avisa que el asesino se dirige a Monkswell Manor y que habrá más víctimas. La Sra. Boyle es asesinada y nadie puede salir. Los huéspedes se acusan entre sí, y Mollie y Giles dudan uno del otro por sus mentiras sobre Londres. Las pistas llevan a la granja Longridge.</p>
+    </div></details>
+    <details class="q"><summary>Clímax: la revelación de Trotter</summary><div class="ans">
+      <p>Durante la reconstrucción de los hechos, Trotter muestra quién es: Georgie Corrigan, hermano del niño que murió en Longridge. Culpa a Mollie por no haber ayudado a Jimmy y se dispone a matarla.</p>
+    </div></details>
+    <details class="q"><summary>Desenlace: Kathy lo detiene y todo se aclara</summary><div class="ans">
+      <p>Kathy revela que es su hermana y lo convence de detenerse. Metcalf, policía encubierto, lo sedó. Se aclara el papel de cada personaje y los falsos sospechosos quedan libres. Mollie y Giles se reconcilian.</p>
+    </div></details>
+
+    <h3>Lo que debes recordar</h3>
+    <div class="tint">
+      <span class="stamp">Clave de examen</span>
+      <p style="margin-top:10px">Asesino: <b>Trotter (Georgie)</b>. Móvil: <b>venganza</b> por Jimmy. Lugar: <b>Monkswell Manor</b>. Clima: <b>nieve</b>. Víctimas: <b>Maureen Lyon, Sra. Boyle</b>. Objetivo final: <b>Mollie</b>. Final: lo detiene <b>Kathy</b> y Metcalf lo sedó.</p>
+    </div>
+  </section>
+
+  <!-- AUTORA -->
+  <section class="panel" id="p-autora" data-tab="autora" hidden>
+    <h2>Agatha Christie</h2>
+    <p class="lead">Escritora británica, conocida en todo el mundo como la «Dama del Crimen». Es la autora más publicada de todos los tiempos, solo superada por la Biblia y Shakespeare.</p>
+    <div class="chips">
+      <span class="chip">Nació en 1890</span><span class="chip">Torquay, Inglaterra</span><span class="chip">Murió en 1976</span><span class="chip">Más de 60 novelas policiales</span>
+    </div>
+    <p>Su nombre de nacimiento fue Agatha Mary Clarissa Miller. Durante la Primera Guerra Mundial trabajó como enfermera voluntaria y luego en la farmacia de un hospital, donde aprendió sobre venenos. Ese conocimiento aparece en muchas de sus tramas. Se calcula que sus libros han vendido cerca de dos mil millones de ejemplares.</p>
+
+    <h3>Detectives que creó</h3>
+    <div class="grid">
+      <div class="item"><h4>Hércules Poirot</h4><p>Detective belga, ordenado y muy observador. Aparece en <i>El misterioso caso de Styles</i> y <i>Asesinato en el Orient Express</i>.</p></div>
+      <div class="item"><h4>Miss Marple</h4><p>Anciana de pueblo que resuelve crímenes gracias a su conocimiento de la naturaleza humana.</p></div>
+    </div>
+
+    <h3>Obras famosas</h3>
+    <div class="chips">
+      <span class="chip">Asesinato en el Orient Express</span><span class="chip">Muerte en el Nilo</span><span class="chip">Diez negritos (Y no quedó ninguno)</span><span class="chip">El asesinato de Roger Ackroyd</span><span class="chip">Testigo de cargo</span><span class="chip">La ratonera</span>
+    </div>
+    <p>También escribió seis novelas románticas con el seudónimo <b>Mary Westmacott</b>.</p>
+
+    <h3>Línea de vida</h3>
+    <dl class="years">
+      <dt>1890</dt><dd>Nace en Torquay, Inglaterra.</dd>
+      <dt>1914</dt><dd>Se casa con Archibald Christie, de quien toma el apellido. Estalla la Primera Guerra Mundial y trabaja como enfermera voluntaria.</dd>
+      <dt>1920</dt><dd>Publica su primera novela, <i>El misterioso caso de Styles</i>, donde debuta Poirot.</dd>
+      <dt>1926</dt><dd>Desaparece once días y es hallada con vida. El episodio es un misterio famoso. Ese año publica <i>El asesinato de Roger Ackroyd</i>.</dd>
+      <dt>1930</dt><dd>Se casa con el arqueólogo Max Mallowan. Aparece Miss Marple.</dd>
+      <dt>1934</dt><dd><i>Asesinato en el Orient Express</i>. En 1937 publica <i>Muerte en el Nilo</i> y en 1939, <i>Diez negritos</i>.</dd>
+      <dt>1947</dt><dd>Escribe el radioteatro <i>Three Blind Mice</i> para el cumpleaños número 80 de la reina María. Es el origen de La Ratonera.</dd>
+      <dt>1952</dt><dd>Estrena <i>La Ratonera</i> en teatro. Regala los derechos a su nieto Mathew Prichard.</dd>
+      <dt>1971</dt><dd>La reina la nombra Dama del Imperio Británico.</dd>
+      <dt>1976</dt><dd>Muere a los 85 años.</dd>
+    </dl>
+
+    <h3>Cómo nació La Ratonera</h3>
+    <div class="tint">
+      <p>Christie escribió un radioteatro corto llamado <i>Three Blind Mice</i> («Tres ratones ciegos»). Luego lo convirtió en la obra de teatro que hoy conocemos. Por eso la canción infantil «Tres ratones ciegos» es el símbolo central de la historia.</p>
+    </div>
+  </section>
+
+  <!-- ESTILO -->
+  <section class="panel" id="p-estilo" data-tab="estilo" hidden>
+    <h2>Estilo literario</h2>
+    <p class="lead">La Ratonera es una <b>obra dramática</b> del subgénero <b>policial o de misterio</b>. Su estructura es la del «whodunit» (del inglés <i>who done it</i>, «¿quién lo hizo?»): todo gira en torno a descubrir al culpable.</p>
+    <h3>Características del estilo de Christie</h3>
+    <div class="grid" id="estilo-grid"></div>
+
+    <h3>Palabras del teatro que debes saber</h3>
+    <dl class="facts">
+      <dt>Acto</dt><dd>Parte grande en que se divide una obra. Esta tiene dos.</dd>
+      <dt>Escena</dt><dd>División de un acto, cuando cambia la situación o los personajes en escena.</dd>
+      <dt>Acotación</dt><dd>Indicaciones del autor sobre el escenario, los movimientos y el tono. Suelen ir entre paréntesis.</dd>
+      <dt>Diálogo</dt><dd>Conversación entre personajes. Es la base del texto dramático.</dd>
+      <dt>Conflicto dramático</dt><dd>Choque de fuerzas que mueve la acción. Aquí, el asesino contra los atrapados en la casa.</dd>
+    </dl>
+
+    <h3>Espacio y tiempo</h3>
+    <div class="grid">
+      <div class="item"><h4>Espacio</h4><p>Monkswell Manor, casa de huéspedes en las afueras de Londres. Toda la acción sucede en el <b>salón principal</b>. Es un lugar cerrado y sin salida por la nieve, lo que crea un ambiente asfixiante.</p></div>
+      <div class="item"><h4>Tiempo</h4><p>Mediados del siglo XX, en invierno, en pocos días. El tiempo es breve y continuo, lo que aumenta la tensión.</p></div>
+    </div>
+  </section>
+
+  <!-- PERSONAJES -->
+  <section class="panel" id="p-personajes" data-tab="personajes" hidden>
+    <h2>Personajes</h2>
+    <p>Toca cada tarjeta para voltearla. Adelante verás <b>cómo parece</b> el personaje. Atrás está <b>quién es en realidad</b> y cuál es su papel.</p>
+    <div class="chars" id="chars"></div>
+
+    <h3>Personajes que no aparecen pero mueven la historia</h3>
+    <div class="grid">
+      <div class="item"><h4>Jimmy Corrigan</h4><p>El niño que murió en la granja Longridge. Su muerte es la causa de todo el conflicto.</p></div>
+      <div class="item"><h4>Maureen Lyon</h4><p>Antes se llamaba Maureen Stanning. Maltrató a los niños en Longridge y es la primera víctima, asesinada en Culver Street.</p></div>
+    </div>
+
+    <h3>Los tres objetivos de Georgie</h3>
+    <div class="box">
+      <p>Georgie eligió a tres adultos que, según él, fallaron a los niños: <b>Maureen</b> (la mujer de la granja), la <b>Sra. Boyle</b> (la magistrada) y <b>Mollie</b> (la maestra). Son tres, como los ratones de la canción.</p>
+      <p class="small">Una lectura posible para tus respuestas de análisis: los «tres ratones ciegos» representan a los adultos que no quisieron ver el sufrimiento de los niños.</p>
+    </div>
+  </section>
+
+  <!-- PROBLEMÁTICA -->
+  <section class="panel" id="p-problema" data-tab="problema" hidden>
+    <h2>La problemática</h2>
+    <div class="tint">
+      <span class="stamp">Respuesta corta</span>
+      <p style="margin-top:10px">El problema central es la <b>venganza que nace de un pasado de maltrato e indiferencia</b>. Georgie, que de niño sufrió abuso y perdió a su hermano, mata a quienes considera responsables de no haberlos protegido.</p>
+    </div>
+
+    <h3>Cómo se encadena el conflicto</h3>
+    <ol class="chain">
+      <li>Tres niños son maltratados en la granja Longridge.</li>
+      <li>Jimmy muere.</li>
+      <li>Los adultos que podían ayudar no actúan a tiempo o no asumen su responsabilidad.</li>
+      <li>Georgie crece con rencor y trauma.</li>
+      <li>Decide vengarse de tres personas.</li>
+      <li>Kathy lo detiene antes del tercer crimen.</li>
+    </ol>
+
+    <h3>Tipos de conflicto</h3>
+    <div class="grid">
+      <div class="item"><h4>Externo</h4><p>Los huéspedes contra un asesino desconocido, y la desconfianza entre ellos, incluso entre Mollie y Giles.</p></div>
+      <div class="item"><h4>Interno</h4><p>Georgie vive atrapado en su trauma. Mollie carga con la acusación de no haber ayudado a Jimmy.</p></div>
+      <div class="item"><h4>Social</h4><p>La indiferencia de los adultos y de las autoridades ante el maltrato infantil.</p></div>
+    </div>
+
+    <h3>Temas de la obra</h3>
+    <dl class="facts">
+      <dt>Venganza y justicia</dt><dd>Georgie busca justicia, pero con violencia. La obra muestra que la venganza no repara el daño.</dd>
+      <dt>El pasado que vuelve</dt><dd>Lo ocurrido años atrás regresa y afecta a quienes lo ignoraron.</dd>
+      <dt>Negligencia</dt><dd>No actuar a tiempo también tiene consecuencias graves.</dd>
+      <dt>Trauma infantil</dt><dd>El maltrato sin ayuda deja heridas que pueden durar toda la vida.</dd>
+      <dt>Apariencia y realidad</dt><dd>Nada es lo que parece: el policía es el asesino y el militar es un policía.</dd>
+      <dt>Miedo y desconfianza</dt><dd>El encierro hace que todos sospechen de todos.</dd>
+    </dl>
+
+    <h3>Mensaje de la obra</h3>
+    <div class="box">
+      <p>Ignorar el sufrimiento de los demás tiene consecuencias, y la violencia nunca es la solución. Hay que ayudar a tiempo a quien lo necesita y atender el dolor antes de que se convierta en rencor.</p>
+    </div>
+  </section>
+
+  <!-- TARJETAS -->
+  <section class="panel" id="p-tarjetas" data-tab="tarjetas" hidden>
+    <h2>Tarjetas de estudio</h2>
+    <p>Toca la tarjeta para ver la respuesta. Si la sabes, pulsa «La sé». Si no, pulsa «Repasar» y volverá al final. Terminas cuando no queden pendientes.</p>
+    <div id="fc"></div>
+  </section>
+
+  <!-- QUIZ -->
+  <section class="panel" id="p-quiz" data-tab="quiz" hidden>
+    <h2>Quiz de práctica</h2>
+    <p>21 preguntas como las del examen. Las opciones cambian de orden cada vez.</p>
+    <div id="quiz"></div>
+  </section>
+
+  <!-- EXAMEN -->
+  <section class="panel" id="p-examen" data-tab="examen" hidden>
+    <h2>Posibles preguntas de examen</h2>
+    <p>Truco para estudiar: lee la pregunta, responde en voz alta con tus palabras y recién entonces abre la respuesta.</p>
+
+    <h3>Preguntas cortas</h3>
+    <div id="ex-a"></div>
+
+    <h3>Preguntas de desarrollo</h3>
+    <div id="ex-b"></div>
+
+    <h3>Párrafos modelo</h3>
+    <p class="small">Si te piden «redacta un párrafo», usa esta fórmula: <b>idea principal</b>, luego <b>dos o tres datos</b> de la obra y cierra con una <b>conclusión</b>. Usa conectores como «además», «sin embargo», «por eso» y «finalmente».</p>
+    <div id="ex-c"></div>
+
+    <h3>Antes de entregar</h3>
+    <div class="box">
+      <ul style="margin:0;padding-left:20px">
+        <li>Escribe bien los nombres: Agatha Christie, Monkswell Manor, Georgie, Kathy, Trotter.</li>
+        <li>Responde con oraciones completas, sin quedarte en una palabra.</li>
+        <li>En preguntas de opinión, da tu postura y una razón sacada de la obra.</li>
+        <li>Revisa ortografía y puntuación al final.</li>
+      </ul>
+    </div>
+  </section>
+
+  <footer>
+    Fuentes consultadas:
+    <a href="https://es.wikipedia.org/wiki/La_ratonera" target="_blank" rel="noopener">Wikipedia</a>,
+    <a href="https://www.litcharts.com/lit/the-mousetrap/summary" target="_blank" rel="noopener">LitCharts</a> y
+    <a href="https://www.planetadelibros.com" target="_blank" rel="noopener">Planeta de Libros</a>.
+    Si tu profesora dio un dato distinto, escribe el de ella.
+  </footer>
+</div>
+
+<script>
+(function(){
+  var $=function(s,r){return (r||document).querySelector(s)};
+  var $$=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))};
+  var store={
+    get:function(k){try{return localStorage.getItem(k)}catch(e){return null}},
+    set:function(k,v){try{localStorage.setItem(k,v)}catch(e){}}
+  };
+  function shuffle(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t}return a}
+
+  /* ---------- Pestañas ---------- */
+  var TABS=[['inicio','Inicio'],['resumen','Resumen'],['autora','Autora'],['estilo','Estilo'],['personajes','Personajes'],['problema','Problemática'],['tarjetas','Tarjetas'],['quiz','Quiz'],['examen','Examen']];
+  var seen={};
+  try{seen=JSON.parse(store.get('rat-seen')||'{}')||{}}catch(e){seen={}}
+  var tabsEl=$('#tabs');
+  TABS.forEach(function(t){
+    var a=document.createElement('a');
+    a.className='tab';a.href='#'+t[0];a.dataset.id=t[0];a.textContent=t[1];
+    a.addEventListener('click',function(e){e.preventDefault();go(t[0])});
+    tabsEl.appendChild(a);
+  });
+  function go(id){
+    try{if(location.hash!=='#'+id)location.hash=id}catch(e){}
+    show(id);
+  }
+  function show(id){
+    if(!TABS.some(function(t){return t[0]===id}))id='inicio';
+    $$('.panel').forEach(function(p){p.hidden=p.dataset.tab!==id});
+    $$('.tab').forEach(function(b){
+      var on=b.dataset.id===id;
+      b.classList.toggle('on',on);
+      b.setAttribute('aria-current',on?'page':'false');
+      if(seen[b.dataset.id])b.classList.add('seen');
+      if(on&&b.scrollIntoView){try{b.scrollIntoView({inline:'center',block:'nearest'})}catch(e){}}
+    });
+    seen[id]=1;store.set('rat-seen',JSON.stringify(seen));
+    window.scrollTo(0,0);
+  }
+  window.addEventListener('hashchange',function(){show((location.hash||'#inicio').slice(1))});
+
+  /* ---------- Plan ---------- */
+  var PLAN=[
+    ['Lee el Resumen y la Problemática','15 minutos','resumen'],
+    ['Voltea todas las tarjetas de Personajes','10 minutos','personajes'],
+    ['Repasa la Autora y el Estilo','10 minutos','autora'],
+    ['Pasa las Tarjetas hasta dominarlas','15 minutos','tarjetas'],
+    ['Haz el Quiz y repite lo que falles','10 minutos','quiz'],
+    ['Responde las preguntas de Examen en voz alta','20 minutos','examen']
+  ];
+  var planDone=[];
+  try{planDone=JSON.parse(store.get('rat-plan')||'[]')||[]}catch(e){planDone=[]}
+  function renderPlan(){
+    var ul=$('#plan');ul.innerHTML='';
+    PLAN.forEach(function(p,i){
+      var li=document.createElement('li');
+      li.innerHTML='<input type="checkbox" id="plan'+i+'"><label for="plan'+i+'">'+p[0]+'<span>'+p[1]+'</span></label><a href="#'+p[2]+'">Ir</a>';
+      var cb=$('input',li);cb.checked=!!planDone[i];
+      cb.addEventListener('change',function(){planDone[i]=cb.checked;store.set('rat-plan',JSON.stringify(planDone));planStat()});
+      $('a',li).addEventListener('click',function(e){e.preventDefault();go(p[2])});
+      ul.appendChild(li);
+    });
+    planStat();
+  }
+  function planStat(){
+    var n=PLAN.filter(function(p,i){return planDone[i]}).length;
+    $('#planbar').style.width=(n/PLAN.length*100)+'%';
+    $('#plantxt').textContent=n===PLAN.length?'Plan completo. Buen trabajo, Camil.':n+' de '+PLAN.length+' pasos completados';
+  }
+
+  /* ---------- Estilo ---------- */
+  var ESTILO=[
+    ['Espacio cerrado','Los personajes quedan encerrados en un solo lugar, sin poder salir.','Todo ocurre en el salón de Monkswell Manor y la nieve impide huir.'],
+    ['Unidad de lugar y tiempo','Un escenario y pocos días seguidos.','La acción no sale del salón y transcurre sin saltos grandes.'],
+    ['Suspenso constante','Se alarga la tensión para que el público quiera saber más.','El teléfono cortado, las luces que se apagan y el silbido de la canción.'],
+    ['Pistas falsas','Datos que hacen sospechar de inocentes.','Wren y Paravicini parecen culpables. Giles y Mollie también por sus mentiras.'],
+    ['Personajes con secretos','Cada uno oculta algo y su máscara social esconde otra realidad.','Casewell esconde su identidad y Metcalf, su verdadero oficio.'],
+    ['Giro final','El desenlace sorprende y cambia lo que creíamos.','El policía que investiga es el asesino.'],
+    ['Diálogos ágiles y lenguaje sencillo','Frases directas, fáciles de seguir en el escenario.','Los interrogatorios hacen avanzar la trama a través de preguntas y respuestas.'],
+    ['Símbolo central','Un elemento que representa una idea más profunda.','La canción «Tres ratones ciegos» y la ratonera, la trampa donde todos están atrapados.'],
+    ['Humor británico ligero','Toques de ironía que aligeran la tensión.','Personajes excéntricos como Wren y Paravicini.'],
+    ['Pregunta central: ¿quién lo hizo?','El público busca al culpable junto con los personajes, sin ventaja.','Hasta el final no sabemos quién es el asesino.']
+  ];
+  $('#estilo-grid').innerHTML=ESTILO.map(function(e){
+    return '<div class="item"><h4>'+e[0]+'</h4><p>'+e[1]+'</p><p class="ex"><b>En la obra:</b> '+e[2]+'</p></div>';
+  }).join('');
+
+  /* ---------- Personajes ---------- */
+  var CHARS=[
+    ['Mollie Ralston','Joven dueña de Monkswell Manor. Dulce, amable y algo insegura.','Fue la maestra de Jimmy, el niño que murió. Georgie la ve como responsable y la elige como tercera víctima. Es la protagonista.'],
+    ['Giles Ralston','Esposo de Mollie y copropietario. Seguro de sí y algo arrogante.','Su comportamiento reservado lo hace parecer sospechoso porque ocultó un viaje a Londres. Es pista falsa y al final apoya a Mollie.'],
+    ['Christopher Wren','Joven huésped, hiperactivo, infantil y excéntrico.','El sospechoso ideal, pero inocente. Es una pista falsa que además aporta humor.'],
+    ['Sra. Boyle','Huésped de mediana edad, criticona y autoritaria. Todo le parece mal.','Fue una de las magistradas que envió a los niños a Longridge y nunca asumió su culpa. Es la segunda víctima.'],
+    ['Mayor Metcalf','Militar de mediana edad, serio y reservado.','Es un policía encubierto que investigaba el caso. Al final sedó a Georgie.'],
+    ['Srta. Casewell','Joven de modales poco femeninos, fría y reservada.','Es Kathy Corrigan, hermana de Georgie y de Jimmy. Ocultaba su identidad y al final calma a su hermano y promete conseguirle ayuda.'],
+    ['Sr. Paravicini','Extranjero que llega sin avisar, extraño y con gusto por asustar.','Otra pista falsa. Parece sospechoso, pero no está relacionado con los crímenes.'],
+    ['Sgto. Trotter','Joven detective que llega para proteger a los huéspedes y dirigir la investigación.','Es Georgie Corrigan, el asesino. Se hace pasar por policía para vengar a su hermano Jimmy.']
+  ];
+  $('#chars').innerHTML=CHARS.map(function(c,i){
+    return '<button type="button" class="flip" aria-pressed="false" aria-label="Voltear tarjeta de '+c[0]+'">'+
+      '<span class="face front"><span class="name">'+c[0]+'</span><span class="eyebrow" style="display:block;margin-bottom:6px">Parece</span><span style="display:block">'+c[1]+'</span><span class="tap">Toca para ver quién es</span></span>'+
+      '<span class="face back"><span class="stamp">Identidad real</span><span class="name">'+c[0]+'</span><span style="display:block">'+c[2]+'</span></span>'+
+      '</button>';
+  }).join('');
+  $$('#chars .flip').forEach(function(b){
+    b.addEventListener('click',function(){var on=b.classList.toggle('on');b.setAttribute('aria-pressed',on)});
+  });
+
+  /* ---------- Tarjetas de estudio ---------- */
+  var CARDS=[
+    ['¿Quién escribió La Ratonera?','Agatha Christie, escritora británica (1890-1976), la «Dama del Crimen».'],
+    ['Título original','The Mousetrap.'],
+    ['Género y subgénero','Género dramático (teatro). Subgénero policial o de misterio.'],
+    ['Estructura','Dos actos. El primero tiene dos escenas.'],
+    ['Estreno','6 de octubre de 1952, en el Teatro Royal de Nottingham.'],
+    ['¿De dónde nació la obra?','De un radioteatro de 1947 llamado «Three Blind Mice», escrito por Christie para el cumpleaños de la reina María.'],
+    ['Récord de la obra','Es la obra con más permanencia ininterrumpida en cartel del mundo (Londres, desde 1952).'],
+    ['Lugar','Monkswell Manor, casa de huéspedes en las afueras de Londres. Todo ocurre en el salón.'],
+    ['¿Qué aísla a los personajes?','Una fuerte tormenta de nieve.'],
+    ['Dueños de la casa','Mollie y Giles Ralston, un matrimonio joven.'],
+    ['¿Cuántos personajes hay en escena?','Ocho.'],
+    ['Primera víctima','Maureen Lyon, asesinada en Culver Street, Londres, antes de que empiece la obra.'],
+    ['Segunda víctima','La Sra. Boyle, dentro de Monkswell Manor.'],
+    ['Tercera víctima planeada','Mollie. Georgie quería matarla, pero Kathy lo detiene.'],
+    ['¿Quién es el asesino?','El sargento Trotter, que en realidad es Georgie Corrigan.'],
+    ['Móvil del crimen','Venganza por el maltrato y la muerte de su hermano Jimmy en la granja Longridge.'],
+    ['Granja Longridge','Lugar donde tres hermanos fueron maltratados. Jimmy murió allí.'],
+    ['La Srta. Casewell','En realidad es Kathy, hermana de Georgie. Lo calma al final.'],
+    ['El Mayor Metcalf','Es un policía encubierto que investigaba el caso. Sedó a Georgie.'],
+    ['Wren y Paravicini','Pistas falsas: parecen sospechosos pero son inocentes.'],
+    ['La Sra. Boyle en el pasado','Magistrada que envió a los niños a Longridge y negó su responsabilidad.'],
+    ['¿Por qué Mollie era un blanco?','Fue la maestra de Jimmy. Él pidió ayuda y ella no llegó a leer su carta a tiempo.'],
+    ['La canción','«Tres ratones ciegos». La silba el asesino. Son tres como los objetivos de Georgie.'],
+    ['Significado del título','Los personajes quedan atrapados como ratones en una trampa.'],
+    ['Tema central','La venganza que nace de un pasado de abuso e indiferencia.'],
+    ['Mensaje','Ignorar el sufrimiento ajeno tiene consecuencias y la violencia no repara el daño.'],
+    ['¿Qué es un «whodunit»?','Historia de misterio centrada en descubrir quién cometió el crimen.'],
+    ['¿Qué es una acotación?','Indicación del autor sobre el escenario, los movimientos o el tono de los personajes.'],
+    ['¿Qué es una pista falsa?','Dato que hace sospechar de un inocente para despistar al público.']
+  ];
+  var fc={queue:[],known:0,total:0,flipped:false};
+  function fcStart(list){
+    fc.queue=shuffle(list.map(function(c,i){return i}));
+    fc.known=0;fc.total=fc.queue.length;fc.flipped=false;fcRender();
+  }
+  function fcRender(){
+    var el=$('#fc');
+    if(!fc.queue.length){
+      el.innerHTML='<div class="qcard"><span class="stamp">Caso cerrado</span><h3>Dominaste las '+fc.total+' tarjetas</h3><p>Ahora pasa al Quiz y a las preguntas de Examen.</p><div class="row"><button type="button" class="btn primary" id="fc-again">Volver a empezar</button><button type="button" class="btn" id="fc-quiz">Ir al Quiz</button></div></div>';
+      $('#fc-again').onclick=function(){fcStart(CARDS)};
+      $('#fc-quiz').onclick=function(){go('quiz')};
+      return;
+    }
+    var c=CARDS[fc.queue[0]];
+    el.innerHTML='<div class="row" style="justify-content:space-between;margin-bottom:8px"><span class="small"><b>'+fc.known+'</b> sabidas · <b>'+fc.queue.length+'</b> pendientes</span><button type="button" class="btn" id="fc-shuf" style="padding:6px 12px;font-size:14px">Mezclar</button></div>'+
+      '<div class="bar" aria-hidden="true" style="margin-bottom:14px"><i style="width:'+(fc.known/fc.total*100)+'%"></i></div>'+
+      '<button type="button" class="flip deck'+(fc.flipped?' on':'')+'" id="fc-card" aria-label="Voltear tarjeta">'+
+        '<span class="face front"><span class="eyebrow">Pregunta</span><span class="big">'+c[0]+'</span><span class="small">Toca para ver la respuesta</span></span>'+
+        '<span class="face back"><span class="eyebrow">Respuesta</span><span class="big" style="font-size:21px">'+c[1]+'</span></span>'+
+      '</button>'+
+      '<div class="row" style="margin-top:14px"><button type="button" class="btn primary" id="fc-know">La sé</button><button type="button" class="btn" id="fc-redo">Repasar</button></div>';
+    $('#fc-card').onclick=function(){fc.flipped=!fc.flipped;this.classList.toggle('on',fc.flipped)};
+    $('#fc-know').onclick=function(){fc.queue.shift();fc.known++;fc.flipped=false;fcRender()};
+    $('#fc-redo').onclick=function(){fc.queue.push(fc.queue.shift());fc.flipped=false;fcRender()};
+    $('#fc-shuf').onclick=function(){fc.queue=shuffle(fc.queue);fc.flipped=false;fcRender()};
+  }
+
+  /* ---------- Quiz ---------- */
+  var QUIZ=[
+    ['¿Quién escribió La Ratonera?',['Agatha Christie','Arthur Conan Doyle','Jane Austen','Edgar Allan Poe'],'Agatha Christie, escritora británica conocida como la Dama del Crimen.'],
+    ['¿A qué género literario pertenece la obra?',['Dramático (teatro)','Narrativo (novela)','Lírico','Ensayo'],'Es una obra de teatro: se escribe para ser representada, con diálogos y acotaciones.'],
+    ['¿Cuál es su subgénero?',['Policial o de misterio','Ciencia ficción','Comedia romántica','Histórico'],'Gira en torno a descubrir a un asesino, como en toda historia policial.'],
+    ['¿Dónde ocurre la historia?',['En Monkswell Manor, una casa de huéspedes cerca de Londres','En un castillo de Escocia','En un tren en marcha','En una granja'],'Toda la acción sucede en el salón de Monkswell Manor.'],
+    ['¿Qué deja aislados a los personajes?',['Una tormenta de nieve','Un incendio','Una inundación','Un terremoto'],'La nieve impide salir y crea el ambiente de encierro que da título a la obra.'],
+    ['¿Cuántos personajes aparecen en escena?',['Ocho','Cinco','Diez','Doce'],'Mollie, Giles, Wren, la Sra. Boyle, Metcalf, la Srta. Casewell, Paravicini y Trotter.'],
+    ['¿Quién fue la primera víctima?',['Maureen Lyon','La Sra. Boyle','Mollie','La Srta. Casewell'],'Fue asesinada en Culver Street, Londres, antes de que comience la obra.'],
+    ['¿Qué canción acompaña los crímenes?',['Tres ratones ciegos','Los tres cerditos','Cumpleaños feliz','God Save the Queen'],'Es una canción infantil. Además, los objetivos del asesino son tres.'],
+    ['¿Quién resulta ser el asesino?',['El sargento Trotter, en realidad Georgie','Christopher Wren','Giles Ralston','El Sr. Paravicini'],'Georgie Corrigan se hace pasar por policía para llegar a sus víctimas.'],
+    ['¿Cuál es el motivo del asesino?',['Venganza por el maltrato y la muerte de su hermano','Dinero','Celos','Una herencia'],'Quiere castigar a quienes no protegieron a los niños de Longridge.'],
+    ['¿Qué ocurrió en la granja Longridge?',['Tres niños fueron maltratados y uno murió','Hubo un incendio','Se celebró una boda','Unos ladrones asaltaron la casa'],'Los hermanos Corrigan sufrieron maltrato y Jimmy murió.'],
+    ['¿Quién es en realidad la Srta. Casewell?',['Kathy, hermana de Georgie','Una detective','La esposa de Metcalf','Una amiga de Mollie'],'Es Kathy Corrigan. Al final convence a su hermano de detenerse.'],
+    ['¿Qué es en realidad el Mayor Metcalf?',['Un policía encubierto','Un militar retirado sin relación con el caso','El asesino','El hermano de Mollie'],'Investigaba el caso en secreto y sedó a Georgie.'],
+    ['¿Qué papel tuvo la Sra. Boyle en el pasado?',['Magistrada que envió a los niños a la granja','Directora de una escuela','Enfermera','Cocinera de Longridge'],'Negó su responsabilidad por lo que les ocurrió, por eso se convierte en la segunda víctima.'],
+    ['¿Por qué Mollie era un blanco de Georgie?',['Fue maestra de Jimmy y no llegó a ayudarlo','Heredó la casa','Era hermana de Maureen','Lo denunció a la policía'],'Jimmy le pidió ayuda y ella no leyó su carta a tiempo.'],
+    ['¿Qué función cumplen Wren y Paravicini?',['Son pistas falsas','Son las víctimas','Son cómplices del asesino','Son detectives'],'Parecen sospechosos para despistar al público, pero son inocentes.'],
+    ['¿Por qué se llama La Ratonera?',['Los personajes quedan atrapados como ratones en una trampa','Por una plaga de ratones','Es el nombre de la casa','Es el apodo del detective'],'La nieve los encierra y además la canción habla de ratones.'],
+    ['¿En qué año se estrenó la obra?',['1952','1920','1975','1990'],'El 6 de octubre de 1952 en Nottingham.'],
+    ['¿Cuál es el tema central?',['La venganza nacida de un pasado de abuso e indiferencia','El amor imposible','La guerra','La amistad'],'Los demás temas giran alrededor de esa idea.'],
+    ['¿Qué es una acotación?',['Indicación del autor sobre escenario, movimientos y tono','Un verso','Una canción','Un diálogo largo'],'Las acotaciones son propias del texto dramático.'],
+    ['¿Qué récord tiene La Ratonera?',['Es la obra que más tiempo se mantuvo en cartel sin interrupción','Es la obra más corta','Es la primera obra de televisión','Es la más traducida de la historia'],'En Londres se presentó sin pausa de 1952 a 2020.']
+  ];
+  var qz={list:[],i:0,score:0,wrong:[],done:false};
+  function qzStart(list){
+    qz={list:shuffle(list),i:0,score:0,wrong:[],done:false};qzRender();
+  }
+  function qzRender(){
+    var el=$('#quiz');
+    if(qz.i>=qz.list.length){
+      var pct=Math.round(qz.score/qz.list.length*100);
+      var rank=pct>=90?'Inspectora jefa':pct>=70?'Detective':pct>=50?'Sargento en prácticas':'Aprendiz de detective';
+      var msg=pct>=90?'Estás lista para el examen.':pct>=70?'Vas muy bien. Repasa lo que fallaste.':pct>=50?'Te falta poco. Repasa el Resumen y los Personajes.':'Vuelve al Resumen y a las Tarjetas, y luego intenta otra vez.';
+      el.innerHTML='<div class="qcard"><span class="stamp">'+rank+'</span><p class="score" style="margin:14px 0 4px">'+qz.score+'/'+qz.list.length+'</p><p>'+pct+'% de aciertos. '+msg+'</p><div class="row">'+
+        (qz.wrong.length?'<button type="button" class="btn primary" id="qz-wrong">Repasar las '+qz.wrong.length+' falladas</button>':'')+
+        '<button type="button" class="btn'+(qz.wrong.length?'':' primary')+'" id="qz-again">Empezar de nuevo</button></div></div>';
+      if(qz.wrong.length)$('#qz-wrong').onclick=function(){qzStart(qz.wrong)};
+      $('#qz-again').onclick=function(){qzStart(QUIZ)};
+      return;
+    }
+    var q=qz.list[qz.i];
+    var order=shuffle(q[1].map(function(o,k){return k}));
+    el.innerHTML='<div class="qcard"><div class="row" style="justify-content:space-between"><span class="eyebrow">Pregunta '+(qz.i+1)+' de '+qz.list.length+'</span><span class="small">Aciertos: <b>'+qz.score+'</b></span></div>'+
+      '<div class="bar" aria-hidden="true" style="margin-top:8px"><i style="width:'+(qz.i/qz.list.length*100)+'%"></i></div>'+
+      '<h3>'+q[0]+'</h3><div class="opts" id="opts"></div><div class="fb" id="fb" aria-live="polite"></div><div class="row" style="margin-top:14px"><button type="button" class="btn primary" id="qz-next" hidden>'+(qz.i===qz.list.length-1?'Ver resultado':'Siguiente')+'</button></div></div>';
+    var box=$('#opts');
+    order.forEach(function(k){
+      var b=document.createElement('button');
+      b.type='button';b.className='opt';b.textContent=q[1][k];b.dataset.k=k;
+      b.addEventListener('click',function(){
+        var ok=k===0;
+        $$('.opt',box).forEach(function(x){x.disabled=true;if(x.dataset.k==='0')x.classList.add('right')});
+        if(ok){qz.score++}else{b.classList.add('wrong');qz.wrong.push(q)}
+        $('#fb').innerHTML='<p><span class="tag '+(ok?'ok':'no')+'">'+(ok?'Correcto.':'No es esa.')+'</span> '+q[2]+'</p>';
+        $('#qz-next').hidden=false;$('#qz-next').focus();
+      });
+      box.appendChild(b);
+    });
+    $('#qz-next').onclick=function(){qz.i++;qzRender()};
+  }
+
+  /* ---------- Examen ---------- */
+  var EX_A=[
+    ['¿Quién es la autora de La Ratonera y de qué país es?','Agatha Christie, escritora británica (inglesa).'],
+    ['¿A qué género y subgénero pertenece la obra?','Pertenece al género dramático, porque es una obra de teatro, y al subgénero policial o de misterio.'],
+    ['¿Cómo está dividida la obra?','En dos actos. El primero se divide en dos escenas.'],
+    ['¿Dónde y cuándo ocurre la historia?','En Monkswell Manor, una casa de huéspedes en las afueras de Londres, a mediados del siglo XX y durante unos pocos días de invierno.'],
+    ['¿Qué impide que los personajes se vayan de la casa?','Una fuerte tormenta de nieve que los deja aislados.'],
+    ['¿Quiénes son los dueños de la casa de huéspedes?','Los jóvenes Mollie y Giles Ralston.'],
+    ['¿Por qué la obra se llama «La Ratonera»?','Porque los personajes quedan atrapados en la casa como ratones en una trampa y porque el asesino silba la canción «Tres ratones ciegos».'],
+    ['¿Quiénes son las víctimas?','Maureen Lyon, la primera, asesinada en Culver Street, y la Sra. Boyle, la segunda. Mollie iba a ser la tercera.'],
+    ['¿Quién es el asesino y cuál es su verdadera identidad?','El sargento Trotter, que en realidad es Georgie Corrigan, hermano del niño Jimmy.'],
+    ['¿Cuál es el móvil de los crímenes?','La venganza por el maltrato y la muerte de su hermano Jimmy en la granja Longridge.'],
+    ['¿Qué papel cumplen Christopher Wren y el Sr. Paravicini?','Son pistas falsas: parecen sospechosos para despistar, pero son inocentes.'],
+    ['¿Quién detiene a Georgie al final?','Su hermana Kathy, la Srta. Casewell, lo convence de detenerse, y el Mayor Metcalf, policía encubierto, lo sedó.']
+  ];
+  var EX_B=[
+    ['¿Cuál es la problemática de la obra?','El problema central es la venganza que nace de un pasado de maltrato e indiferencia. Georgie, que de niño sufrió abuso y perdió a su hermano Jimmy, mata a quienes considera responsables de no haberlos protegido. La obra enfrenta la justicia y la venganza y muestra que la violencia no repara el daño.'],
+    ['¿Cómo ayuda el espacio a crear suspenso?','El salón de Monkswell Manor es un lugar cerrado y aislado por la nieve. Nadie puede salir ni pedir ayuda, y eso genera encierro, miedo y desconfianza. Como el asesino está entre ellos, la tensión crece en cada escena.'],
+    ['¿Qué relación tienen Maureen, la Sra. Boyle y Mollie con el pasado?','Las tres son adultos que, según Georgie, fallaron a los niños de Longridge. Maureen los maltrató, la Sra. Boyle los envió a la granja y negó su responsabilidad, y Mollie no llegó a ayudar a Jimmy cuando él le pidió ayuda. Son los tres objetivos del asesino.'],
+    ['Explica la relación entre Trotter, la Srta. Casewell y Jimmy.','Los tres son hermanos Corrigan. Trotter es Georgie, el mayor; la Srta. Casewell es Kathy, y Jimmy es el niño que murió en Longridge. Georgie mata para vengar a Jimmy y Kathy lo detiene al final.'],
+    ['¿Qué características del género policial tiene la obra?','Tiene un crimen, un grupo de sospechosos, un detective, pistas falsas, un ambiente de misterio y un final sorpresivo en el que se descubre al culpable.'],
+    ['Compara la apariencia y la realidad de dos personajes.','Trotter parece un detective que protege a los huéspedes, pero es el asesino. Metcalf parece un militar retirado, pero es un policía encubierto. En ambos casos, la obra muestra que las apariencias engañan.'],
+    ['¿Qué mensaje deja la obra?','Que ignorar el sufrimiento de los demás tiene consecuencias graves, que hay que ayudar a tiempo a quien lo necesita y que la venganza solo genera más dolor.'],
+    ['¿Estás de acuerdo con la actitud de Georgie? Justifica.','(Opinión personal) No estoy de acuerdo. Entiendo su dolor por lo que vivió su hermano, pero matar no repara el daño ni devuelve a Jimmy. Habría sido mejor buscar ayuda y justicia por vías legales.']
+  ];
+  var EX_C=[
+    ['Resume la historia en un párrafo','La Ratonera, de Agatha Christie, es una obra de teatro policial que transcurre en Monkswell Manor, una casa de huéspedes de las afueras de Londres que los jóvenes Mollie y Giles Ralston acaban de inaugurar. Una tormenta de nieve deja aisladas a ocho personas, mientras la radio informa del asesinato de una mujer en Culver Street. Llega el sargento Trotter y advierte que el asesino se dirige a la casa y que habrá más víctimas. Poco después, la Sra. Boyle es asesinada y todos se vuelven sospechosos. Las pistas llevan a un pasado terrible: tres niños maltratados en la granja Longridge, uno de los cuales murió. Al final se descubre que el propio Trotter es Georgie, hermano del niño muerto, y quería vengarse de quienes no ayudaron a los niños. Cuando intenta atacar a Mollie, su hermana Kathy lo detiene.'],
+    ['Explica la problemática','El problema central de La Ratonera es la venganza que nace de un pasado de abuso e indiferencia. Años antes, tres hermanos fueron maltratados en la granja Longridge y uno de ellos, Jimmy, murió sin que los adultos que podían ayudarlos actuaran a tiempo. Georgie, el hermano mayor, crece con ese dolor y decide hacer justicia por su cuenta, matando a quienes considera responsables. Por eso la obra enfrenta la justicia y la venganza y muestra cómo un trauma sin atención puede convertir a una víctima en agresor. Además, el encierro por la nieve y la desconfianza entre los huéspedes mantienen la tensión hasta el final.'],
+    ['Describe al sargento Trotter','El sargento Trotter parece un joven y amable detective que llega para proteger a los huéspedes, pero en realidad es Georgie Corrigan, el asesino. Dirige los interrogatorios y propone reconstruir los hechos, lo que le permite acercarse a su siguiente víctima. Su actitud inestable muestra el trauma que dejó en él el maltrato sufrido de niño. Es un personaje clave porque representa la apariencia engañosa y porque su historia da sentido a toda la trama.'],
+    ['Explica el estilo literario de la autora','Agatha Christie escribe La Ratonera dentro del género dramático y el subgénero policial. Su estilo se caracteriza por un espacio cerrado, el suspenso constante y los personajes sospechosos que ocultan secretos. Además, usa pistas falsas para despistar al público y guarda un giro final sorprendente: el detective resulta ser el asesino. Su lenguaje es sencillo y se apoya en diálogos ágiles, lo que hace que la obra sea fácil de seguir en el escenario.'],
+    ['Da tu opinión y el mensaje de la obra','En mi opinión, La Ratonera nos enseña que ignorar el sufrimiento de los demás tiene consecuencias graves. Los adultos que no protegieron a los niños dejaron una herida que años después regresó como violencia. Aunque entiendo el dolor de Georgie, no estoy de acuerdo con su decisión, porque matar no devuelve a su hermano ni repara el daño. Por eso creo que el mensaje es que debemos actuar a tiempo cuando alguien necesita ayuda y que la venganza solo genera más dolor.']
+  ];
+  function qlist(arr,withModel){
+    return arr.map(function(x,i){
+      return '<details class="q"><summary>'+x[0]+'</summary><div class="ans">'+(withModel?'<div class="model">'+x[1]+'</div>':'<p>'+x[1]+'</p>')+'</div></details>';
+    }).join('');
+  }
+  $('#ex-a').innerHTML=qlist(EX_A,false);
+  $('#ex-b').innerHTML=qlist(EX_B,false);
+  $('#ex-c').innerHTML=qlist(EX_C,true);
+
+  /* ---------- Arranque ---------- */
+  renderPlan();
+  fcStart(CARDS);
+  qzStart(QUIZ);
+  show((location.hash||'#inicio').slice(1));
+})();
+</script>
+
+</body>
+</html>
