@@ -99,7 +99,7 @@ h1 { font-family: var(--font-display); font-weight: 700; font-size: clamp(36px, 
 
 .scrim { position: fixed; inset: 0; z-index: 20; background: rgba(8, 16, 15, .5); display: flex; justify-content: flex-end; }
 .scrim[hidden] { display: none; }
-.sheet { width: min(520px, 100%); height: 100%; overflow-y: auto; background: var(--surface); border-left: 1px solid var(--line);
+.sheet { width: min(840px, 100%); height: 100%; overflow-y: auto; background: var(--surface); border-left: 1px solid var(--line);
   padding-block: calc(20px + env(safe-area-inset-top, 0px)) calc(24px + env(safe-area-inset-bottom, 0px));
   padding-left: 20px; padding-right: max(20px, env(safe-area-inset-right, 0px)); display: flex; flex-direction: column; gap: 14px; }
 .sheet h2 { font-family: var(--font-display); font-size: 26px; margin: 0; }
@@ -107,12 +107,46 @@ h1 { font-family: var(--font-display); font-weight: 700; font-size: clamp(36px, 
 .field label { font-family: var(--font-mono); font-size: 11.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
 .field input, .field select, .field textarea { width: 100%; min-width: 0; padding: 9px 11px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); }
 .field textarea { min-height: 90px; resize: vertical; }
+#f-notas { min-height: 380px; line-height: 1.55; }
+#f-angulo { min-height: 110px; }
 .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .err { color: var(--danger); font-size: 13px; min-height: 1em; }
 .actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-top: 4px; }
 .actions .spacer { flex: 1; }
 .toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(20px + env(safe-area-inset-bottom, 0px)); z-index: 30; background: var(--ink); color: var(--bg); padding: 10px 16px; border-radius: 8px; max-width: calc(100% - 32px); }
 .toast[hidden] { display: none; }
+
+/* Vista de lectura: página amplia para leer un tema completo sin subir y bajar por un panel angosto. */
+.reader { position: fixed; inset: 0; z-index: 15; background: var(--bg); overflow-y: auto; }
+.reader[hidden] { display: none; }
+.rd-bar { position: sticky; top: 0; z-index: 2; background: var(--bg); border-bottom: 1px solid var(--line);
+  padding-block: calc(10px + env(safe-area-inset-top, 0px)) 10px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.rd-bar-in { max-width: 880px; margin: 0 auto; display: flex; gap: 10px; align-items: center; justify-content: space-between; }
+.rd-wrap { padding-block: 30px calc(90px + env(safe-area-inset-bottom, 0px));
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.rd-art { max-width: 880px; margin: 0 auto; min-width: 0; }
+.rd-title { font-family: var(--font-display); font-weight: 700; font-size: clamp(30px, 5.5vw, 48px); line-height: 1.05; letter-spacing: -.02em; margin: 0 0 16px; text-wrap: balance; overflow-wrap: anywhere; }
+.rd-meta { display: flex; flex-wrap: wrap; gap: 8px; }
+.rd-chip { display: inline-flex; align-items: center; gap: 7px; padding: 4px 12px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); font-size: 13.5px; }
+.rd-chip.tag { background: var(--surface-2); color: var(--muted); border-color: transparent; }
+.rd-lede { font-size: 20px; line-height: 1.55; margin: 24px 0 0; max-width: 62ch; overflow-wrap: anywhere; }
+.rd-notes { margin-top: 28px; }
+.rd-over { font-family: var(--font-mono); font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin: 0; }
+.rd-sec { margin-top: 30px; padding-top: 22px; border-top: 1px solid var(--line); }
+.rd-sec:first-of-type { margin-top: 18px; }
+.rd-h { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.rd-n { flex: none; width: 32px; height: 32px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; background: var(--accent); color: var(--accent-ink); font-family: var(--font-mono); font-size: 14px; font-variant-numeric: tabular-nums; }
+.rd-h h3 { font-family: var(--font-display); font-weight: 700; font-size: clamp(20px, 3.4vw, 26px); line-height: 1.15; margin: 0; flex: 1; min-width: 0; text-wrap: balance; overflow-wrap: anywhere; }
+.rd-t { flex: none; font-family: var(--font-mono); font-size: 12.5px; color: var(--muted); border: 1px solid var(--line); border-radius: 999px; padding: 2px 10px; font-variant-numeric: tabular-nums; }
+.rd-list { list-style: none; margin: 16px 0 0; padding: 0; display: grid; gap: 10px; }
+.rd-list li { position: relative; padding-left: 22px; font-size: 17.5px; line-height: 1.6; max-width: 66ch; overflow-wrap: anywhere; }
+.rd-list li::before { content: ""; position: absolute; left: 4px; top: .72em; width: 6px; height: 6px; border-radius: 50%; background: var(--muted); }
+.rd-list li.q { background: var(--surface-2); border-radius: 8px; padding: 12px 16px; }
+.rd-list li.q::before { display: none; }
+.rd-sec p { font-size: 17.5px; line-height: 1.6; margin: 14px 0 0; max-width: 66ch; overflow-wrap: anywhere; }
+.rd-pend { margin-top: 34px; padding: 14px 16px; border: 1px dashed var(--line); border-radius: 8px; color: var(--muted); font-size: 15px; line-height: 1.55; overflow-wrap: anywhere; }
+.rd-pend strong { color: var(--ink); }
 
 @media (max-width: 1100px) { .board { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 @media (max-width: 720px) {
@@ -149,6 +183,14 @@ h1 { font-family: var(--font-display); font-weight: 700; font-size: clamp(36px, 
 
   <div class="banner" id="banner" hidden></div>
   <div id="main"></div>
+</div>
+
+<div class="reader" id="reader" hidden role="dialog" aria-modal="true" aria-label="Detalle del tema">
+  <div class="rd-bar"><div class="rd-bar-in">
+    <button class="btn" type="button" id="rd-back">← Volver al tablero</button>
+    <button class="btn primary" type="button" id="rd-edit">Editar</button>
+  </div></div>
+  <div class="rd-wrap"><article class="rd-art" id="rd-body"></article></div>
 </div>
 
 <div class="scrim" id="scrim" hidden>
@@ -198,7 +240,7 @@ function h(tag, cls, text) { const e = document.createElement(tag); if (cls) e.c
 
 let sb = null, items = [], loading = true, loadFailed = false;
 const view = { q: "", who: "" };
-let editing = null, delTimer = null, toastTimer = null;
+let editing = null, delTimer = null, toastTimer = null, backToReader = false, readerId = null, readerKey = "";
 
 function toast(msg) {
   const t = $("#toast"); t.textContent = msg; t.hidden = false;
@@ -240,6 +282,7 @@ function visible() {
 }
 
 function draw() {
+  syncReader();
   $("#add").disabled = !sb || loadFailed;
   const banner = $("#banner");
   if (loadFailed || !sb) { banner.hidden = false; banner.textContent = "No se pudieron cargar los temas. Revisa tu conexión y recarga la página."; }
@@ -309,8 +352,8 @@ function card(it, idx) {
   right.addEventListener("click", (e) => { e.stopPropagation(); mover(it, 1); });
   mv.append(left, right); foot.append(mv);
   c.append(foot);
-  c.addEventListener("click", () => openEditor(it));
-  c.addEventListener("keydown", (e) => { if (e.key === "Enter" && e.target === c) openEditor(it); });
+  c.addEventListener("click", () => openReader(it));
+  c.addEventListener("keydown", (e) => { if (e.key === "Enter" && e.target === c) openReader(it); });
   return c;
 }
 
@@ -323,8 +366,8 @@ async function mover(it, dir) {
   if (!ok) load();
 }
 
-function openEditor(it) {
-  editing = it;
+function openEditor(it, fromReader) {
+  editing = it; backToReader = !!(fromReader && it);
   clearTimeout(delTimer); resetDel();
   $("#sheet-title").textContent = it ? "Editar tema" : "Nuevo tema";
   $("#f-titulo").value = it ? it.titulo || "" : "";
@@ -340,7 +383,106 @@ function openEditor(it) {
   $("#scrim").hidden = false;
   $("#f-titulo").focus();
 }
-function closeEditor() { $("#scrim").hidden = true; editing = null; clearTimeout(delTimer); resetDel(); }
+function closeEditor() { $("#scrim").hidden = true; editing = null; backToReader = false; clearTimeout(delTimer); resetDel(); }
+function cancelEditor() {
+  const id = editing && editing.id, back = backToReader;
+  closeEditor();
+  if (back && id) { const it = items.find((x) => x.id === id); if (it) openReader(it); }
+}
+
+/* ---- Vista de lectura ---- */
+const ESTADO_T = Object.fromEntries(ESTADOS.map((s) => [s.k, s]));
+const LABELS = /^(Pregunta final|Preguntas|Pregunta|Gancho|Práctica de la semana|Mirada somática|Opcional|Nota|Ojo):\s*(.*)$/;
+
+function renderNotes(text, host) {
+  host.replaceChildren();
+  let sec = null, ul = null;
+  const section = () => { sec = h("section", "rd-sec"); host.append(sec); ul = null; };
+  String(text || "").split("\n").forEach((raw) => {
+    const line = raw.trim();
+    if (!line) return;
+    let m;
+    if (/^PENDIENTE:/i.test(line)) {
+      const box = h("div", "rd-pend");
+      box.append(h("strong", null, "Pendiente: "), document.createTextNode(line.replace(/^PENDIENTE:\s*/i, "")));
+      host.append(box); sec = null; ul = null; return;
+    }
+    if (/^ESTRUCTURA\b/i.test(line)) {
+      const dur = line.replace(/^ESTRUCTURA\s*\(?/i, "").replace(/\)?\s*$/, "");
+      host.append(h("p", "rd-over", "Estructura del episodio" + (dur ? " · " + dur : "")));
+      return;
+    }
+    if ((m = line.match(/^(\d+)\.\s+(.*)$/))) {
+      let title = m[2];
+      const tm = title.match(/\s*\((\d+)\s*min\)\s*$/);
+      if (tm) title = title.slice(0, title.length - tm[0].length);
+      section();
+      const hd = h("div", "rd-h");
+      hd.append(h("span", "rd-n", m[1]), h("h3", null, title));
+      if (tm) hd.append(h("span", "rd-t", tm[1] + " min"));
+      sec.append(hd);
+      return;
+    }
+    if (!sec) section();
+    if (line.startsWith("- ")) {
+      const t = line.slice(2);
+      if (!ul) { ul = h("ul", "rd-list"); sec.append(ul); }
+      const li = h("li");
+      const lm = t.match(LABELS);
+      if (lm) {
+        li.append(h("strong", null, lm[1] + ": "), document.createTextNode(lm[2]));
+        if (/^(Pregunta|Gancho)/.test(lm[1])) li.className = "q";
+      } else li.textContent = t;
+      ul.append(li);
+    } else { sec.append(h("p", null, line)); ul = null; }
+  });
+}
+
+function readerKeyOf(it) { return it.id + "|" + (it.mov || "") + "|" + (it.notas || "").length; }
+
+function renderReader(it) {
+  const el = $("#reader"), body = $("#rd-body"), keep = el.scrollTop;
+  body.replaceChildren();
+  const st = ESTADO_T[it.estado] || ESTADOS[0];
+  const meta = h("div", "rd-meta");
+  const chip = h("span", "rd-chip"), dot = h("span", "dot");
+  dot.style.background = "var(" + st.c + ")";
+  chip.append(dot, document.createTextNode(st.t));
+  meta.append(chip);
+  if (it.fecha) meta.append(h("span", "rd-chip", "Graba " + fmtDate(it.fecha)));
+  if (it.invitado) meta.append(h("span", "rd-chip", "Con " + it.invitado));
+  meta.append(h("span", "rd-chip", it.lleva ? "Lo lleva " + it.lleva : "Sin asignar"));
+  (it.etiquetas || []).forEach((t) => meta.append(h("span", "rd-chip tag", t)));
+  body.append(h("h2", "rd-title", it.titulo || "Sin título"), meta);
+  if (it.angulo) body.append(h("p", "rd-lede", it.angulo));
+  const notes = h("div", "rd-notes");
+  renderNotes(it.notas, notes);
+  body.append(notes.childNodes.length ? notes : h("p", "none", "Todavía no hay notas en este tema. Pulsa Editar para agregarlas."));
+  el.scrollTop = keep;
+}
+
+function openReader(it) {
+  readerId = it.id; readerKey = readerKeyOf(it);
+  renderReader(it);
+  const el = $("#reader");
+  el.hidden = false; el.scrollTop = 0;
+  document.body.style.overflow = "hidden";
+  $("#rd-back").focus();
+}
+function hideReader() { $("#reader").hidden = true; document.body.style.overflow = ""; }
+function closeReader() { hideReader(); readerId = null; }
+function syncReader() {
+  if (!readerId || $("#reader").hidden) return;
+  const it = items.find((x) => x.id === readerId);
+  if (!it) { closeReader(); return; }
+  const k = readerKeyOf(it);
+  if (k !== readerKey) { readerKey = k; renderReader(it); }
+}
+$("#rd-back").addEventListener("click", closeReader);
+$("#rd-edit").addEventListener("click", () => {
+  const it = items.find((x) => x.id === readerId);
+  if (it) { hideReader(); openEditor(it, true); }
+});
 function resetDel() { const d = $("#del"); d.textContent = "Eliminar"; d.dataset.arm = ""; }
 
 $("#form").addEventListener("submit", async (e) => {
@@ -361,11 +503,19 @@ $("#form").addEventListener("submit", async (e) => {
   $("#save").disabled = true;
   const ok = await run(editing ? sb.from("temas").update(data).eq("id", editing.id) : sb.from("temas").insert(data), "Tema guardado");
   $("#save").disabled = false;
-  if (ok) closeEditor();
+  if (ok) {
+    const id = editing && editing.id, back = backToReader;
+    closeEditor();
+    if (back && id) { const it = items.find((x) => x.id === id); if (it) openReader(it); }
+  }
 });
-$("#cancel").addEventListener("click", closeEditor);
-$("#scrim").addEventListener("mousedown", (e) => { if (e.target === $("#scrim")) closeEditor(); });
-document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !$("#scrim").hidden) closeEditor(); });
+$("#cancel").addEventListener("click", cancelEditor);
+$("#scrim").addEventListener("mousedown", (e) => { if (e.target === $("#scrim")) cancelEditor(); });
+document.addEventListener("keydown", (e) => {
+  if (e.key !== "Escape") return;
+  if (!$("#scrim").hidden) cancelEditor();
+  else if (!$("#reader").hidden) closeReader();
+});
 $("#del").addEventListener("click", async () => {
   const d = $("#del");
   if (!editing) return;
