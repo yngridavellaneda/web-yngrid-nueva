@@ -1,0 +1,492 @@
+<title>Química del carbono</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Patrick+Hand&family=Nunito:wght@400;600;700;800&family=DM+Mono:wght@400;500&display=swap">
+<style>
+/* Concepto: hoja de cuaderno cuadriculado con resaltadores (rosa, verde, azul, naranja, lila) como en los apuntes. Un solo gesto fuerte: el subrayado de marcador en los títulos. */
+:root{
+  --bg:#f5f7fd; --grid:rgba(80,100,200,.09); --surface:#ffffff; --ink:#1d2342; --muted:#586088; --line:#d6dcef;
+  --accent:#5b3fd0; --accent-ink:#ffffff;
+  --hl-pink:#ffd0e4; --hl-green:#c4f2cf; --hl-blue:#c3e4ff; --hl-orange:#ffdcae; --hl-purple:#e1d7ff;
+  --ok:#17874a; --bad:#cf2e6a; --hcol:#cf2e6a;
+  --f-display:"Patrick Hand","Comic Sans MS",cursive; --f-body:"Nunito","Segoe UI",system-ui,sans-serif; --f-mono:"DM Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#12162e; --grid:rgba(160,175,255,.07); --surface:#1b2142; --ink:#eef0fc; --muted:#a6aed4; --line:#333c6c;
+  --accent:#b7a4ff; --accent-ink:#17133a;
+  --hl-pink:#6b2a52; --hl-green:#1f5a45; --hl-blue:#1f4d78; --hl-orange:#6b4a1f; --hl-purple:#46348f;
+  --ok:#5fd68f; --bad:#ff8fb8; --hcol:#ff8fb8; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#12162e; --grid:rgba(160,175,255,.07); --surface:#1b2142; --ink:#eef0fc; --muted:#a6aed4; --line:#333c6c;
+  --accent:#b7a4ff; --accent-ink:#17133a;
+  --hl-pink:#6b2a52; --hl-green:#1f5a45; --hl-blue:#1f4d78; --hl-orange:#6b4a1f; --hl-purple:#46348f;
+  --ok:#5fd68f; --bad:#ff8fb8; --hcol:#ff8fb8; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{margin:0;font:400 16px/1.6 var(--f-body);color:var(--ink);background-color:var(--bg);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:26px 26px;
+  padding-block:22px 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap{max-width:880px;margin:0 auto;display:flex;flex-direction:column;gap:22px}
+h1,h2,h3{font-family:var(--f-display);font-weight:400;margin:0;text-wrap:balance;line-height:1.15}
+h1{font-size:clamp(36px,9vw,54px);color:var(--accent)}
+h2{font-size:30px}
+h3{font-size:22px}
+p{margin:0}
+sub{font-size:.72em}
+.kicker{font-size:13px;letter-spacing:.09em;text-transform:uppercase;font-weight:800;color:var(--muted)}
+.lead{color:var(--muted);max-width:60ch;margin-top:8px}
+.mark{background:linear-gradient(transparent 58%,var(--hl-pink) 58% 90%,transparent 90%);padding:0 4px}
+.hl{display:inline-block;padding:0 6px;border-radius:3px}
+.hl-pink{background:var(--hl-pink)}.hl-green{background:var(--hl-green)}.hl-blue{background:var(--hl-blue)}.hl-orange{background:var(--hl-orange)}.hl-purple{background:var(--hl-purple)}
+.top{display:flex;flex-direction:column;gap:4px}
+
+.tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;background:var(--surface);border:1.5px solid var(--line);border-radius:14px;padding:6px}
+.tab{font:700 15px var(--f-body);padding:10px 4px;border:0;border-radius:9px;background:transparent;color:var(--muted);cursor:pointer}
+.tab[aria-selected="true"]{background:var(--accent);color:var(--accent-ink)}
+button{font-family:inherit}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+
+.panel{display:flex;flex-direction:column;gap:18px}
+.card{background:var(--surface);border:1.5px solid var(--line);border-radius:14px;padding:16px 18px;min-width:0}
+.card p+p{margin-top:8px}
+.grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(min(100%,290px),1fr))}
+.simple{margin-top:10px;padding:8px 12px;border-radius:8px;background:var(--bg);font-size:15px}
+.simple b{font-weight:800}
+.scroll{overflow-x:auto;max-width:100%}
+.sec{display:flex;flex-direction:column;gap:12px}
+.note{font-size:14px;color:var(--muted)}
+
+table{border-collapse:collapse;width:100%;font-size:15px}
+th,td{padding:7px 12px;text-align:left;border-bottom:1.5px solid var(--line)}
+th{font-size:12.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
+td.n{font-family:var(--f-mono);width:1%}
+td.p{font-weight:800}
+tr:last-child td{border-bottom:0}
+
+.mol{display:block;color:var(--ink);max-width:none}
+.mol line{stroke:currentColor;stroke-width:2;stroke-linecap:round;fill:none}
+.at-c{font:700 17px var(--f-mono);fill:currentColor}
+.at-h{font:500 15px var(--f-mono);fill:var(--hcol)}
+.zig{fill:none;stroke:var(--accent);stroke-width:3;stroke-linejoin:round;stroke-linecap:round}
+.dot{fill:var(--accent)}
+.lab{font:500 13px var(--f-mono);fill:var(--ink)}
+.formula{font:500 22px var(--f-mono);overflow-wrap:anywhere}
+.viz{display:flex;justify-content:center;padding:6px 0;overflow-x:auto}
+.cap{font-size:13.5px;color:var(--muted);text-align:center}
+.pair{display:flex;gap:14px;flex-wrap:wrap;justify-content:center}
+.pair figure{margin:0;display:flex;flex-direction:column;align-items:center;gap:4px}
+
+.btn{font:700 15px var(--f-body);padding:10px 16px;border-radius:10px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+.btn:hover{border-color:var(--accent)}
+.btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.chip{font:700 14px var(--f-body);padding:6px 12px;border-radius:999px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--hl-purple);border-color:var(--accent)}
+
+.exp-head{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:baseline}
+.exp-head .name{font-family:var(--f-display);font-size:34px}
+.fcard{display:flex;flex-direction:column;gap:8px}
+.fcard .what{font-size:14.5px;color:var(--muted)}
+.fcard.k1{background:linear-gradient(var(--surface),var(--surface)) padding-box}
+.tint-pink{background:var(--hl-pink)}.tint-green{background:var(--hl-green)}.tint-blue{background:var(--hl-blue)}.tint-orange{background:var(--hl-orange)}
+
+.cards{display:grid;gap:10px;grid-template-columns:repeat(auto-fill,minmax(112px,1fr))}
+.fc{min-height:104px;border-radius:12px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:8px;text-align:center}
+.fc .big{font-family:var(--f-display);font-size:30px;line-height:1.1}
+.fc .small{font-size:13px;color:var(--muted)}
+.fc[aria-pressed="true"]{background:var(--hl-green);border-color:var(--ok)}
+.fc[aria-pressed="true"] .small{color:var(--ink)}
+
+.bar{height:8px;border-radius:99px;background:var(--line);overflow:hidden}
+.bar>i{display:block;height:100%;background:var(--accent);transition:width .25s}
+.qmeta{display:flex;justify-content:space-between;gap:10px;font-size:14px;color:var(--muted);font-weight:700}
+.qtext{font-size:26px}
+.opts{display:flex;flex-direction:column;gap:8px}
+.opt{width:100%;text-align:left;font:600 16px/1.4 var(--f-body);padding:12px 14px;border-radius:10px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+.opt:hover{border-color:var(--accent)}
+.opt.sel{background:var(--hl-purple);border-color:var(--accent)}
+.opt.ok{background:var(--hl-green);border-color:var(--ok)}
+.opt.bad{background:var(--hl-pink);border-color:var(--bad)}
+.opt[disabled]{cursor:default}
+.fb{padding:10px 14px;border-radius:10px;background:var(--bg);border:1.5px solid var(--line);font-size:15px}
+.fb.good{border-color:var(--ok)}.fb.nope{border-color:var(--bad)}
+.score{font-family:var(--f-display);font-size:64px;line-height:1}
+.miss{display:flex;flex-direction:column;gap:10px}
+.miss .card{padding:12px 14px}
+.miss .ans{color:var(--ok);font-weight:800}
+.mode{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr))}
+.mode .btn{text-align:left;display:flex;flex-direction:column;gap:4px;padding:14px 16px}
+.mode .btn b{font-family:var(--f-display);font-weight:400;font-size:22px}
+.mode .btn span{font-weight:600;font-size:14px;color:var(--muted)}
+.mode .btn.primary span{color:var(--accent-ink);opacity:.9}
+.drill-item{display:flex;justify-content:center;align-items:center;min-height:96px;overflow-x:auto;padding:8px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <p class="kicker">Guía de estudio · para Camille</p>
+    <h1>la química <span class="mark">del carbono</span></h1>
+    <p class="lead">Teoría en palabras simples, fórmulas que puedes explorar, práctica y un quiz para comprobar lo que ya sabes.</p>
+  </header>
+
+  <nav class="tabs" role="tablist" aria-label="Secciones">
+    <button class="tab" role="tab" id="t-teoria" data-tab="teoria" aria-controls="teoria" aria-selected="true">Teoría</button>
+    <button class="tab" role="tab" id="t-formulas" data-tab="formulas" aria-controls="formulas" aria-selected="false">Fórmulas</button>
+    <button class="tab" role="tab" id="t-practica" data-tab="practica" aria-controls="practica" aria-selected="false">Práctica</button>
+    <button class="tab" role="tab" id="t-quiz" data-tab="quiz" aria-controls="quiz" aria-selected="false">Quiz</button>
+  </nav>
+
+  <!-- TEORÍA -->
+  <main>
+  <section class="panel" id="teoria" role="tabpanel" aria-labelledby="t-teoria">
+    <div class="card">
+      <h2><span class="hl hl-purple">¿Qué estudia?</span></h2>
+      <p style="margin-top:10px">La química del carbono estudia los <b>compuestos que tienen carbono</b> y sus reacciones. Estos compuestos pueden ser de origen biológico (vienen de seres vivos) o no biológico.</p>
+    </div>
+
+    <div class="sec">
+      <h2><span class="hl hl-pink">Prefijos: cuántos carbonos tiene</span></h2>
+      <div class="card">
+        <div class="scroll"><table id="tabla-prefijos"><thead><tr><th>N° de carbonos</th><th>Prefijo</th><th>Nombre</th></tr></thead><tbody></tbody></table></div>
+        <div class="simple"><b>Pistas:</b> Met-, Et-, Prop- y But- se memorizan. Después piensa en figuras: <b>pent</b>ágono (5 lados), <b>hex</b>ágono (6) y <b>oct</b>ágono (8). Los compuestos con solo enlaces simples terminan en <b>-ano</b>.</div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <h2><span class="hl hl-green">Características</span></h2>
+      <div class="grid">
+        <div class="card"><h3>No soportan altas temperaturas</h3><p>Con mucho calor se descomponen.</p></div>
+        <div class="card"><h3>Son covalentes</h3><p>Sus átomos se unen compartiendo electrones.</p></div>
+        <div class="card"><h3>No conducen electricidad</h3><p>Ni siquiera en estado líquido dejan pasar la corriente.</p></div>
+        <div class="card"><h3>No se disuelven en agua</h3><p>No se mezclan con el agua. Sí se disuelven en otros disolventes, como el benceno o el tetracloruro de carbono.</p></div>
+        <div class="card"><h3>Son combustibles</h3><p>Tienen carbono e hidrógeno y por eso arden. Ejemplos: derivados del petróleo, gas natural y alcoholes.</p></div>
+        <div class="card"><h3>Presentan isomería</h3><p>Misma fórmula, diferente estructura.</p><div class="simple"><b>En simple:</b> son las mismas piezas de Lego armadas de otra forma.</div></div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <h2><span class="hl hl-blue">Propiedades del carbono</span></h2>
+      <div class="grid">
+        <div class="card">
+          <h3><span class="hl hl-orange">Covalencia</span></h3>
+          <p style="margin-top:8px">El átomo de carbono se une a otros átomos compartiendo electrones. Eso es un enlace covalente.</p>
+          <div class="viz" data-viz="covalencia"></div>
+          <p class="cap">Metano (CH<sub>4</sub>): el carbono comparte un electrón con cada hidrógeno.</p>
+        </div>
+        <div class="card">
+          <h3><span class="hl hl-purple">Tetravalencia</span></h3>
+          <p style="margin-top:8px">El carbono puede formar <b>4 enlaces covalentes</b> con átomos iguales o diferentes. Participan sus 4 electrones de valencia.</p>
+          <div class="viz" data-viz="tetra"></div>
+          <p class="cap">Configuración: C: 1s² 2s² 2p²</p>
+        </div>
+        <div class="card">
+          <h3><span class="hl hl-blue">Hibridación</span></h3>
+          <p style="margin-top:8px">Es el reordenamiento de los electrones del carbono cuando se une con otros elementos. Eso le permite formar enlaces.</p>
+          <div class="simple"><b>En simple:</b> el carbono acomoda sus electrones para poder hacer sus 4 enlaces.</div>
+        </div>
+        <div class="card">
+          <h3><span class="hl hl-green">Autosaturación</span></h3>
+          <p style="margin-top:8px">Es la capacidad del carbono de unirse a otros carbonos mediante enlaces simples, dobles y triples. Así forma cadenas de distintas estructuras.</p>
+          <div class="viz"><div class="pair" data-viz="bonds"></div></div>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Tipos de cadena</h3>
+        <div class="grid" style="margin-top:8px">
+          <div><p><span class="hl hl-green">Cadena lineal</span></p><div class="viz" data-viz="lineal"></div><p class="cap">Los carbonos van en fila.</p></div>
+          <div><p><span class="hl hl-green">Cadena ramificada</span></p><div class="viz" data-viz="ramificada"></div><p class="cap">De la cadena principal sale una rama.</p></div>
+          <div><p><span class="hl hl-green">Cadena cíclica</span></p><div class="viz" data-viz="ciclica"></div><p class="cap">Los carbonos cierran un anillo.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card row" style="justify-content:space-between">
+      <p><b>Siguiente paso:</b> mira cómo se escriben las fórmulas.</p>
+      <button class="btn primary" data-go="formulas">Ir a Fórmulas</button>
+    </div>
+  </section>
+
+  <!-- FÓRMULAS -->
+  <section class="panel" id="formulas" role="tabpanel" aria-labelledby="t-formulas" hidden>
+    <div class="card">
+      <h2><span class="hl hl-green">Fórmulas químicas orgánicas</span></h2>
+      <p style="margin-top:10px">Un mismo compuesto se puede escribir de 4 formas. Elige uno y compáralas.</p>
+      <div class="row" id="exp-chips" style="margin-top:12px" role="group" aria-label="Elegir compuesto"></div>
+    </div>
+    <div class="exp-head"><span class="name" id="exp-name"></span><span class="note" id="exp-info"></span></div>
+    <div class="grid" id="exp-cards"></div>
+    <div class="card">
+      <h3>Cómo contar hidrógenos en la esqueletal</h3>
+      <p style="margin-top:6px">Cada carbono necesita 4 enlaces. Mira cuántos enlaces ya tiene con otros carbonos y los que faltan son hidrógenos. Activa el botón de la tarjeta esqueletal para comprobarlo.</p>
+    </div>
+  </section>
+
+  <!-- PRÁCTICA -->
+  <section class="panel" id="practica" role="tabpanel" aria-labelledby="t-practica" hidden>
+    <div class="sec">
+      <h2><span class="hl hl-pink">Tarjetas de prefijos</span></h2>
+      <p class="note">Toca una tarjeta para voltearla. Intenta responder antes de mirar.</p>
+      <div class="row">
+        <button class="btn" id="fc-dir">Cambiar: ahora ves el número</button>
+        <button class="btn" id="fc-shuf">Mezclar</button>
+        <button class="btn" id="fc-reset">Ocultar respuestas</button>
+      </div>
+      <div class="cards" id="fc-grid"></div>
+    </div>
+    <div class="sec">
+      <h2><span class="hl hl-orange">¿Qué tipo de fórmula es?</span></h2>
+      <div class="card" id="drill"></div>
+    </div>
+  </section>
+
+  <!-- QUIZ -->
+  <section class="panel" id="quiz" role="tabpanel" aria-labelledby="t-quiz" hidden>
+    <div id="quiz-root" class="panel"></div>
+  </section>
+  </main>
+</div>
+
+<script>
+(function(){
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const SUBS='₀₁₂₃₄₅₆₇₈₉';
+const sub=n=>String(n).split('').map(d=>SUBS[+d]).join('');
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+const PREF=[[1,'Met','Metano'],[2,'Et','Etano'],[3,'Prop','Propano'],[4,'But','Butano'],[5,'Pent','Pentano'],[6,'Hex','Hexano'],[7,'Hept','Heptano'],[8,'Oct','Octano'],[9,'Non','Nonano'],[10,'Dec','Decano']];
+
+/* ---------- dibujos ---------- */
+function structural(n){
+  const dx=54,cy=62,w=100+(n-1)*dx,h=124;let g='';
+  const C=(x,y)=>`<text class="at-c" x="${x}" y="${y}" text-anchor="middle" dominant-baseline="central">C</text>`;
+  const H=(x,y)=>`<text class="at-h" x="${x}" y="${y}" text-anchor="middle" dominant-baseline="central">H</text>`;
+  const ln=(a,b,c,d)=>`<line x1="${a}" y1="${b}" x2="${c}" y2="${d}"/>`;
+  for(let i=0;i<n;i++){
+    const x=50+i*dx;
+    g+=C(x,cy)+ln(x,cy-12,x,cy-32)+H(x,cy-44)+ln(x,cy+12,x,cy+32)+H(x,cy+44);
+    if(i<n-1)g+=ln(x+12,cy,x+dx-12,cy);
+    if(i===0)g+=ln(x-12,cy,x-30,cy)+H(x-40,cy);
+    if(i===n-1)g+=ln(x+12,cy,x+30,cy)+H(x+40,cy);
+  }
+  return `<svg class="mol" viewBox="0 0 ${w} ${h}" width="${w}" height="${h}" role="img" aria-label="Fórmula estructural con ${n} carbono${n>1?'s':''}">${g}</svg>`;
+}
+function skeletal(n,labels){
+  const dx=46,w=72+(n-1)*dx,h=118;
+  const pts=[...Array(n)].map((_,i)=>[36+i*dx,n===1?59:(i%2?40:78)]);
+  let s=`<svg class="mol" viewBox="0 0 ${w} ${h}" width="${w}" height="${h}" role="img" aria-label="Fórmula esqueletal con ${n} carbono${n>1?'s':''}">`;
+  if(n>1)s+=`<polyline class="zig" points="${pts.map(p=>p.join(',')).join(' ')}"/>`;
+  pts.forEach((p,i)=>{
+    s+=`<circle class="dot" cx="${p[0]}" cy="${p[1]}" r="${n===1?5:4}"/>`;
+    if(labels){
+      const t=n===1?'CH'+sub(4):(i===0||i===n-1?'CH'+sub(3):'CH'+sub(2));
+      const y=n===1?p[1]-18:(i%2?p[1]-16:p[1]+24);
+      s+=`<text class="lab" x="${p[0]}" y="${y}" text-anchor="middle" dominant-baseline="central">${t}</text>`;
+    }
+  });
+  return s+'</svg>';
+}
+function semi(n){
+  if(n===1)return 'CH<sub>4</sub>';
+  const parts=['CH<sub>3</sub>'];for(let i=0;i<n-2;i++)parts.push('CH<sub>2</sub>');parts.push('CH<sub>3</sub>');
+  return parts.map(p=>`<span style="white-space:nowrap">${p}</span>`).join('<wbr>–');
+}
+function molec(n){return n===1?'CH<sub>4</sub>':`C<sub>${n}</sub>H<sub>${2*n+2}</sub>`;}
+function bond(k){
+  const ys={1:[22],2:[17,27],3:[14,22,30]}[k];
+  return `<svg class="mol" viewBox="0 0 110 44" width="110" height="44" role="img" aria-label="${['','Enlace simple','Enlace doble','Enlace triple'][k]}"><text class="at-c" x="16" y="22" text-anchor="middle" dominant-baseline="central">C</text><text class="at-c" x="94" y="22" text-anchor="middle" dominant-baseline="central">C</text>${ys.map(y=>`<line x1="32" y1="${y}" x2="78" y2="${y}"/>`).join('')}</svg>`;
+}
+const T=(x,y,t)=>`<text class="at-c" x="${x}" y="${y}" text-anchor="middle" dominant-baseline="central">${t}</text>`;
+const L=(a,b,c,d)=>`<line x1="${a}" y1="${b}" x2="${c}" y2="${d}"/>`;
+function tetra(){
+  const d=[[60,16],[104,50],[60,84],[16,50]].map(p=>`<circle cx="${p[0]}" cy="${p[1]}" r="5" fill="var(--accent)"/>`).join('');
+  return `<svg class="mol" viewBox="0 0 120 100" width="120" height="100" role="img" aria-label="Carbono con 4 electrones de valencia">${T(60,50,'C')}${d}</svg>`;
+}
+function chain(kind){
+  if(kind==='lineal'){
+    let g='';[40,100,160].forEach((x,i)=>{g+=T(x,60,'C')+L(x,48,x,28)+L(x,72,x,92);if(i<2)g+=L(x+12,60,x+48,60);});
+    g+=L(28,60,10,60)+L(172,60,190,60);
+    return `<svg class="mol" viewBox="0 0 200 120" width="200" height="120" role="img" aria-label="Cadena lineal">${g}</svg>`;
+  }
+  if(kind==='ramificada'){
+    let g='';[40,100,160].forEach((x,i)=>{g+=T(x,34,'C')+L(x,22,x,8);if(i<2)g+=L(x+12,34,x+48,34);});
+    g+=L(28,34,10,34)+L(172,34,190,34)+L(40,46,40,60)+L(160,46,160,60)+L(100,46,100,70)+T(100,82,'C')+L(100,94,100,108)+T(100,120,'C')+L(112,120,148,120)+T(160,120,'C');
+    return `<svg class="mol" viewBox="0 0 200 132" width="200" height="132" role="img" aria-label="Cadena ramificada">${g}</svg>`;
+  }
+  const g=L(100,38,58,92)+L(100,38,142,92)+L(76,106,124,106)+`<text class="lab" x="100" y="22" text-anchor="middle">CH₂</text><text class="lab" x="50" y="108" text-anchor="middle">H₂C</text><text class="lab" x="150" y="108" text-anchor="middle">CH₂</text>`;
+  return `<svg class="mol" viewBox="0 0 200 132" width="200" height="132" role="img" aria-label="Cadena cíclica">${g}</svg>`;
+}
+
+/* ---------- teoría ---------- */
+$('#tabla-prefijos tbody').innerHTML=PREF.map(p=>`<tr><td class="n">${p[0]}</td><td class="p">${p[1]}-</td><td>${p[2]}</td></tr>`).join('');
+const VIZ={covalencia:()=>structural(1),tetra:tetra,bonds:()=>[1,2,3].map(k=>`<figure>${bond(k)}<span class="cap">${['','Enlace simple','Enlace doble','Enlace triple'][k]}</span></figure>`).join(''),lineal:()=>chain('lineal'),ramificada:()=>chain('ramificada'),ciclica:()=>chain('ciclica')};
+$$('[data-viz]').forEach(el=>{el.innerHTML=VIZ[el.dataset.viz]();});
+
+/* ---------- pestañas ---------- */
+const NAMES=['teoria','formulas','practica','quiz'];
+function show(name,scroll){
+  if(!NAMES.includes(name))name='teoria';
+  NAMES.forEach(n=>{$('#'+n).hidden=n!==name;$('#t-'+n).setAttribute('aria-selected',n===name);});
+  try{if(location.hash!=='#'+name)history.replaceState(null,'','#'+name);}catch(e){}
+  if(scroll)window.scrollTo({top:0,behavior:'auto'});
+}
+$$('.tab').forEach(b=>b.addEventListener('click',()=>show(b.dataset.tab,true)));
+$$('[data-go]').forEach(b=>b.addEventListener('click',()=>show(b.dataset.go,true)));
+window.addEventListener('hashchange',()=>show(location.hash.slice(1)));
+
+/* ---------- explorador de fórmulas ---------- */
+const exp={n:3,labels:false};
+function renderExp(){
+  const n=exp.n,p=PREF[n-1];
+  $('#exp-chips').innerHTML=PREF.map(q=>`<button class="chip" data-n="${q[0]}" aria-pressed="${q[0]===n}">${q[2]}</button>`).join('');
+  $('#exp-name').textContent=p[2];
+  $('#exp-info').textContent=`${n} carbono${n>1?'s':''} · ${2*n+2} hidrógenos`;
+  const esq=n===1?`<div class="viz">${skeletal(1,exp.labels)}</div><p class="cap">Con un solo carbono no hay esqueleto que dibujar, es solo un punto.</p>`:`<div class="viz">${skeletal(n,exp.labels)}</div>`;
+  $('#exp-cards').innerHTML=`
+   <div class="card fcard tint-pink"><h3>1. Estructural o desarrollada</h3><p class="what" style="color:inherit">Muestra todos los enlaces.</p><div class="viz">${structural(n)}</div></div>
+   <div class="card fcard tint-green"><h3>2. Semidesarrollada o condensada</h3><p class="what" style="color:inherit">Muestra el enlace C–C y los hidrógenos de forma condensada.</p><div class="viz"><div class="formula">${semi(n)}</div></div></div>
+   <div class="card fcard tint-blue"><h3>3. Molecular</h3><p class="what" style="color:inherit">Total de átomos por elemento.</p><div class="viz"><div class="formula">${molec(n)}</div></div></div>
+   <div class="card fcard tint-orange"><h3>4. Esqueletal</h3><p class="what" style="color:inherit">Los C no se ven: están en los ángulos y vértices. Los H se suponen.</p>${esq}<div class="row" style="justify-content:center"><button class="btn" id="tog-lab" aria-pressed="${exp.labels}">${exp.labels?'Ocultar':'Mostrar'} carbonos e hidrógenos</button></div></div>`;
+}
+$('#exp-chips').addEventListener('click',e=>{const b=e.target.closest('[data-n]');if(b){exp.n=+b.dataset.n;renderExp();}});
+$('#exp-cards').addEventListener('click',e=>{if(e.target.closest('#tog-lab')){exp.labels=!exp.labels;renderExp();}});
+renderExp();
+
+/* ---------- tarjetas de prefijos ---------- */
+const fc={dir:'n',order:PREF.slice(),open:new Set()};
+function renderFC(){
+  $('#fc-dir').textContent=fc.dir==='n'?'Ahora ves: número. Cambiar a prefijo':'Ahora ves: prefijo. Cambiar a número';
+  $('#fc-grid').innerHTML=fc.order.map(p=>{
+    const open=fc.open.has(p[0]);
+    const front=fc.dir==='n'?`<span class="big">${p[0]}</span><span class="small">carbonos</span>`:`<span class="big">${p[1]}-</span><span class="small">¿cuántos C?</span>`;
+    const back=fc.dir==='n'?`<span class="big">${p[1]}-</span><span class="small">${p[2]}</span>`:`<span class="big">${p[0]}</span><span class="small">${p[2]}</span>`;
+    return `<button class="fc" data-k="${p[0]}" aria-pressed="${open}">${open?back:front}</button>`;
+  }).join('');
+}
+$('#fc-grid').addEventListener('click',e=>{const b=e.target.closest('[data-k]');if(!b)return;const k=+b.dataset.k;fc.open.has(k)?fc.open.delete(k):fc.open.add(k);renderFC();});
+$('#fc-dir').addEventListener('click',()=>{fc.dir=fc.dir==='n'?'p':'n';fc.open.clear();renderFC();});
+$('#fc-shuf').addEventListener('click',()=>{shuffle(fc.order);fc.open.clear();renderFC();});
+$('#fc-reset').addEventListener('click',()=>{fc.open.clear();renderFC();});
+renderFC();
+
+/* ---------- ejercicio de tipos de fórmula ---------- */
+const TIPOS=[['est','Estructural'],['semi','Semidesarrollada'],['mol','Molecular'],['esq','Esqueletal']];
+const DR=[
+ {h:()=>`<div class="formula">CH<sub>3</sub>–CH<sub>3</sub></div>`,a:'semi',e:'Muestra el enlace C–C y los hidrógenos condensados.'},
+ {h:()=>`<div class="formula">CH<sub>3</sub>–CH<sub>2</sub>–CH<sub>3</sub></div>`,a:'semi',e:'Tiene los grupos CH₃ y CH₂ escritos uno tras otro.'},
+ {h:()=>`<div class="formula">CH<sub>3</sub>–CH<sub>2</sub>–CH<sub>2</sub>–CH<sub>3</sub></div>`,a:'semi',e:'Es la forma condensada del butano.'},
+ {h:()=>`<div class="formula">C<sub>2</sub>H<sub>6</sub></div>`,a:'mol',e:'Solo dice cuántos átomos hay de cada elemento.'},
+ {h:()=>`<div class="formula">C<sub>3</sub>H<sub>8</sub></div>`,a:'mol',e:'Solo cuenta átomos: 3 de carbono y 8 de hidrógeno.'},
+ {h:()=>`<div class="formula">C<sub>4</sub>H<sub>10</sub></div>`,a:'mol',e:'Total de átomos por elemento.'},
+ {h:()=>structural(2),a:'est',e:'Se ven todos los enlaces y todos los átomos.'},
+ {h:()=>structural(3),a:'est',e:'Se dibuja cada enlace, también los de C–H.'},
+ {h:()=>skeletal(4,false),a:'esq',e:'Solo hay una línea quebrada: los carbonos están en los vértices y los H se suponen.'},
+ {h:()=>skeletal(3,false),a:'esq',e:'Los carbonos están en los ángulos y los hidrógenos no se dibujan.'}
+];
+const dr={items:[],i:0,score:0,done:false,picked:null};
+function newDrill(){dr.items=shuffle(DR.slice()).slice(0,6);dr.i=0;dr.score=0;dr.done=false;dr.picked=null;renderDrill();}
+function renderDrill(){
+  const root=$('#drill');
+  if(dr.done){
+    root.innerHTML=`<div class="row" style="justify-content:space-between"><div><p class="note">Resultado</p><p class="score">${dr.score}/${dr.items.length}</p></div><button class="btn primary" id="dr-again">Otra ronda</button></div>`;
+    return;
+  }
+  const it=dr.items[dr.i],p=dr.picked;
+  root.innerHTML=`<div class="qmeta"><span>Fórmula ${dr.i+1} de ${dr.items.length}</span><span>Aciertos: ${dr.score}</span></div>
+   <div class="drill-item">${it.h()}</div>
+   <div class="opts">${TIPOS.map(t=>{let c='';if(p){if(t[0]===it.a)c=' ok';else if(t[0]===p)c=' bad';}return `<button class="opt${c}" data-t="${t[0]}" ${p?'disabled':''}>${t[1]}</button>`;}).join('')}</div>
+   ${p?`<div class="fb ${p===it.a?'good':'nope'}" style="margin-top:10px" aria-live="polite"><b>${p===it.a?'Correcto.':'No era esa.'}</b> ${it.e}</div><div style="margin-top:10px"><button class="btn primary" id="dr-next">${dr.i+1<dr.items.length?'Siguiente':'Ver resultado'}</button></div>`:''}`;
+}
+$('#drill').addEventListener('click',e=>{
+  const o=e.target.closest('[data-t]');
+  if(o&&!dr.picked){dr.picked=o.dataset.t;if(dr.picked===dr.items[dr.i].a)dr.score++;renderDrill();return;}
+  if(e.target.closest('#dr-next')){dr.picked=null;dr.i++;if(dr.i>=dr.items.length)dr.done=true;renderDrill();}
+  if(e.target.closest('#dr-again'))newDrill();
+});
+newDrill();
+
+/* ---------- quiz ---------- */
+const Q=[
+ ['¿Qué estudia la química del carbono?','Los compuestos con carbono y sus reacciones','Solo los metales y sus aleaciones','Únicamente los gases nobles','Solo la materia de los seres vivos','Incluye compuestos de origen biológico y no biológico.'],
+ ['¿Qué prefijo indica 3 átomos de carbono?','Prop-','Et-','But-','Pent-','Met (1), Et (2), Prop (3), But (4).'],
+ ['¿Cuántos carbonos tiene el hexano?','6','5','7','8','Hex- significa 6, como en hexágono.'],
+ ['¿Cómo se llama el compuesto de 8 carbonos?','Octano','Heptano','Nonano','Pentano','Oct- significa 8, como en octágono.'],
+ ['¿Cuántos carbonos tiene el butano?','4','3','5','6','But- significa 4.'],
+ ['¿Cuál de estas NO es una característica de los compuestos orgánicos?','Se disuelven bien en agua','Son covalentes','Son combustibles','Presentan isomería','No se disuelven en agua. Sí lo hacen en disolventes como el benceno.'],
+ ['Aun en estado líquido, los compuestos orgánicos…','no conducen la electricidad','conducen muy bien la electricidad','se convierten en metales','se disuelven en agua','Por ser covalentes no conducen electricidad.'],
+ ['¿Por qué las sustancias orgánicas son combustibles?','Porque tienen carbono e hidrógeno','Porque tienen mucho oxígeno','Porque son iónicas','Porque se disuelven en agua','Arden gracias al carbono y al hidrógeno que contienen.'],
+ ['¿Cuál es un ejemplo de sustancia orgánica combustible?','El gas natural','El agua','La sal de mesa','La arena','Los derivados del petróleo, el gas natural y los alcoholes son ejemplos.'],
+ ['¿Qué es la isomería?','Misma fórmula, diferente estructura','Misma estructura, diferente fórmula','Cuando un compuesto no tiene carbono','Cuando una sustancia se disuelve','Son las mismas piezas armadas de otra forma.'],
+ ['Verdadero o falso: los compuestos orgánicos soportan muy altas temperaturas.','Falso','Verdadero','','','No soportan altas temperaturas.'],
+ ['En un enlace covalente, los átomos…','comparten electrones','regalan electrones','pierden todos sus electrones','no usan electrones','Covalencia es compartir electrones.'],
+ ['Tetravalencia significa que el carbono puede formar…','4 enlaces covalentes','2 enlaces covalentes','3 enlaces covalentes','6 enlaces covalentes','Tetra significa cuatro.'],
+ ['¿Cuántos electrones de valencia tiene el carbono?','4','2','6','8','Participan los 4 en sus enlaces.'],
+ ['¿Cuál es la configuración electrónica del carbono?','1s² 2s² 2p²','1s² 2s² 2p⁴','1s² 2s¹','1s² 2p⁶','C: 1s² 2s² 2p², con 4 electrones de valencia.'],
+ ['La hibridación es…','el reordenamiento de los electrones del carbono al unirse con otros elementos','la unión de dos moléculas de agua','la pérdida de un protón','el cambio de estado de líquido a gas','Ese reordenamiento permite formar enlaces.'],
+ ['La autosaturación es la capacidad del carbono de…','unirse consigo mismo con enlaces simples, dobles y triples','disolverse en agua','perder sus 4 electrones','formar solo enlaces simples con el hidrógeno','Así forma cadenas con distintas estructuras.'],
+ ['¿Qué tipo de enlace es C≡C?','Triple','Simple','Doble','Iónico','Una raya es simple, dos son dobles y tres son triple.'],
+ ['En una cadena ramificada…','hay carbonos que salen de la cadena principal','los carbonos forman un anillo','todos los carbonos están en línea recta','no hay carbonos','La rama sale de la cadena principal.'],
+ ['Una cadena cíclica es aquella que…','forma un anillo cerrado','es una línea recta','tiene ramas hacia los lados','no tiene hidrógenos','Cíclica viene de ciclo, como un círculo.'],
+ ['¿Qué fórmula muestra todos los enlaces?','Estructural o desarrollada','Molecular','Semidesarrollada','Esqueletal','La estructural dibuja cada enlace.'],
+ ['CH₃–CH₃ es la fórmula…','semidesarrollada del etano','molecular del etano','esqueletal del etano','estructural del etano','Muestra el enlace C–C y los H condensados.'],
+ ['La fórmula molecular indica…','el total de átomos por elemento','todos los enlaces','solo los vértices','solo el enlace C–C','Por ejemplo C₂H₆: 2 carbonos y 6 hidrógenos.'],
+ ['¿Cuál es la fórmula molecular del etano?','C₂H₆','CH₄','C₃H₈','C₂H₄','El etano tiene 2 carbonos y 6 hidrógenos.'],
+ ['¿Cuántos hidrógenos tiene el etano (C₂H₆)?','6','2','4','8','El subíndice 6 indica los hidrógenos.'],
+ ['En la fórmula esqueletal, ¿dónde se ubican los carbonos?','En los ángulos y vértices','En el centro de cada H','Se escriben todos con la letra C','No existen','Los carbonos no se escriben y los hidrógenos se suponen.']
+];
+const qz={view:'start',mode:null,list:[],i:0,sel:null,locked:false,results:[]};
+function best(){try{return localStorage.getItem('qc-best');}catch(e){return null;}}
+function saveBest(p){try{const b=+localStorage.getItem('qc-best')||0;if(p>b)localStorage.setItem('qc-best',String(p));}catch(e){}}
+function build(ids){return ids.map(id=>{const q=Q[id];const opts=q.slice(1,5).filter(Boolean).map((t,k)=>({t,ok:k===0}));return {id,q:q[0],e:q[5],opts:q[0].startsWith('Verdadero')?opts:shuffle(opts)};});}
+function startQuiz(mode,ids){
+  const all=ids||shuffle(Q.map((_,i)=>i)).slice(0,mode==='exam'?20:10);
+  qz.mode=mode;qz.list=build(all);qz.i=0;qz.sel=null;qz.locked=false;qz.results=[];qz.view='play';renderQuiz();
+}
+function renderQuiz(){
+  const root=$('#quiz-root');
+  if(qz.view==='start'){
+    const b=best();
+    root.innerHTML=`<div class="card"><h2><span class="hl hl-purple">Quiz</span></h2><p style="margin-top:10px">Elige cómo quieres estudiar. Las preguntas salen mezcladas cada vez.</p>${b?`<p class="note" style="margin-top:8px">Tu mejor resultado: ${b}%</p>`:''}</div>
+     <div class="mode"><button class="btn primary" data-mode="practice"><b>Practicar</b><span>10 preguntas. Ves la explicación después de cada respuesta.</span></button><button class="btn" data-mode="exam"><b>Examen</b><span>20 preguntas. Ves tu nota y las respuestas al final.</span></button></div>`;
+    return;
+  }
+  if(qz.view==='end'){
+    const total=qz.results.length,ok=qz.results.filter(r=>r.ok).length,pct=Math.round(ok/total*100);
+    const miss=qz.results.filter(r=>!r.ok);
+    const msg=pct>=90?'Excelente, ya dominas el tema.':pct>=70?'Muy bien. Repasa lo que fallaste y quedas lista.':pct>=50?'Vas por buen camino. Vuelve a la teoría de lo que fallaste.':'Tranquila, repasa la teoría y vuelve a intentarlo. Se aprende practicando.';
+    root.innerHTML=`<div class="card"><p class="note">${qz.mode==='exam'?'Examen':'Práctica'} terminado</p><p class="score">${ok}/${total}</p><p style="margin-top:6px"><b>${pct}%</b> · ${msg}</p>
+     <div class="row" style="margin-top:14px"><button class="btn primary" data-mode="${qz.mode}">Intentar de nuevo</button>${miss.length?`<button class="btn" id="q-miss">Repasar las ${miss.length} que fallé</button>`:''}<button class="btn" id="q-home">Cambiar de modo</button></div></div>
+     ${miss.length?`<div class="miss"><h3>Para repasar</h3>${miss.map(r=>`<div class="card"><p><b>${r.q}</b></p><p style="margin-top:6px">Tu respuesta: ${r.picked}</p><p class="ans">Correcta: ${r.right}</p><p class="note" style="margin-top:4px">${r.e}</p></div>`).join('')}</div>`:''}`;
+    return;
+  }
+  const q=qz.list[qz.i],n=qz.list.length,prac=qz.mode==='practice';
+  const letters='ABCD';
+  root.innerHTML=`<div class="card" style="display:flex;flex-direction:column;gap:14px">
+    <div class="qmeta"><span>${prac?'Práctica':'Examen'} · Pregunta ${qz.i+1} de ${n}</span><span>${qz.results.filter(r=>r.ok).length} correctas</span></div>
+    <div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="${n}" aria-valuenow="${qz.i}"><i style="width:${qz.i/n*100}%"></i></div>
+    <h3 class="qtext">${q.q}</h3>
+    <div class="opts">${q.opts.map((o,k)=>{let c='';if(qz.sel!==null){if(prac&&qz.locked){if(o.ok)c=' ok';else if(k===qz.sel)c=' bad';}else if(k===qz.sel)c=' sel';}return `<button class="opt${c}" data-o="${k}" ${prac&&qz.locked?'disabled':''}>${letters[k]}. ${o.t}</button>`;}).join('')}</div>
+    ${prac&&qz.locked?`<div class="fb ${q.opts[qz.sel].ok?'good':'nope'}" aria-live="polite"><b>${q.opts[qz.sel].ok?'Correcto.':'Casi.'}</b> ${q.e}</div>`:''}
+    ${qz.sel!==null&&(!prac||qz.locked)?`<div><button class="btn primary" id="q-next">${qz.i+1<n?'Siguiente':'Ver resultado'}</button></div>`:''}
+  </div>`;
+}
+$('#quiz-root').addEventListener('click',e=>{
+  const m=e.target.closest('[data-mode]');
+  if(m){startQuiz(m.dataset.mode);return;}
+  if(e.target.closest('#q-home')){qz.view='start';renderQuiz();return;}
+  if(e.target.closest('#q-miss')){const ids=qz.results.filter(r=>!r.ok).map(r=>r.id);startQuiz('practice',ids);return;}
+  const o=e.target.closest('[data-o]');
+  if(o&&qz.view==='play'){
+    if(qz.mode==='practice'&&qz.locked)return;
+    qz.sel=+o.dataset.o;if(qz.mode==='practice')qz.locked=true;renderQuiz();return;
+  }
+  if(e.target.closest('#q-next')){
+    const q=qz.list[qz.i],picked=q.opts[qz.sel];
+    qz.results.push({id:q.id,q:q.q,e:q.e,ok:picked.ok,picked:picked.t,right:q.opts.find(x=>x.ok).t});
+    qz.sel=null;qz.locked=false;qz.i++;
+    if(qz.i>=qz.list.length){qz.view='end';saveBest(Math.round(qz.results.filter(r=>r.ok).length/qz.results.length*100));}
+    renderQuiz();window.scrollTo({top:0,behavior:'auto'});
+  }
+});
+renderQuiz();
+show(location.hash.slice(1));
+})();
+</script>
