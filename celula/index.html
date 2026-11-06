@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>La célula por dentro</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+/* Idea: laboratorio de bioquímica. Vinotinto + amarillo sobre blanco roto; mapa de célula central, paneles de química a un toque. */
+:root{
+  --bg:#faf7f5; --surface:#ffffff; --ink:#2a1218; --muted:#6e5a5f; --line:#e6dcd8;
+  --accent:#7a1a2e; --accent-ink:#ffffff; --hl:#f2b705; --hl-ink:#2a1218;
+  --ok:#2f7d4f; --bad:#b3261e; --cell:#fbe9e4; --cyto:#fff4ef; --org:#c97b8a; --org2:#e8b4be;
+  --font-d:'Bricolage Grotesque','Segoe UI',system-ui,sans-serif; --font-b:'Source Sans 3','Segoe UI',system-ui,sans-serif;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#1a0d11; --surface:#26151a; --ink:#f5e9ea; --muted:#bba3a8; --line:#4a2c34;
+    --accent:#e57a8f; --accent-ink:#1a0d11; --hl:#f2b705; --hl-ink:#1a0d11;
+    --ok:#6ccf93; --bad:#ff8a80; --cell:#3a1f27; --cyto:#2f1a21; --org:#b8566b; --org2:#8a3d4f; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#1a0d11; --surface:#26151a; --ink:#f5e9ea; --muted:#bba3a8; --line:#4a2c34;
+  --accent:#e57a8f; --accent-ink:#1a0d11; --hl:#f2b705; --hl-ink:#1a0d11;
+  --ok:#6ccf93; --bad:#ff8a80; --cell:#3a1f27; --cyto:#2f1a21; --org:#b8566b; --org2:#8a3d4f; color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--font-b);font-size:17px;line-height:1.5}
+.wrap{max-width:980px;margin:0 auto;padding:20px 16px 60px}
+h1,h2,h3{font-family:var(--font-d);text-wrap:balance;line-height:1.1;margin:0}
+h1{font-size:clamp(2rem,6vw,3.2rem);font-weight:800;letter-spacing:-.02em}
+h2{font-size:1.6rem;font-weight:700;margin-bottom:6px}
+h3{font-size:1.15rem;font-weight:700}
+p{margin:.4em 0}
+header{padding:12px 0 18px;border-bottom:3px solid var(--accent);margin-bottom:16px}
+header .tag{display:inline-block;background:var(--hl);color:var(--hl-ink);font-weight:700;font-size:.8rem;padding:3px 10px;border-radius:99px;margin-bottom:10px}
+header p{color:var(--muted);max-width:60ch}
+.chnops{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}
+.el{width:46px;height:50px;border:2px solid var(--accent);border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--surface);font-family:var(--font-d);line-height:1}
+.el b{font-size:1.25rem;color:var(--accent)} .el small{font-size:.62rem;color:var(--muted);margin-top:3px}
+nav{display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;margin-bottom:14px;position:sticky;top:0;background:var(--bg);z-index:5;padding-top:6px}
+nav button{flex:0 0 auto;font:inherit;font-weight:700;border:2px solid var(--line);background:var(--surface);color:var(--ink);padding:8px 14px;border-radius:99px;cursor:pointer}
+nav button[aria-selected="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+button:focus-visible,input:focus-visible,.org:focus-visible{outline:3px solid var(--hl);outline-offset:2px}
+section.tab{display:none} section.tab.on{display:block}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px}
+.grid2{display:grid;grid-template-columns:1.15fr 1fr;gap:16px;align-items:start}
+@media(max-width:760px){.grid2{grid-template-columns:1fr}}
+.toggle{display:inline-flex;border:2px solid var(--accent);border-radius:99px;overflow:hidden;margin:8px 0}
+.toggle button{font:inherit;font-weight:700;border:0;background:transparent;color:var(--accent);padding:6px 14px;cursor:pointer}
+.toggle button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
+svg{max-width:100%;height:auto;display:block}
+.org{cursor:pointer;transition:filter .15s}
+.org:hover{filter:brightness(1.12)}
+.org.sel{filter:drop-shadow(0 0 6px var(--hl))}
+.org.sel .shape{stroke:var(--hl);stroke-width:4}
+.plant-only{display:none} .plant .plant-only{display:inline}
+.lbl{font-family:var(--font-d);font-size:13px;fill:var(--ink);pointer-events:none;font-weight:700}
+.formula{font-family:var(--font-d);font-size:1.15rem;background:var(--bg);border-left:5px solid var(--hl);padding:10px 12px;border-radius:6px;margin:10px 0;overflow-x:auto}
+.chem li{margin:6px 0}
+.chem{padding-left:20px;margin:6px 0}
+.pill{display:inline-block;font-size:.78rem;font-weight:700;padding:2px 9px;border-radius:99px;background:var(--hl);color:var(--hl-ink)}
+.hint{color:var(--muted);font-size:.92rem}
+.mol-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.mol{text-align:left;font:inherit;color:inherit;cursor:pointer;border:2px solid var(--line);background:var(--surface);border-radius:14px;padding:14px}
+.mol[aria-expanded="true"]{border-color:var(--accent)}
+.mol .big{font-family:var(--font-d);font-size:1.3rem;font-weight:800;color:var(--accent)}
+.mol .more{display:none;margin-top:8px;border-top:1px dashed var(--line);padding-top:8px;font-size:.95rem}
+.mol[aria-expanded="true"] .more{display:block}
+table{border-collapse:collapse;width:100%;font-size:.95rem}
+th,td{border-bottom:1px solid var(--line);padding:7px 8px;text-align:left;vertical-align:top}
+th{font-family:var(--font-d)}
+.scroll{overflow-x:auto}
+input[type=range]{width:100%;accent-color:var(--accent)}
+.readout{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0}
+.readout div{flex:1 1 130px;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:8px 10px}
+.readout b{display:block;font-family:var(--font-d);font-size:1.3rem;color:var(--accent)}
+.readout span{font-size:.8rem;color:var(--muted)}
+select{font:inherit;padding:7px 10px;border-radius:8px;border:2px solid var(--line);background:var(--surface);color:var(--ink)}
+.btn{font:inherit;font-weight:700;border:0;background:var(--accent);color:var(--accent-ink);padding:9px 16px;border-radius:99px;cursor:pointer}
+.btn.alt{background:var(--hl);color:var(--hl-ink)}
+.q{margin:14px 0}
+.opts{display:grid;gap:8px;margin-top:8px}
+.opts button{font:inherit;text-align:left;border:2px solid var(--line);background:var(--surface);color:var(--ink);padding:10px 12px;border-radius:10px;cursor:pointer}
+.opts button.right{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 18%,var(--surface))}
+.opts button.wrong{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 15%,var(--surface))}
+.why{margin-top:8px;font-size:.95rem;color:var(--muted)}
+.bar{height:10px;background:var(--line);border-radius:99px;overflow:hidden;margin:8px 0}
+.bar i{display:block;height:100%;background:var(--accent);width:0;transition:width .3s}
+.flow{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px}
+.chip{border:2px solid var(--line);border-radius:12px;padding:10px;background:var(--surface)}
+.chip b{display:block;font-family:var(--font-d);color:var(--accent)}
+.chip span{display:inline-block;background:var(--hl);color:var(--hl-ink);font-weight:700;font-size:.75rem;border-radius:99px;padding:1px 8px;margin:4px 0}
+.chip small{display:block;color:var(--muted);font-size:.9rem}
+.kn circle{fill:var(--surface);stroke:var(--line);stroke-width:3}
+.kn.on circle{fill:var(--hl);stroke:var(--hl-ink)}
+.kn.done circle{fill:var(--org2);stroke:var(--accent)}
+.kn text{font-family:var(--font-d);font-weight:800;font-size:12px;fill:var(--ink);text-anchor:middle;pointer-events:none}
+.kn.on text{fill:var(--hl-ink)}
+[data-s]{opacity:.3;transition:opacity .2s}
+[data-s].lit{opacity:1}
+.carbons{font-size:1.3rem;letter-spacing:3px;color:var(--accent);min-height:1.8rem}
+.btnrow{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.key{background:var(--bg);border-left:5px solid var(--accent);padding:10px 12px;border-radius:6px;margin:10px 0}
+.mp{cursor:pointer}
+.mp.sel .ms{stroke:var(--hl);stroke-width:8}
+.mlbl{font-family:var(--font-d);font-weight:700;font-size:12px;fill:var(--ink);pointer-events:none}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <span class="tag">Clase para Ale · Secundaria</span>
+  <h1>La célula por dentro: una fábrica de química</h1>
+  <p>Una célula no es un dibujo con bolitas. Es una bolsa de agua donde ocurren miles de reacciones químicas a la vez, ordenadas por membranas. Toca, mueve y responde para verlo.</p>
+  <div class="chnops" aria-label="Los seis elementos de la vida">
+    <div class="el"><b>C</b><small>Carbono</small></div>
+    <div class="el"><b>H</b><small>Hidrógeno</small></div>
+    <div class="el"><b>N</b><small>Nitrógeno</small></div>
+    <div class="el"><b>O</b><small>Oxígeno</small></div>
+    <div class="el"><b>P</b><small>Fósforo</small></div>
+    <div class="el"><b>S</b><small>Azufre</small></div>
+  </div>
+</header>
+
+<nav role="tablist" id="tabs">
+  <button role="tab" aria-selected="true" data-t="mapa">1 · Mapa</button>
+  <button role="tab" aria-selected="false" data-t="moleculas">2 · Moléculas</button>
+  <button role="tab" aria-selected="false" data-t="membrana">3 · Membrana</button>
+  <button role="tab" aria-selected="false" data-t="energia">4 · Energía y enzimas</button>
+  <button role="tab" aria-selected="false" data-t="mito">5 · Mitocondria y Krebs</button>
+  <button role="tab" aria-selected="false" data-t="quiz">6 · Reto</button>
+</nav>
+
+<!-- 1 MAPA -->
+<section class="tab on" id="t-mapa">
+  <h2>Mapa de la célula</h2>
+  <p class="hint">Toca cualquier estructura. Cada una tiene su propia química.</p>
+  <div class="toggle" role="group" aria-label="Tipo de célula">
+    <button id="bAnimal" aria-pressed="true">Animal</button>
+    <button id="bPlant" aria-pressed="false">Vegetal</button>
+  </div>
+  <div class="grid2">
+    <div class="card">
+      <svg id="cellsvg" viewBox="0 0 600 420" role="img" aria-label="Célula con organelos que se pueden tocar">
+        <g id="cellroot">
+          <ellipse class="plant-only" cx="300" cy="210" rx="286" ry="196" fill="none" stroke="#5a8f3d" stroke-width="10" style="stroke-linecap:round"/>
+          <g class="org" tabindex="0" role="button" data-id="membrana" aria-label="Membrana plasmática">
+            <ellipse class="shape" cx="300" cy="210" rx="270" ry="180" fill="var(--cyto)" stroke="var(--accent)" stroke-width="6"/>
+          </g>
+          <g class="org plant-only" tabindex="0" role="button" data-id="pared" aria-label="Pared celular">
+            <ellipse class="shape" cx="300" cy="210" rx="286" ry="196" fill="none" stroke="#5a8f3d" stroke-width="10" opacity=".001"/>
+            <ellipse cx="300" cy="210" rx="286" ry="196" fill="none" stroke="#5a8f3d" stroke-width="10"/>
+          </g>
+          <g class="org" tabindex="0" role="button" data-id="citosol" aria-label="Citosol">
+            <text class="lbl" x="300" y="388" text-anchor="middle" fill="currentColor">toca aquí: citosol</text>
+          </g>
+          <g class="org" tabindex="0" role="button" data-id="nucleo" aria-label="Núcleo">
+            <circle class="shape" cx="230" cy="175" r="64" fill="var(--org2)" stroke="var(--accent)" stroke-width="3"/>
+            <circle cx="220" cy="168" r="17" fill="var(--accent)"/>
+            <text class="lbl" x="230" y="262" text-anchor="middle" style="display:none">Núcleo</text>
+          </g>
+          <g class="org" tabindex="0" role="button" data-id="re" aria-label="Retículo endoplasmático">
+            <path class="shape" d="M150 270 q40 -22 80 0 t80 0 M150 292 q40 -22 80 0 t80 0 M150 314 q40 -22 80 0 t80 0" fill="none" stroke="var(--org)" stroke-width="9" stroke-linecap="round"/>
+            <circle cx="165" cy="262" r="3.5" fill="var(--ink)"/><circle cx="205" cy="262" r="3.5" fill="var(--ink)"/><circle cx="245" cy="262" r="3.5" fill="var(--ink)"/><circle cx="285" cy="262" r="3.5" fill="var(--ink)"/>
+          </g>
+          <g class="org" tabindex="0" role="button" data-id="ribosoma" aria-label="Ribosomas">
+            <circle class="shape" cx="320" cy="150" r="6" fill="var(--ink)"/><circle class="shape" cx="338" cy="172" r="6" fill="var(--ink)"/><circle class="shape" cx="312" cy="196" r="6" fill="var(--ink)"/><circle class="shape" cx="344" cy="212" r="6" fill="var(--ink)"/>
+          </g>
+          <g class="org" tabindex="0" role="button" data-id="golgi" aria-label="Aparato de Golgi">
+            <path class="shape" d="M345 95 q35 -20 70 0 M340 112 q40 -22 80 0 M345 129 q35 -20 70 0 M352 146 q28 -16 56 0" fill="none" stroke="#d99a2b" stroke-width="9" stroke-linecap="round"/>
+          </g>
+          <g class="org" tabindex="0" role="button" data-id="mito" aria-label="Mitocondria">
+            <g transform="translate(375 285) rotate(-20)"><ellipse class="shape" rx="50" ry="26" fill="#e07a5f" stroke="#8b2f1a" stroke-width="3"/><path d="M-34 0 q8 -14 14 0 t14 0 t14 0 t14 0 t14 0" fill="none" stroke="#8b2f1a" stroke-width="3"/></g>
+            <g transform="translate(110 240) rotate(25)"><ellipse class="shape" rx="42" ry="22" fill="#e07a5f" stroke="#8b2f1a" stroke-width="3"/><path d="M-28 0 q7 -12 12 0 t12 0 t12 0 t12 0" fill="none" stroke="#8b2f1a" stroke-width="3"/></g>
+          </g>
+          <g class="org" tabindex="0" role="button" data-id="lisosoma" aria-label="Lisosoma">
+            <circle class="shape" cx="470" cy="320" r="18" fill="#7a4fa3" stroke="#3d2459" stroke-width="3"/><circle cx="464" cy="314" r="3" fill="#e9dcf7"/><circle cx="475" cy="324" r="3" fill="#e9dcf7"/>
+          </g>
+          <g class="org plant-only" tabindex="0" role="button" data-id="cloroplasto" aria-label="Cloroplasto">
+            <g transform="translate(120 130) rotate(-30)"><ellipse class="shape" rx="42" ry="22" fill="#5a9e3a" stroke="#2f5f1a" stroke-width="3"/><ellipse cx="-14" cy="0" rx="8" ry="4" fill="#2f5f1a"/><ellipse cx="6" cy="2" rx="8" ry="4" fill="#2f5f1a"/><ellipse cx="22" cy="-2" rx="6" ry="3" fill="#2f5f1a"/></g>
+            <g transform="translate(190 355) rotate(10)"><ellipse class="shape" rx="38" ry="19" fill="#5a9e3a" stroke="#2f5f1a" stroke-width="3"/><ellipse cx="-12" cy="0" rx="7" ry="3.5" fill="#2f5f1a"/><ellipse cx="8" cy="2" rx="7" ry="3.5" fill="#2f5f1a"/></g>
+          </g>
+          <g class="org plant-only" tabindex="0" role="button" data-id="vacuola" aria-label="Vacuola">
+            <ellipse class="shape" cx="500" cy="195" rx="40" ry="80" fill="#cfe6f2" stroke="#3b7ea1" stroke-width="3"/>
+          </g>
+        </g>
+      </svg>
+      <p class="hint" style="text-align:center;margin-top:6px">Núcleo, retículo, ribosomas, Golgi, mitocondrias, lisosoma. En modo vegetal aparecen pared, cloroplastos y vacuola.</p>
+    </div>
+    <div class="card" id="panel" aria-live="polite"></div>
+  </div>
+</section>
+
+<!-- 2 MOLECULAS -->
+<section class="tab" id="t-moleculas">
+  <h2>Las cuatro familias de moléculas</h2>
+  <p class="hint">Casi todo lo que hay en una célula es agua más cuatro tipos de biomoléculas. Toca una tarjeta para abrirla.</p>
+  <div class="card" style="margin-bottom:14px">
+    <h3>Primero, el agua (≈70 % de la célula)</h3>
+    <p>H<sub>2</sub>O es una molécula <b>polar</b>: el oxígeno atrae más los electrones, queda con carga parcial negativa (δ−) y los hidrógenos con δ+. Por eso forma <b>puentes de hidrógeno</b> con otras moléculas.</p>
+    <ul class="chem">
+      <li><b>Disuelve</b> lo polar o iónico (sal, glucosa): son <i>hidrófilos</i>.</li>
+      <li><b>No mezcla</b> con lo apolar (aceite, grasas): son <i>hidrófobos</i>. Esta regla explica por qué existe la membrana.</li>
+      <li>Calor específico alto: amortigua los cambios de temperatura de la célula.</li>
+    </ul>
+  </div>
+  <div class="mol-grid" id="molgrid"></div>
+  <div class="card scroll" style="margin-top:14px">
+    <h3>Pruebas de laboratorio (para identificarlas)</h3>
+    <table>
+      <tr><th>Reactivo</th><th>Detecta</th><th>Resultado positivo</th></tr>
+      <tr><td>Lugol (I<sub>2</sub>/KI)</td><td>Almidón</td><td>Azul-negro</td></tr>
+      <tr><td>Benedict (CuSO<sub>4</sub> en medio alcalino, calor)</td><td>Azúcares reductores (glucosa)</td><td>Azul → verde → naranja-rojo (Cu<sub>2</sub>O)</td></tr>
+      <tr><td>Biuret (CuSO<sub>4</sub> + NaOH)</td><td>Enlaces peptídicos (proteínas)</td><td>Violeta</td></tr>
+      <tr><td>Sudán III</td><td>Lípidos</td><td>Gotas rojo-anaranjadas</td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- 3 MEMBRANA -->
+<section class="tab" id="t-membrana">
+  <h2>La membrana: química que separa y deja pasar</h2>
+  <div class="grid2">
+    <div class="card">
+      <h3>Fosfolípidos: moléculas con dos caras</h3>
+      <p>Cada fosfolípido tiene una <b>cabeza polar</b> (con grupo fosfato, ama el agua) y dos <b>colas apolares</b> de ácidos grasos (odian el agua). En agua se ordenan solos en doble capa: las cabezas hacia el agua, las colas escondidas adentro.</p>
+      <svg viewBox="0 0 360 200" role="img" aria-label="Bicapa lipídica con cabezas hacia afuera y colas hacia adentro">
+        <rect x="0" y="0" width="360" height="200" fill="none"/>
+        <text x="8" y="16" class="lbl" style="font-size:12px">Agua (exterior)</text>
+        <text x="8" y="196" class="lbl" style="font-size:12px">Agua (citosol)</text>
+        <g id="bilayer"></g>
+        <rect x="150" y="82" width="60" height="38" rx="10" fill="var(--hl)" stroke="var(--hl-ink)" stroke-width="2"/>
+        <text x="180" y="105" text-anchor="middle" class="lbl" style="font-size:11px;fill:var(--hl-ink)">proteína</text>
+      </svg>
+      <ul class="chem">
+        <li>Pasa solo por difusión simple: O<sub>2</sub>, CO<sub>2</sub>, moléculas apolares.</li>
+        <li>No pasan solos: iones (Na<sup>+</sup>, K<sup>+</sup>, Cl<sup>−</sup>) y glucosa. Necesitan proteínas canal o transportadoras.</li>
+        <li>El agua pasa por <b>ósmosis</b>, a veces por acuaporinas.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Simulador de ósmosis</h3>
+      <p class="hint">Un glóbulo rojo vive a gusto en NaCl al 0,9 % (suero fisiológico). Cambia la concentración de la solución externa.</p>
+      <label for="salt"><b>NaCl externo: <span id="saltv">0,90</span> g/100 mL</b></label>
+      <input type="range" id="salt" min="0" max="2" step="0.05" value="0.9">
+      <svg viewBox="0 0 300 190" role="img" aria-label="Célula que cambia de tamaño según la sal externa" id="osmsvg">
+        <circle id="osmcell" cx="150" cy="95" r="60" fill="var(--org2)" stroke="var(--accent)" stroke-width="5"/>
+        <g id="osmarrows"></g>
+      </svg>
+      <div class="readout">
+        <div><b id="osmM">154</b><span>mM de NaCl</span></div>
+        <div><b id="osmO">308</b><span>mOsm/L (NaCl se separa en 2 iones)</span></div>
+      </div>
+      <p id="osmtxt" style="font-weight:700"></p>
+    </div>
+  </div>
+  <div class="card scroll" style="margin-top:14px">
+    <h3>Cómo atraviesan las sustancias</h3>
+    <table>
+      <tr><th>Tipo</th><th>Energía (ATP)</th><th>Dirección</th><th>Ejemplo</th></tr>
+      <tr><td>Difusión simple</td><td>No</td><td>A favor del gradiente</td><td>O<sub>2</sub>, CO<sub>2</sub></td></tr>
+      <tr><td>Difusión facilitada</td><td>No</td><td>A favor del gradiente</td><td>Glucosa por GLUT</td></tr>
+      <tr><td>Transporte activo</td><td>Sí</td><td>En contra del gradiente</td><td>Bomba Na<sup>+</sup>/K<sup>+</sup>: saca 3 Na<sup>+</sup>, mete 2 K<sup>+</sup></td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- 4 ENERGIA -->
+<section class="tab" id="t-energia">
+  <h2>Energía y enzimas</h2>
+  <div class="card" style="margin-bottom:14px">
+    <h3>ATP: la moneda de energía</h3>
+    <div class="formula">ATP + H<sub>2</sub>O → ADP + P<sub>i</sub> &nbsp; <span class="pill">ΔG°′ ≈ −30,5 kJ/mol</span></div>
+    <p>El ATP lleva tres grupos fosfato con cargas negativas que se repelen. Al romper el último enlace se libera energía que la célula usa para mover, sintetizar o bombear. Una célula gasta y recicla millones de moléculas de ATP por segundo.</p>
+  </div>
+  <div class="card" style="margin-bottom:14px">
+    <h3>Respiración celular (mitocondria): ¿está balanceada?</h3>
+    <div class="formula">C<sub>6</sub>H<sub>12</sub>O<sub>6</sub> + 6 O<sub>2</sub> → 6 CO<sub>2</sub> + 6 H<sub>2</sub>O + energía (≈ 30 ATP)</div>
+    <button class="btn alt" id="bBal">Contar átomos</button>
+    <div class="scroll"><table id="balT" style="margin-top:10px;display:none">
+      <tr><th>Átomo</th><th>Reactivos</th><th>Productos</th><th></th></tr>
+      <tr><td>C</td><td>6</td><td>6 × 1 = 6</td><td>✓</td></tr>
+      <tr><td>H</td><td>12</td><td>6 × 2 = 12</td><td>✓</td></tr>
+      <tr><td>O</td><td>6 + 6 × 2 = 18</td><td>6 × 2 + 6 × 1 = 18</td><td>✓</td></tr>
+    </table></div>
+    <p class="hint">La fotosíntesis (cloroplasto) es la reacción inversa: 6 CO<sub>2</sub> + 6 H<sub>2</sub>O + luz → C<sub>6</sub>H<sub>12</sub>O<sub>6</sub> + 6 O<sub>2</sub>. El oxígeno que respiras sale del agua.</p>
+  </div>
+  <div class="card">
+    <h3>Enzimas y pH</h3>
+    <p>Una enzima es una proteína que acelera una reacción. Su forma 3D depende de enlaces débiles que el pH altera: fuera de su pH óptimo se <b>desnaturaliza</b> y pierde actividad.</p>
+    <label for="enz"><b>Enzima:</b></label>
+    <select id="enz">
+      <option value="2">Pepsina (estómago)</option>
+      <option value="4.8">Hidrolasas del lisosoma</option>
+      <option value="6.8" selected>Amilasa salival (boca)</option>
+      <option value="8">Tripsina (intestino)</option>
+    </select>
+    <label for="ph" style="display:block;margin-top:10px"><b>pH del medio: <span id="phv">7,0</span></b></label>
+    <input type="range" id="ph" min="0" max="14" step="0.1" value="7">
+    <svg viewBox="0 0 400 170" role="img" aria-label="Curva de actividad de la enzima según el pH" id="enzsvg"></svg>
+    <div class="readout">
+      <div><b id="hconc">1,0 × 10⁻⁷</b><span>[H⁺] en mol/L</span></div>
+      <div><b id="act">0 %</b><span>actividad relativa</span></div>
+    </div>
+    <p class="hint">pH = −log[H<sup>+</sup>]. Bajar una unidad de pH multiplica por 10 la concentración de H<sup>+</sup>.</p>
+  </div>
+</section>
+
+<!-- 5 MITOCONDRIA Y KREBS -->
+<section class="tab" id="t-mito">
+  <h2>Mitocondria y ciclo de Krebs</h2>
+  <div class="card" style="margin-bottom:14px">
+    <h3>La idea en pocas palabras</h3>
+    <p>La mitocondria es como una <b>central eléctrica</b>. Recibe un combustible (la glucosa de lo que comes), usa oxígeno para "quemarlo" despacito y produce <b>ATP</b>, la energía que tu cuerpo usa para moverte, pensar y crecer. Lo que sobra es <b>CO₂</b> (lo exhalas) y <b>agua</b>.</p>
+    <div class="key"><b>Dos palabras clave.</b> <b>Oxidar</b> es quitarle electrones a algo. <b>Reducir</b> es dárselos. Los electrones son pequeñas cargas que llevan energía, y en la mitocondria se pasan de mano en mano como una bolsa de dinero.</div>
+  </div>
+
+  <div class="card" style="margin-bottom:14px">
+    <h3>Por dentro: cuatro zonas</h3>
+    <p class="hint">Toca cada zona del dibujo.</p>
+    <div class="grid2">
+      <svg viewBox="0 0 420 240" role="img" aria-label="Mitocondria con sus cuatro zonas">
+        <g class="mp sel" tabindex="0" role="button" data-m="espacio" aria-label="Espacio intermembrana"><ellipse class="ms" cx="210" cy="120" rx="190" ry="100" fill="var(--org2)" stroke="none"/></g>
+        <g class="mp" tabindex="0" role="button" data-m="matriz" aria-label="Matriz"><path class="ms" d="M72 120 C72 62 150 42 210 46 S348 62 348 120 S270 198 210 194 S72 178 72 120 Z" fill="var(--cyto)" stroke="none"/></g>
+        <g class="mp" tabindex="0" role="button" data-m="interna" aria-label="Membrana interna y crestas">
+          <path class="ms" d="M72 120 C72 62 150 42 210 46 S348 62 348 120 S270 198 210 194 S72 178 72 120 Z" fill="none" stroke="var(--accent)" stroke-width="5"/>
+          <path class="ms" d="M130 56 V112 M178 47 V92 M242 47 V92 M292 56 V112 M130 184 V130 M178 193 V148 M242 193 V148 M292 184 V130" fill="none" stroke="var(--accent)" stroke-width="5" stroke-linecap="round"/>
+        </g>
+        <g class="mp" tabindex="0" role="button" data-m="externa" aria-label="Membrana externa"><ellipse class="ms" cx="210" cy="120" rx="190" ry="100" fill="none" stroke="#8b2f1a" stroke-width="6"/></g>
+        <text class="mlbl" x="210" y="125" text-anchor="middle">MATRIZ</text>
+        <text class="mlbl" x="38" y="124" text-anchor="middle" transform="rotate(-90 38 124)" style="font-size:10px">espacio intermembrana</text>
+      </svg>
+      <div id="mpanel" aria-live="polite"></div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:14px">
+    <h3>El camino completo de la glucosa</h3>
+    <div class="flow">
+      <div class="chip"><b>1 · Glucólisis</b><span>Citosol</span><small>Glucosa (6 C) → 2 piruvato (3 C). No necesita oxígeno.</small></div>
+      <div class="chip"><b>2 · Puente</b><span>Matriz</span><small>Cada piruvato pierde 1 CO₂ y se vuelve Acetil-CoA (2 C).</small></div>
+      <div class="chip"><b>3 · Ciclo de Krebs</b><span>Matriz</span><small>El acetilo se desarma. Sale CO₂ y se cargan los "taxis" de electrones.</small></div>
+      <div class="chip"><b>4 · Cadena transportadora</b><span>Membrana interna</span><small>Los taxis descargan y se fabrica casi todo el ATP. Aquí entra el O₂.</small></div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:14px">
+    <h3>Ciclo de Krebs: una noria de 8 paradas</h3>
+    <p>Imagina una noria. En la parada 1 sube un pasajero nuevo de <b>2 carbonos</b> (Acetil-CoA). Durante la vuelta la noria le va quitando carbonos, que salen como <b>CO₂</b>, y le saca la energía guardada en forma de electrones. Al final queda la misma cabina vacía de siempre (oxaloacetato, 4 C), lista para otro pasajero.</p>
+    <p class="hint">Los "taxis" de electrones se llaman <b>NADH</b> y <b>FADH₂</b>: llegan vacíos (NAD⁺ y FAD), se cargan en Krebs y viajan a la cadena transportadora.</p>
+    <div class="grid2">
+      <svg id="kring" viewBox="0 0 340 300" role="img" aria-label="Noria del ciclo de Krebs con 8 paradas"></svg>
+      <div>
+        <div class="readout">
+          <div><b id="kturn">–</b><span>vuelta</span></div>
+          <div><b id="kco2">0</b><span>CO₂ salidos</span></div>
+          <div><b id="knadh">0</b><span>NADH</span></div>
+          <div><b id="kfadh">0</b><span>FADH₂</span></div>
+          <div><b id="katp">0</b><span>ATP directo</span></div>
+        </div>
+        <h3 id="kname" style="font-size:1.25rem"></h3>
+        <div class="carbons" id="kc" aria-label="carbonos en la molécula"></div>
+        <p id="ktxt" aria-live="polite"></p>
+        <div class="btnrow"><button class="btn" id="knext">Siguiente parada</button><button class="btn alt" id="kreset">Reiniciar</button></div>
+      </div>
+    </div>
+    <p class="hint">Pista de lectura: cada punto ● es un átomo de carbono. Cuenta cuántos hay en cada parada.</p>
+  </div>
+
+  <div class="card" style="margin-bottom:14px">
+    <h3>Cadena transportadora: la presa y la turbina</h3>
+    <p>Aquí está la comparación que lo hace fácil: es una <b>central hidroeléctrica</b>. Los electrones del NADH sirven para <b>bombear H⁺</b> (protones) y acumularlos, como agua detrás de una presa. Cuando el agua baja por la turbina (la <b>ATP sintasa</b>) se produce la "electricidad": el ATP.</p>
+    <svg id="etc" viewBox="0 0 420 250" role="img" aria-label="Cadena transportadora de electrones en la membrana interna">
+      <rect x="0" y="0" width="420" height="90" fill="var(--org2)" opacity=".5"/>
+      <rect x="0" y="150" width="420" height="100" fill="var(--cyto)"/>
+      <rect x="0" y="90" width="420" height="60" fill="var(--accent)" opacity=".18"/>
+      <text class="mlbl" x="8" y="18">ESPACIO INTERMEMBRANA (muchos H⁺)</text>
+      <text class="mlbl" x="8" y="240">MATRIZ</text>
+      <g data-s="1"><text class="mlbl" x="22" y="212">NADH</text><path d="M44 200 V146" stroke="var(--ink)" stroke-width="3" fill="none"/><path d="M38 154 L44 144 L50 154 Z" fill="var(--ink)"/></g>
+      <g data-s="1,2,3"><rect x="30" y="84" width="60" height="66" rx="10" fill="var(--hl)" stroke="var(--hl-ink)" stroke-width="2"/><text class="mlbl" x="60" y="122" text-anchor="middle" style="fill:var(--hl-ink)">I</text></g>
+      <g data-s="2,3"><rect x="140" y="84" width="60" height="66" rx="10" fill="var(--hl)" stroke="var(--hl-ink)" stroke-width="2"/><text class="mlbl" x="170" y="122" text-anchor="middle" style="fill:var(--hl-ink)">III</text></g>
+      <g data-s="2,3,5"><rect x="250" y="84" width="60" height="66" rx="10" fill="var(--hl)" stroke="var(--hl-ink)" stroke-width="2"/><text class="mlbl" x="280" y="122" text-anchor="middle" style="fill:var(--hl-ink)">IV</text></g>
+      <g data-s="2"><path d="M92 117 H138 M202 117 H248" stroke="var(--ink)" stroke-width="3" stroke-dasharray="5 5" fill="none"/><text class="mlbl" x="115" y="108" text-anchor="middle">e⁻</text><text class="mlbl" x="225" y="108" text-anchor="middle">e⁻</text></g>
+      <g data-s="3">
+        <path d="M60 80 V50 M170 80 V50 M280 80 V50" stroke="var(--ink)" stroke-width="2" fill="none"/>
+        <circle cx="60" cy="42" r="9" fill="var(--bad)"/><circle cx="170" cy="42" r="9" fill="var(--bad)"/><circle cx="280" cy="42" r="9" fill="var(--bad)"/>
+        <circle cx="110" cy="58" r="8" fill="var(--bad)"/><circle cx="225" cy="58" r="8" fill="var(--bad)"/><circle cx="330" cy="58" r="8" fill="var(--bad)"/><circle cx="360" cy="40" r="8" fill="var(--bad)"/>
+        <text class="mlbl" x="60" y="46" text-anchor="middle" style="fill:#fff;font-size:10px">H⁺</text><text class="mlbl" x="170" y="46" text-anchor="middle" style="fill:#fff;font-size:10px">H⁺</text><text class="mlbl" x="280" y="46" text-anchor="middle" style="fill:#fff;font-size:10px">H⁺</text>
+      </g>
+      <g data-s="4">
+        <rect x="340" y="90" width="28" height="60" fill="var(--ink)" opacity=".7"/>
+        <circle cx="354" cy="176" r="26" fill="#e07a5f" stroke="#8b2f1a" stroke-width="3"/>
+        <text class="mlbl" x="354" y="180" text-anchor="middle" style="font-size:10px">ATP sintasa</text>
+        <path d="M354 76 V120" stroke="var(--bad)" stroke-width="3" fill="none"/><path d="M348 112 L354 124 L360 112 Z" fill="var(--bad)"/>
+        <text class="mlbl" x="354" y="226" text-anchor="middle">ADP + Pᵢ → ATP</text>
+      </g>
+      <g data-s="5"><text class="mlbl" x="280" y="190" text-anchor="middle">O₂ + 4 e⁻ + 4 H⁺</text><text class="mlbl" x="280" y="208" text-anchor="middle">→ 2 H₂O</text><path d="M280 176 V152" stroke="var(--ink)" stroke-width="3" fill="none"/></g>
+    </svg>
+    <h3 id="etitle" style="font-size:1.15rem;margin-top:8px"></h3>
+    <p id="etxt" aria-live="polite"></p>
+    <div class="btnrow"><button class="btn alt" id="eprev">Anterior</button><button class="btn" id="enext">Siguiente</button><span class="pill" id="epos" style="align-self:center"></span></div>
+  </div>
+
+  <div class="card scroll">
+    <h3>La cuenta final de una glucosa</h3>
+    <table>
+      <tr><th>Etapa</th><th>Dónde</th><th>ATP directo</th><th>NADH</th><th>FADH₂</th><th>CO₂</th></tr>
+      <tr><td>Glucólisis</td><td>Citosol</td><td>2</td><td>2</td><td>0</td><td>0</td></tr>
+      <tr><td>Piruvato → Acetil-CoA (×2)</td><td>Matriz</td><td>0</td><td>2</td><td>0</td><td>2</td></tr>
+      <tr><td>Krebs (×2 vueltas)</td><td>Matriz</td><td>2</td><td>6</td><td>2</td><td>4</td></tr>
+      <tr><th>Total</th><th></th><th>4</th><th>10</th><th>2</th><th>6</th></tr>
+    </table>
+    <div class="formula">10 NADH × ≈2,5 ATP = 25 &nbsp;+&nbsp; 2 FADH₂ × ≈1,5 ATP = 3 &nbsp;+&nbsp; 4 ATP directos<br><b>Total ≈ 30 a 32 ATP por glucosa</b></div>
+    <ul class="chem">
+      <li>Los <b>6 CO₂</b> son exactamente los 6 carbonos de la glucosa. Cuando exhalas, estás soltando carbono que venía de tu comida.</li>
+      <li>Cada NADH vale más ATP que un FADH₂ porque entrega sus electrones antes en la cadena, y así se bombean más H⁺.</li>
+      <li>Sin oxígeno, la cadena se atasca, los taxis no se vacían y Krebs se detiene. Por eso necesitamos respirar.</li>
+      <li>Los números exactos cambian un poco según el libro (30 o 32). Lo importante es el orden de magnitud: la glucólisis sola da 2 ATP, la respiración completa da unas 15 veces más.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- 6 QUIZ -->
+<section class="tab" id="t-quiz">
+  <h2>Reto final</h2>
+  <div class="bar"><i id="qbar"></i></div>
+  <p class="hint" id="qscore">Puntaje: 0 de 8</p>
+  <div id="qbox"></div>
+</section>
+</div>
+
+<script>
+(function(){
+"use strict";
+/* ---------- pestañas ---------- */
+var tabs=document.querySelectorAll('#tabs button');
+tabs.forEach(function(b){b.addEventListener('click',function(){
+  tabs.forEach(function(x){x.setAttribute('aria-selected',x===b?'true':'false')});
+  document.querySelectorAll('section.tab').forEach(function(s){s.classList.toggle('on',s.id==='t-'+b.dataset.t)});
+  window.scrollTo({top:0});
+});});
+
+/* ---------- mapa ---------- */
+var D={
+ membrana:{n:'Membrana plasmática',pill:'Barrera selectiva',f:'Fosfolípidos + proteínas + colesterol',
+  l:['Doble capa de <b>fosfolípidos</b>: cabeza polar (fosfato) hacia el agua, colas de ácidos grasos hacia adentro.','Las proteínas de membrana funcionan como canales, bombas y receptores.','Deja pasar O<sub>2</sub> y CO<sub>2</sub>; bloquea iones y moléculas grandes salvo con transportador.'],
+  d:'Es un fluido: los lípidos se mueven lateralmente. El colesterol evita que se endurezca o se derrita demasiado.'},
+ citosol:{n:'Citosol (citoplasma)',pill:'Solución acuosa',f:'≈ 70 % H<sub>2</sub>O + iones + proteínas + ATP',
+  l:['Es una disolución concentrada: iones K<sup>+</sup> (alto adentro), glucosa, aminoácidos, ATP.','Aquí ocurre la <b>glucólisis</b>: C<sub>6</sub>H<sub>12</sub>O<sub>6</sub> → 2 piruvato + 2 ATP (sin oxígeno).','Su pH es cercano a 7,2.'],
+  d:'Es tan denso de macromoléculas que se parece más a un gel que a un agua pura.'},
+ nucleo:{n:'Núcleo',pill:'Guarda el ADN',f:'ADN: A=T (2 puentes H) · G≡C (3 puentes H)',
+  l:['El ADN es un polímero de <b>nucleótidos</b>: azúcar desoxirribosa + grupo fosfato + base nitrogenada.','Las dos hebras se unen por <b>puentes de hidrógeno</b> entre bases: A–T y G–C.','La envoltura nuclear tiene poros: salen ARN mensajeros, entran proteínas.'],
+  d:'Si estiraras el ADN de una sola célula humana, mediría cerca de 2 metros.'},
+ re:{n:'Retículo endoplasmático',pill:'Fabrica lípidos y proteínas',f:'RER: proteínas · REL: lípidos y detox',
+  l:['<b>Rugoso (RER):</b> lleva ribosomas pegados; las proteínas se plegan adentro.','<b>Liso (REL):</b> sintetiza fosfolípidos y esteroides; en el hígado transforma fármacos con enzimas.','Almacena iones Ca<sup>2+</sup>, clave para la contracción muscular.'],
+  d:'Sus membranas son una red continua con la envoltura del núcleo.'},
+ ribosoma:{n:'Ribosomas',pill:'Arman proteínas',f:'aa₁ + aa₂ → dipéptido + H₂O',
+  l:['Leen el ARNm y unen aminoácidos en orden.','Cada unión es un <b>enlace peptídico</b> (–CO–NH–), una reacción de condensación que libera una molécula de agua.','Están hechos de ARN ribosomal más proteínas.'],
+  d:'No tienen membrana. Son lo bastante pequeños para verse solo con microscopio electrónico.'},
+ golgi:{n:'Aparato de Golgi',pill:'Empaqueta y etiqueta',f:'Proteína + glúcidos → glucoproteína',
+  l:['Recibe proteínas del RER y les añade cadenas de azúcares (<b>glicosilación</b>).','Las empaqueta en vesículas con destino: membrana, exterior o lisosoma.','Funciona como oficina de correos de la célula.'],
+  d:'Es clave en células que secretan mucho, como las que producen insulina.'},
+ mito:{n:'Mitocondria',pill:'Produce ATP',f:'C<sub>6</sub>H<sub>12</sub>O<sub>6</sub> + 6 O<sub>2</sub> → 6 CO<sub>2</sub> + 6 H<sub>2</sub>O + ≈30 ATP',
+  l:['Oxida piruvato en el <b>ciclo de Krebs</b> y pasa electrones por la cadena de transporte.','El O<sub>2</sub> es el aceptor final de electrones: se reduce a H<sub>2</sub>O.','Un gradiente de H<sup>+</sup> a través de la membrana interna mueve la <b>ATP sintasa</b>, como una turbina.'],
+  d:'Tiene su propio ADN, heredado casi siempre de la madre.'},
+ lisosoma:{n:'Lisosoma',pill:'Digestión interna',f:'Macromolécula + H₂O → monómeros (hidrólisis)',
+  l:['Contiene unas 50 <b>enzimas hidrolíticas</b> que rompen proteínas, lípidos, glúcidos y ácidos nucleicos.','Su interior tiene pH ≈ 4,5–5: ácido, el óptimo de sus enzimas.','Si se rompe en el citosol (pH 7,2) sus enzimas casi no actúan: protección extra.'],
+  d:'Reciclan organelos viejos. Es la autofagia.'},
+ pared:{n:'Pared celular',pill:'Solo vegetal',f:'Celulosa: (C<sub>6</sub>H<sub>10</sub>O<sub>5</sub>)<sub>n</sub>',
+  l:['Polímero de glucosa unida por enlaces β(1→4).','Las cadenas se agrupan con puentes de hidrógeno en microfibrillas muy resistentes.','Nuestras enzimas no rompen ese enlace β: la celulosa es fibra para nosotros.'],
+  d:'Da forma rígida a la planta. El almidón, con enlaces α, sí lo digerimos.'},
+ cloroplasto:{n:'Cloroplasto',pill:'Fotosíntesis',f:'6 CO<sub>2</sub> + 6 H<sub>2</sub>O + luz → C<sub>6</sub>H<sub>12</sub>O<sub>6</sub> + 6 O<sub>2</sub>',
+  l:['La <b>clorofila</b> absorbe luz roja y azul, y refleja verde.','Fase luminosa: la luz rompe H<sub>2</sub>O y libera O<sub>2</sub>, y se forman ATP y NADPH.','Ciclo de Calvin: fija el CO<sub>2</sub> y construye glucosa.'],
+  d:'Como la mitocondria, tiene ADN propio.'},
+ vacuola:{n:'Vacuola central',pill:'Agua y reservas',f:'Presión de turgencia = agua que empuja la pared',
+  l:['Almacena agua, iones, azúcares y pigmentos.','Al entrar agua por ósmosis, la vacuola se hincha y la célula queda firme (turgente).','Sin agua la planta se marchita: la presión baja.'],
+  d:'Puede ocupar hasta el 90 % del volumen de la célula.'}
+};
+var panel=document.getElementById('panel');
+function show(id){
+  var o=D[id];if(!o)return;
+  document.querySelectorAll('.org').forEach(function(g){g.classList.toggle('sel',g.dataset.id===id)});
+  panel.innerHTML='<span class="pill">'+o.pill+'</span><h3 style="margin-top:8px;font-size:1.4rem">'+o.n+'</h3>'+
+   '<div class="formula">'+o.f+'</div><ul class="chem">'+o.l.map(function(x){return '<li>'+x+'</li>'}).join('')+'</ul>'+
+   '<p class="hint"><b>Dato:</b> '+o.d+'</p>';
+}
+document.querySelectorAll('.org').forEach(function(g){
+  g.addEventListener('click',function(e){e.stopPropagation();show(g.dataset.id)});
+  g.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();show(g.dataset.id)}});
+});
+var svg=document.getElementById('cellsvg');
+function setPlant(p){
+  svg.classList.toggle('plant',p);
+  document.getElementById('bPlant').setAttribute('aria-pressed',p);
+  document.getElementById('bAnimal').setAttribute('aria-pressed',!p);
+  if(!p && ['pared','cloroplasto','vacuola'].indexOf(current)>-1) show('nucleo');
+}
+var current='nucleo';
+document.querySelectorAll('.org').forEach(function(g){g.addEventListener('click',function(){current=g.dataset.id})});
+document.getElementById('bPlant').onclick=function(){setPlant(true)};
+document.getElementById('bAnimal').onclick=function(){setPlant(false)};
+show('mito');current='mito';
+
+/* ---------- moléculas ---------- */
+var M=[
+ {n:'Glúcidos',big:'C<sub>x</sub>(H<sub>2</sub>O)<sub>x</sub>',mono:'Monosacárido (glucosa)',pol:'Almidón, glucógeno, celulosa',bond:'Enlace glucosídico',e:'C, H, O',fn:'Energía rápida y estructura.',ex:'Al unir dos glucosas se libera H<sub>2</sub>O (condensación): maltosa. Con agua se rompe (hidrólisis).'},
+ {n:'Lípidos',big:'CH₃–(CH₂)ₙ–COOH',mono:'Ácidos grasos + glicerol',pol:'No son polímeros verdaderos',bond:'Enlace éster',e:'C, H, O (P en fosfolípidos)',fn:'Reserva de energía, membranas, hormonas.',ex:'Grasa saturada: sin dobles enlaces C=C, recta, sólida. Insaturada: con C=C, doblada, líquida (aceite). 1 g de grasa da ≈ 9 kcal, más del doble que 1 g de glúcido.'},
+ {n:'Proteínas',big:'H₂N–CHR–COOH',mono:'Aminoácido (20 tipos)',pol:'Polipéptido / proteína',bond:'Enlace peptídico (–CO–NH–)',e:'C, H, O, N (S en algunos)',fn:'Enzimas, transporte, estructura, defensa.',ex:'La secuencia de aminoácidos determina el plegamiento 3D, y éste la función. Calor o pH extremo la desnaturalizan, como al cocer un huevo.'},
+ {n:'Ácidos nucleicos',big:'Nucleótido: P · azúcar · base',mono:'Nucleótido',pol:'ADN y ARN',bond:'Enlace fosfodiéster',e:'C, H, O, N, P',fn:'Guardar y expresar la información genética.',ex:'ADN: doble hélice, desoxirribosa, bases A, T, G, C. ARN: una hebra, ribosa, usa uracilo (U) en lugar de T.'}
+];
+var grid=document.getElementById('molgrid');
+M.forEach(function(m,i){
+  var b=document.createElement('button');b.className='mol';b.setAttribute('aria-expanded','false');
+  b.innerHTML='<h3>'+m.n+'</h3><div class="big">'+m.big+'</div><div class="hint">Elementos: '+m.e+'</div>'+
+   '<div class="more"><p><b>Monómero:</b> '+m.mono+'</p><p><b>Polímero:</b> '+m.pol+'</p><p><b>Unión:</b> '+m.bond+'</p><p><b>Función:</b> '+m.fn+'</p><p class="hint">'+m.ex+'</p></div>';
+  b.onclick=function(){b.setAttribute('aria-expanded',b.getAttribute('aria-expanded')==='true'?'false':'true')};
+  grid.appendChild(b);
+});
+
+/* ---------- membrana ---------- */
+var bl=document.getElementById('bilayer'),s='';
+for(var i=0;i<9;i++){
+  var x=20+i*38;
+  if(i===4||i===5)continue;
+  s+='<circle cx="'+x+'" cy="48" r="9" fill="var(--accent)"/><path d="M'+(x-4)+' 57 v28 M'+(x+4)+' 57 v28" stroke="var(--org)" stroke-width="3" fill="none" stroke-linecap="round"/>';
+  s+='<circle cx="'+x+'" cy="152" r="9" fill="var(--accent)"/><path d="M'+(x-4)+' 143 v-28 M'+(x+4)+' 143 v-28" stroke="var(--org)" stroke-width="3" fill="none" stroke-linecap="round"/>';
+}
+bl.innerHTML=s;
+var salt=document.getElementById('salt');
+function comma(n,d){return n.toFixed(d).replace('.',',')}
+function osm(){
+  var c=parseFloat(salt.value);
+  document.getElementById('saltv').textContent=comma(c,2);
+  var mM=c*10/58.44*1000;
+  document.getElementById('osmM').textContent=Math.round(mM);
+  document.getElementById('osmO').textContent=Math.round(mM*2);
+  var v=Math.max(0.55,Math.min(1.5,1+(0.9-c)*0.5));
+  var r=60*Math.sqrt(v), cell=document.getElementById('osmcell');
+  cell.setAttribute('r',r.toFixed(1));
+  var t,arrows='';
+  if(c<0.15){t='Muy hipotónico: entra tanta agua que la célula puede estallar (lisis).';cell.setAttribute('stroke-dasharray','6 6');}
+  else{cell.removeAttribute('stroke-dasharray');
+    if(c<0.85)t='Hipotónico: hay menos soluto afuera, el agua entra y la célula se hincha.';
+    else if(c<=0.95)t='Isotónico: entra y sale el mismo agua. Es el equilibrio.';
+    else t='Hipertónico: hay más soluto afuera, el agua sale y la célula se encoge (crenación).';}
+  var dir=c<0.85?1:(c>0.95?-1:0);
+  if(dir!==0){for(var k=0;k<4;k++){var a=k*Math.PI/2+Math.PI/4,R=r+22,x1=150+Math.cos(a)*(dir>0?R+16:R-6),y1=95+Math.sin(a)*(dir>0?R+16:R-6),x2=150+Math.cos(a)*(dir>0?R-6:R+16),y2=95+Math.sin(a)*(dir>0?R-6:R+16);
+    arrows+='<line x1="'+x1.toFixed(0)+'" y1="'+y1.toFixed(0)+'" x2="'+x2.toFixed(0)+'" y2="'+y2.toFixed(0)+'" stroke="#3b7ea1" stroke-width="4" stroke-linecap="round"/><circle cx="'+x2.toFixed(0)+'" cy="'+y2.toFixed(0)+'" r="5" fill="#3b7ea1"/>';}}
+  document.getElementById('osmarrows').innerHTML=arrows;
+  document.getElementById('osmtxt').textContent=t;
+}
+salt.addEventListener('input',osm);osm();
+
+/* ---------- balance ---------- */
+document.getElementById('bBal').onclick=function(){
+  var t=document.getElementById('balT');t.style.display=t.style.display==='none'?'table':'none';
+};
+
+/* ---------- enzimas ---------- */
+var ph=document.getElementById('ph'),enz=document.getElementById('enz'),es=document.getElementById('enzsvg');
+function act(p,o){return Math.exp(-Math.pow(p-o,2)/(2*1.1*1.1))}
+function enzDraw(){
+  var o=parseFloat(enz.value),p=parseFloat(ph.value);
+  document.getElementById('phv').textContent=comma(p,1);
+  var pts=[];for(var x=0;x<=14;x+=0.25){pts.push((20+x*26).toFixed(1)+','+(140-act(x,o)*110).toFixed(1))}
+  var g='<line x1="20" y1="140" x2="384" y2="140" stroke="var(--muted)"/>';
+  for(var i=0;i<=14;i+=2){g+='<text x="'+(20+i*26)+'" y="158" text-anchor="middle" class="lbl" style="font-size:11px;font-weight:400">'+i+'</text>'}
+  g+='<polyline points="'+pts.join(' ')+'" fill="none" stroke="var(--accent)" stroke-width="3"/>';
+  var a=act(p,o);
+  g+='<line x1="'+(20+p*26)+'" y1="20" x2="'+(20+p*26)+'" y2="140" stroke="var(--hl)" stroke-width="3"/><circle cx="'+(20+p*26)+'" cy="'+(140-a*110)+'" r="7" fill="var(--hl)" stroke="var(--hl-ink)" stroke-width="2"/>';
+  es.innerHTML=g;
+  var h=Math.pow(10,-p),e=Math.floor(Math.log10(h)+1e-9),m=h/Math.pow(10,e);
+  var sup={'-':'⁻','0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹'};
+  var es2=String(e).split('').map(function(c){return sup[c]}).join('');
+  document.getElementById('hconc').textContent=comma(m,1)+' × 10'+es2;
+  document.getElementById('act').textContent=Math.round(a*100)+' %';
+}
+ph.addEventListener('input',enzDraw);enz.addEventListener('change',function(){ph.value=enz.value;enzDraw()});enzDraw();
+
+/* ---------- mitocondria ---------- */
+var MP={
+ externa:{n:'Membrana externa',t:'La piel lisa de la mitocondria. Tiene poros (porinas) que dejan pasar moléculas pequeñas como el piruvato. Protege lo de adentro.'},
+ espacio:{n:'Espacio intermembrana',t:'Un pasillo muy estrecho entre las dos membranas. Aquí se acumulan los H⁺ que bombea la cadena transportadora. Es el embalse de la presa: mucha presión de H⁺, pH más bajo.'},
+ interna:{n:'Membrana interna y crestas',t:'Está plegada en forma de crestas para tener muchísima superficie. Ahí viven los complejos de la cadena y las ATP sintasas. Casi no deja pasar H⁺ salvo por la ATP sintasa, y por eso la presa funciona.'},
+ matriz:{n:'Matriz',t:'El interior gelatinoso. Aquí ocurre el ciclo de Krebs. Tiene enzimas, ribosomas y ADN propio. Se parece a una bacteria pequeña, y los científicos creen que hace millones de años lo fue.'}
+};
+function mshow(id){
+  document.querySelectorAll('.mp').forEach(function(g){g.classList.toggle('sel',g.dataset.m===id)});
+  document.getElementById('mpanel').innerHTML='<h3 style="font-size:1.25rem">'+MP[id].n+'</h3><p>'+MP[id].t+'</p>';
+}
+document.querySelectorAll('.mp').forEach(function(g){
+  g.addEventListener('click',function(){mshow(g.dataset.m)});
+  g.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();mshow(g.dataset.m)}});
+});
+mshow('espacio');
+
+/* ---------- Krebs ---------- */
+var K=[
+ {n:'1 · Citrato',c:6,t:'El Acetil-CoA (2 carbonos) se pega al oxaloacetato (4 carbonos). Resultado: citrato, de 6 carbonos. Subió el pasajero a la noria.',g:{}},
+ {n:'2 · Isocitrato',c:6,t:'El citrato se reacomoda un poco para poder soltar carbonos en la siguiente parada. Todavía no sale nada.',g:{}},
+ {n:'3 · α-cetoglutarato',c:5,t:'Primera pérdida: sale un CO₂ y queda una molécula de 5 carbonos. Además se carga el primer taxi, un NADH, con electrones.',g:{co2:1,nadh:1}},
+ {n:'4 · Succinil-CoA',c:4,t:'Segunda pérdida: sale otro CO₂ y queda de 4 carbonos. Se carga el segundo NADH.',g:{co2:1,nadh:1}},
+ {n:'5 · Succinato',c:4,t:'La energía que se libera aquí se usa para fabricar 1 ATP directamente.',g:{atp:1}},
+ {n:'6 · Fumarato',c:4,t:'Se carga un FADH₂, otro taxi de electrones, algo menos potente que el NADH.',g:{fadh:1}},
+ {n:'7 · Malato',c:4,t:'Se suma una molécula de agua. Es solo un cambio de forma para preparar la última parada.',g:{}},
+ {n:'8 · Oxaloacetato',c:4,t:'Se carga el tercer NADH. La molécula de 4 carbonos del inicio está de vuelta y lista para recibir otro Acetil-CoA. Entraron 2 carbonos y salieron 2 como CO₂.',g:{nadh:1}}
+];
+var ks=-1,kt=1,tot={co2:0,nadh:0,fadh:0,atp:0};
+var kr=document.getElementById('kring'),ksv='<circle cx="170" cy="150" r="105" fill="none" stroke="var(--line)" stroke-width="3" stroke-dasharray="6 6"/>'+
+ '<text x="170" y="146" text-anchor="middle" class="mlbl" style="font-size:15px">Ciclo de Krebs</text><text x="170" y="170" text-anchor="middle" class="mlbl" style="font-size:22px">↻</text>'+
+ '<text x="170" y="12" text-anchor="middle" class="mlbl">Entra Acetil-CoA (2 C) ↓</text>';
+for(var i=0;i<8;i++){
+  var an=(-90+i*45)*Math.PI/180,x=170+105*Math.cos(an),y=150+105*Math.sin(an);
+  ksv+='<g class="kn" id="kn'+i+'"><circle cx="'+x.toFixed(1)+'" cy="'+y.toFixed(1)+'" r="25"/><text x="'+x.toFixed(1)+'" y="'+(y-2).toFixed(1)+'">'+(i+1)+'</text><text x="'+x.toFixed(1)+'" y="'+(y+12).toFixed(1)+'" style="font-size:10px;font-weight:600">'+K[i].c+' C</text></g>';
+}
+kr.innerHTML=ksv;
+function dots(n){return new Array(n+1).join('●')}
+function kdraw(){
+  for(var i=0;i<8;i++){var e=document.getElementById('kn'+i);e.setAttribute('class','kn'+(ks===i?' on':(ks>i?' done':'')))}
+  document.getElementById('kturn').textContent=ks<0?'–':kt;
+  ['co2','nadh','fadh','atp'].forEach(function(k){document.getElementById('k'+k).textContent=tot[k]});
+  if(ks<0){
+    document.getElementById('kname').textContent='Listo para arrancar';
+    document.getElementById('kc').textContent=dots(4)+'  +  '+dots(2);
+    document.getElementById('ktxt').textContent='La noria empieza con oxaloacetato (4 carbonos) esperando y un Acetil-CoA (2 carbonos) que llega. Aprieta «Siguiente parada».';
+  }else{
+    document.getElementById('kname').textContent=K[ks].n;
+    document.getElementById('kc').textContent=dots(K[ks].c);
+    var extra=(ks===7&&kt>=2)?' Una glucosa da 2 vueltas, una por cada Acetil-CoA.':'';
+    document.getElementById('ktxt').textContent=K[ks].t+extra;
+  }
+}
+document.getElementById('knext').onclick=function(){
+  if(ks===7){ks=0;kt++}else{ks++}
+  var g=K[ks].g;Object.keys(g).forEach(function(k){tot[k]+=g[k]});
+  kdraw();
+};
+document.getElementById('kreset').onclick=function(){ks=-1;kt=1;tot={co2:0,nadh:0,fadh:0,atp:0};kdraw()};
+kdraw();
+
+/* ---------- cadena transportadora ---------- */
+var E=[
+ {n:'1 · Los taxis descargan',t:'El NADH y el FADH₂ llegan desde el ciclo de Krebs y entregan sus electrones (e⁻) al primer complejo. Quedan vacíos (NAD⁺ y FAD) y vuelven a Krebs a recargarse.'},
+ {n:'2 · Los electrones bajan',t:'Los electrones pasan de un complejo a otro como una pelota que baja escalones. En cada escalón sueltan un poco de energía.'},
+ {n:'3 · Se llena la presa',t:'Esa energía se usa para bombear H⁺ desde la matriz hacia el espacio intermembrana. Se amontonan allá, como el agua detrás de una presa.'},
+ {n:'4 · La turbina gira',t:'Los H⁺ quieren volver. La única salida es la ATP sintasa, una turbina molecular. Al girar fabrica ATP: ADP + Pᵢ → ATP.'},
+ {n:'5 · El oxígeno cierra la fila',t:'Al final de la escalera, los electrones los recibe el oxígeno que respiras: O₂ + 4 e⁻ + 4 H⁺ → 2 H₂O. Sin oxígeno, la fila se atasca y todo se frena.'}
+];
+var es_=0;
+function edraw(){
+  document.querySelectorAll('#etc [data-s]').forEach(function(g){
+    g.classList.toggle('lit',g.getAttribute('data-s').split(',').indexOf(String(es_+1))>-1);
+  });
+  document.getElementById('etitle').textContent=E[es_].n;
+  document.getElementById('etxt').textContent=E[es_].t;
+  document.getElementById('epos').textContent=(es_+1)+' de '+E.length;
+}
+document.getElementById('enext').onclick=function(){es_=(es_+1)%E.length;edraw()};
+document.getElementById('eprev').onclick=function(){es_=(es_+E.length-1)%E.length;edraw()};
+edraw();
+
+/* ---------- quiz ---------- */
+var Q=[
+ {q:'¿Qué enlace une dos aminoácidos?',o:['Glucosídico','Peptídico','Fosfodiéster','Éster'],a:1,w:'El grupo –COOH de uno reacciona con el –NH₂ del otro y se libera H₂O.'},
+ {q:'¿Por qué los fosfolípidos forman una bicapa en agua?',o:['Las colas son hidrófilas','Las cabezas son apolares','Cabezas polares hacia el agua y colas apolares escondidas','Se unen con enlaces peptídicos'],a:2,w:'Es el efecto hidrofóbico: las colas evitan el agua.'},
+ {q:'Un glóbulo rojo en agua destilada (0 % de sal) ...',o:['Se encoge','Se hincha y puede estallar','No cambia','Produce más ATP'],a:1,w:'Medio hipotónico: el agua entra por ósmosis.'},
+ {q:'¿Qué organelo oxida glucosa con O₂ para obtener ≈30 ATP?',o:['Ribosoma','Lisosoma','Mitocondria','Aparato de Golgi'],a:2,w:'C₆H₁₂O₆ + 6 O₂ → 6 CO₂ + 6 H₂O + energía.'},
+ {q:'¿Qué puentes mantienen unidas las dos hebras del ADN?',o:['Puentes de hidrógeno','Enlaces iónicos','Enlaces peptídicos','Enlaces glucosídicos'],a:0,w:'A–T con 2 puentes y G–C con 3.'},
+ {q:'Las enzimas del lisosoma trabajan mejor a pH ≈ 5. ¿Qué pasa con la [H⁺] respecto a pH 7?',o:['Es 100 veces mayor','Es 2 veces mayor','Es igual','Es 100 veces menor'],a:0,w:'Dos unidades de pH = 10² = 100 veces más H⁺.'},
+ {q:'¿Qué reactivo da azul-negro con almidón?',o:['Biuret','Benedict','Lugol','Sudán III'],a:2,w:'El yodo se mete en la hélice del almidón y da color intenso.'},
+ {q:'La bomba Na⁺/K⁺ es transporte activo porque ...',o:['Va a favor del gradiente','Gasta ATP para ir contra el gradiente','No necesita proteína','Solo mueve agua'],a:1,w:'Saca 3 Na⁺ y mete 2 K⁺ por cada ATP.'},
+ {q:'¿Dónde ocurre el ciclo de Krebs?',o:['En el citosol','En la matriz de la mitocondria','En el núcleo','En la membrana externa'],a:1,w:'La matriz tiene las enzimas del ciclo. La cadena transportadora, en cambio, está en la membrana interna.'},
+ {q:'Una molécula de glucosa tiene 6 carbonos. ¿Cuántos CO₂ salen en total en la respiración completa?',o:['2','3','6','12'],a:2,w:'2 en el puente piruvato → Acetil-CoA y 4 en las dos vueltas de Krebs. Son los 6 carbonos de la glucosa.'},
+ {q:'¿Para qué sirve el oxígeno en la mitocondria?',o:['Para fabricar glucosa','Es el aceptor final de electrones y forma agua','Para bombear Na⁺','Para romper el ADN'],a:1,w:'O₂ + 4 e⁻ + 4 H⁺ → 2 H₂O. Sin él, la cadena se detiene.'},
+ {q:'En la comparación con una central hidroeléctrica, ¿qué papel hace la ATP sintasa?',o:['La presa','El agua','La turbina','El río'],a:2,w:'Los H⁺ que regresan hacen girar la ATP sintasa y se fabrica ATP.'}
+];
+var qi=0,score=0,box=document.getElementById('qbox');
+function render(){
+  document.getElementById('qbar').style.width=(qi/Q.length*100)+'%';
+  document.getElementById('qscore').textContent='Puntaje: '+score+' de '+Q.length;
+  if(qi>=Q.length){
+    var msg=score>=7?'Dominas la química de la célula.':score>=5?'Muy bien, repasa las que fallaste.':'Vuelve al mapa y a las moléculas, y prueba otra vez.';
+    box.innerHTML='<div class="card"><h3>'+score+' de '+Q.length+'</h3><p>'+msg+'</p><button class="btn" id="again">Repetir</button></div>';
+    document.getElementById('again').onclick=function(){qi=0;score=0;render()};return;
+  }
+  var q=Q[qi];
+  box.innerHTML='<div class="card q"><p class="hint">Pregunta '+(qi+1)+' de '+Q.length+'</p><h3>'+q.q+'</h3><div class="opts" id="opts"></div><div class="why" id="why"></div></div>';
+  var od=document.getElementById('opts');
+  q.o.forEach(function(t,i){
+    var b=document.createElement('button');b.textContent=t;
+    b.onclick=function(){
+      var all=od.querySelectorAll('button');
+      all.forEach(function(x,j){x.disabled=true;if(j===q.a)x.classList.add('right')});
+      if(i===q.a){score++}else{b.classList.add('wrong')}
+      document.getElementById('why').innerHTML=(i===q.a?'<b>Correcto.</b> ':'<b>No.</b> ')+q.w+'<br><br><button class="btn" id="nx">'+(qi===Q.length-1?'Ver resultado':'Siguiente')+'</button>';
+      document.getElementById('nx').onclick=function(){qi++;render()};
+      document.getElementById('qscore').textContent='Puntaje: '+score+' de '+Q.length;
+    };
+    od.appendChild(b);
+  });
+}
+render();
+})();
+</script>
+</body>
+</html>
